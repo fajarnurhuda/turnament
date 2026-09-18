@@ -21,32 +21,32 @@
     </div>
 
     <!-- MAIN SCOREBOARD HERO -->
-    <div class="rounded-xl overflow-hidden bg-court-surface border border-court-border shadow-2xl p-6 sm:p-8">
+    <div class="rounded-xl overflow-hidden bg-court-surface border border-court-border shadow-2xl p-4 sm:p-6 lg:p-8">
         <!-- Stage info & status badge -->
-        <div class="flex items-center justify-between pb-6 mb-6 border-b border-court-border">
-            <div class="flex items-center gap-3">
-                <span class="px-3 py-1 rounded text-xs font-mono font-bold tracking-wider border {{ $match->status_badge['color'] }}" x-text="matchData.status_badge.text">
+        <div class="flex flex-col sm:flex-row sm:items-center justify-between pb-4 sm:pb-6 mb-4 sm:mb-6 border-b border-court-border gap-2 sm:gap-4">
+            <div class="flex flex-wrap items-center gap-2 sm:gap-3">
+                <span class="px-2.5 sm:px-3 py-0.5 sm:py-1 rounded text-[10px] sm:text-xs font-mono font-bold tracking-wider border {{ $match->status_badge['color'] }}" x-text="matchData.status_badge.text">
                     {{ $match->status_badge['text'] }}
                 </span>
-                <span class="text-xs font-mono text-text-muted">
+                <span class="text-[11px] sm:text-xs font-mono text-text-muted truncate">
                     {{ $match->category->name }} &bull; {{ $match->stage?->name }} {{ $match->group ? '('.$match->group->name.')' : '' }}
                 </span>
             </div>
 
-            <div class="text-right text-xs font-mono text-text-muted">
+            <div class="text-left sm:text-right text-[11px] sm:text-xs font-mono text-text-muted truncate">
                 {{ $match->venue }} &bull; {{ $match->match_date->format('d M Y, H:i') }} WIB
             </div>
         </div>
 
-        <!-- Symmetrical Score Readout -->
-        <div class="grid grid-cols-1 md:grid-cols-11 items-center gap-6 text-center">
+        <!-- Symmetrical Score Readout (Responsive 3-col on Mobile & 11-col on Desktop) -->
+        <div class="grid grid-cols-3 md:grid-cols-11 items-center gap-2 sm:gap-4 md:gap-6 text-center">
             <!-- Home Team -->
-            <div class="md:col-span-4 flex flex-col md:flex-row items-center justify-end gap-4">
-                <div class="text-center md:text-right order-2 md:order-1">
-                    <h1 class="text-2xl sm:text-3xl font-headline font-black text-text-primary">{{ $match->homeTeam->name }}</h1>
-                    <p class="text-xs font-mono text-text-muted">MANAJER: {{ $match->homeTeam->manager_name ?? '-' }}</p>
+            <div class="col-span-1 md:col-span-4 flex flex-col md:flex-row items-center justify-center md:justify-end gap-2 sm:gap-4 min-w-0">
+                <div class="text-center md:text-right order-2 md:order-1 min-w-0">
+                    <h1 class="text-xs sm:text-base md:text-3xl font-headline font-black text-text-primary leading-tight line-clamp-2" title="{{ $match->homeTeam->name }}">{{ $match->homeTeam->name }}</h1>
+                    <p class="text-[9px] sm:text-xs font-mono text-text-muted mt-0.5 truncate">MANAJER: {{ $match->homeTeam->manager_name ?? '-' }}</p>
                 </div>
-                <div class="w-20 h-20 rounded-xl bg-court-surface-elevated border border-court-border flex items-center justify-center font-headline font-black text-2xl text-stadium-emerald shadow-inner order-1 md:order-2 flex-shrink-0 overflow-hidden p-2">
+                <div class="w-12 h-12 sm:w-16 sm:h-16 md:w-20 md:h-20 rounded-xl bg-court-surface-elevated border border-court-border flex items-center justify-center font-headline font-black text-lg sm:text-2xl text-stadium-emerald shadow-inner order-1 md:order-2 flex-shrink-0 overflow-hidden p-1 sm:p-2">
                     @if($match->homeTeam->logo)
                         <img src="{{ $match->homeTeam->logo_url }}" alt="{{ $match->homeTeam->name }}" class="w-full h-full object-contain">
                     @else
@@ -55,39 +55,39 @@
                 </div>
             </div>
 
-            <!-- Score Center with Live Status & Minute (Sesuai Referensi) -->
-            <div class="md:col-span-3 flex flex-col items-center justify-center py-4 bg-court-navy/80 rounded-xl border border-court-border/60">
-                <div class="flex items-center gap-4 font-headline text-6xl sm:text-7xl font-black tracking-tight">
+            <!-- Score Center with Live Status & Minute -->
+            <div class="col-span-1 md:col-span-3 flex flex-col items-center justify-center py-2 sm:py-4 bg-court-navy/80 rounded-xl border border-court-border/60 px-1 sm:px-3">
+                <div class="flex items-center justify-center gap-1 sm:gap-3 md:gap-4 font-headline text-3xl sm:text-5xl md:text-7xl font-black tracking-tight">
                     <span class="text-stadium-emerald" x-text="matchData.home_score">{{ $match->home_score }}</span>
                     <span class="text-court-border">:</span>
                     <span class="text-text-primary" x-text="matchData.away_score">{{ $match->away_score }}</span>
                 </div>
                 
                 <!-- Status Babak & Menit Pertandingan -->
-                <div class="mt-3 flex items-center gap-2 font-mono text-xs">
-                    <span class="px-2.5 py-0.5 rounded font-bold border"
+                <div class="mt-1.5 sm:mt-3 flex flex-col sm:flex-row items-center gap-1 sm:gap-2 font-mono text-[10px] sm:text-xs text-center">
+                    <span class="px-2 py-0.5 rounded font-bold border whitespace-nowrap text-[9px] sm:text-xs"
                           :class="matchData.status_badge.color"
                           x-text="matchData.status_badge.text">
                         {{ $match->status_badge['text'] }}
                     </span>
-                    <span x-show="matchData.is_live" class="text-telemetry-cyan font-bold tracking-wider">
+                    <span x-show="matchData.is_live" class="text-telemetry-cyan font-bold tracking-wider whitespace-nowrap text-[10px] sm:text-xs">
                         MENIT <span x-text="matchData.current_minute">{{ $match->current_minute }}</span>'
                     </span>
                 </div>
             </div>
 
             <!-- Away Team -->
-            <div class="md:col-span-4 flex flex-col md:flex-row items-center justify-start gap-4">
-                <div class="w-20 h-20 rounded-xl bg-court-surface-elevated border border-court-border flex items-center justify-center font-headline font-black text-2xl text-telemetry-cyan shadow-inner flex-shrink-0 overflow-hidden p-2">
+            <div class="col-span-1 md:col-span-4 flex flex-col md:flex-row items-center justify-center md:justify-start gap-2 sm:gap-4 min-w-0">
+                <div class="w-12 h-12 sm:w-16 sm:h-16 md:w-20 md:h-20 rounded-xl bg-court-surface-elevated border border-court-border flex items-center justify-center font-headline font-black text-lg sm:text-2xl text-telemetry-cyan shadow-inner flex-shrink-0 overflow-hidden p-1 sm:p-2">
                     @if($match->awayTeam->logo)
                         <img src="{{ $match->awayTeam->logo_url }}" alt="{{ $match->awayTeam->name }}" class="w-full h-full object-contain">
                     @else
                         {{ $match->awayTeam->initials }}
                     @endif
                 </div>
-                <div class="text-center md:text-left">
-                    <h1 class="text-2xl sm:text-3xl font-headline font-black text-text-primary">{{ $match->awayTeam->name }}</h1>
-                    <p class="text-xs font-mono text-text-muted">MANAJER: {{ $match->awayTeam->manager_name ?? '-' }}</p>
+                <div class="text-center md:text-left min-w-0">
+                    <h1 class="text-xs sm:text-base md:text-3xl font-headline font-black text-text-primary leading-tight line-clamp-2" title="{{ $match->awayTeam->name }}">{{ $match->awayTeam->name }}</h1>
+                    <p class="text-[9px] sm:text-xs font-mono text-text-muted mt-0.5 truncate">MANAJER: {{ $match->awayTeam->manager_name ?? '-' }}</p>
                 </div>
             </div>
         </div>

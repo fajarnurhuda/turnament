@@ -141,9 +141,9 @@
                             </form>
                         </div>
                     @else
-                        <a href="{{ route('login') }}" class="px-4 py-2 rounded text-xs font-headline font-bold bg-stadium-emerald hover:bg-stadium-emerald/90 text-court-navy transition-all shadow-[0_0_12px_rgba(0,255,135,0.2)] flex items-center gap-1.5">
+                        <a href="{{ route('login') }}" title="Login Operator & Admin" class="p-2 sm:px-4 sm:py-2 rounded text-xs font-headline font-bold bg-stadium-emerald hover:bg-stadium-emerald/90 text-court-navy transition-all shadow-[0_0_12px_rgba(0,255,135,0.2)] flex items-center gap-1.5 flex-shrink-0">
                             <span class="material-symbols-outlined text-base">login</span>
-                            LOGIN OPERATOR
+                            <span class="hidden sm:inline">LOGIN OPERATOR</span>
                         </a>
                     @endauth
                 </div>
