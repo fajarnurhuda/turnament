@@ -1,0 +1,767 @@
+<!DOCTYPE html><html class="dark" lang="id"><head>
+<meta charset="utf-8">
+<meta content="width=device-width, initial-scale=1.0" name="viewport">
+<title>Piala Juara Nusantara 2025 - Live Match &amp; Fan Center</title>
+<!-- Google Fonts & Material Symbols -->
+<link href="https://fonts.googleapis.com" rel="preconnect">
+<link crossorigin="" href="https://fonts.gstatic.com" rel="preconnect">
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&amp;family=JetBrains+Mono:wght@500;600;700;800&amp;family=Space+Grotesk:wght@500;600;700;800&amp;display=swap" rel="stylesheet">
+<link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&amp;display=swap" rel="stylesheet">
+<link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&amp;display=swap" rel="stylesheet">
+<!-- Tailwind CSS with custom config -->
+<script src="https://cdn.tailwindcss.com?plugins=forms,container-queries"></script>
+<script id="tailwind-config">
+    tailwind.config = {
+      darkMode: "class",
+      theme: {
+        extend: {
+          colors: {
+            "text-muted": "#798FA8",
+            "stadium-emerald": "#00FF87",
+            "surface-container-low": "#181b25",
+            "telemetry-cyan": "#00E5FF",
+            "secondary-fixed": "#9cf0ff",
+            "on-surface": "#e0e2ef",
+            "on-primary": "#003919",
+            "background": "#10131c",
+            "tertiary-container": "#ffd4d7",
+            "on-primary-fixed-variant": "#005227",
+            "on-secondary-fixed-variant": "#004f58",
+            "tertiary-fixed": "#ffd9dc",
+            "on-background": "#e0e2ef",
+            "on-error-container": "#ffdad6",
+            "surface-container-highest": "#32343f",
+            "tertiary-fixed-dim": "#ffb2ba",
+            "primary-fixed": "#60ff98",
+            "card-red": "#FF2A4D",
+            "surface-tint": "#00e478",
+            "error-container": "#93000a",
+            "outline-variant": "#3b4b3d",
+            "on-tertiary": "#670020",
+            "card-yellow": "#FFD600",
+            "on-error": "#690005",
+            "primary": "#f1ffef",
+            "error": "#ffb4ab",
+            "surface": "#10131c",
+            "secondary-container": "#00e3fd",
+            "on-tertiary-fixed-variant": "#910030",
+            "on-surface-variant": "#b9cbb9",
+            "primary-container": "#00ff87",
+            "on-tertiary-container": "#c40044",
+            "surface-container": "#1c1f29",
+            "secondary-fixed-dim": "#00daf3",
+            "inverse-surface": "#e0e2ef",
+            "on-primary-container": "#007138",
+            "on-tertiary-fixed": "#400011",
+            "court-border": "#22304C",
+            "on-secondary-fixed": "#001f24",
+            "on-primary-fixed": "#00210c",
+            "inverse-primary": "#006d36",
+            "inverse-on-surface": "#2d303a",
+            "on-secondary-container": "#00616d",
+            "surface-dim": "#10131c",
+            "live-pulse": "#FF3366",
+            "court-surface": "#121826",
+            "surface-bright": "#363943",
+            "court-navy": "#0B0E17",
+            "primary-fixed-dim": "#00e478",
+            "secondary": "#bdf4ff",
+            "court-surface-elevated": "#1A2338",
+            "text-primary": "#F0F6FC",
+            "tertiary": "#fffaf9",
+            "surface-container-high": "#272a34",
+            "outline": "#849585",
+            "surface-variant": "#32343f",
+            "surface-container-lowest": "#0b0e17",
+            "on-secondary": "#00363d"
+          },
+          borderRadius: {
+            DEFAULT: "0.125rem",
+            lg: "0.25rem",
+            xl: "0.5rem",
+            full: "0.75rem"
+          },
+          fontFamily: {
+            "headline-md": ["Space Grotesk"],
+            "label-badge": ["JetBrains Mono"],
+            "label-score": ["Space Grotesk"],
+            "headline-lg-mobile": ["Space Grotesk"],
+            "display-hero": ["Space Grotesk"],
+            "body-lg": ["Inter"],
+            "body-sm": ["Inter"],
+            "headline-lg": ["Space Grotesk"],
+            "label-telemetry": ["JetBrains Mono"],
+            "headline-sm": ["Space Grotesk"],
+            "display-hero-mobile": ["Space Grotesk"],
+            "body-md": ["Inter"]
+          },
+          fontSize: {
+            "headline-md": ["20px", { lineHeight: "28px", fontWeight: "600" }],
+            "label-badge": ["11px", { lineHeight: "14px", letterSpacing: "0.08em", fontWeight: "700" }],
+            "label-score": ["48px", { lineHeight: "52px", letterSpacing: "-0.02em", fontWeight: "700" }],
+            "headline-lg-mobile": ["24px", { lineHeight: "32px", letterSpacing: "-0.01em", fontWeight: "700" }],
+            "display-hero": ["64px", { lineHeight: "72px", letterSpacing: "-0.03em", fontWeight: "700" }],
+            "body-lg": ["16px", { lineHeight: "24px", fontWeight: "400" }],
+            "body-sm": ["12px", { lineHeight: "16px", fontWeight: "400" }],
+            "headline-lg": ["32px", { lineHeight: "40px", letterSpacing: "-0.02em", fontWeight: "700" }],
+            "label-telemetry": ["14px", { lineHeight: "18px", letterSpacing: "0.05em", fontWeight: "600" }],
+            "headline-sm": ["16px", { lineHeight: "24px", fontWeight: "600" }],
+            "display-hero-mobile": ["40px", { lineHeight: "48px", letterSpacing: "-0.02em", fontWeight: "700" }],
+            "body-md": ["14px", { lineHeight: "20px", fontWeight: "400" }]
+          }
+        }
+      }
+    }
+  </script>
+<style>
+    .material-symbols-outlined {
+      font-family: 'Material Symbols Outlined';
+      font-weight: normal;
+      font-style: normal;
+      font-size: 20px;
+      line-height: 1;
+      letter-spacing: normal;
+      text-transform: none;
+      display: inline-block;
+      white-space: nowrap;
+      word-wrap: normal;
+      direction: ltr;
+      -webkit-font-feature-settings: 'liga';
+      -webkit-font-smoothing: antialiased;
+    }
+    @keyframes pulse-dot {
+      0%, 100% { opacity: 1; transform: scale(1); }
+      50% { opacity: 0.35; transform: scale(1.3); }
+    }
+    .animate-pulse-sync {
+      animation: pulse-dot 1.8s cubic-bezier(0.4, 0, 0.6, 1) infinite;
+    }
+    @keyframes goal-slide {
+      0% { transform: translateY(-100%); opacity: 0; }
+      15% { transform: translateY(0); opacity: 1; }
+      85% { transform: translateY(0); opacity: 1; }
+      100% { transform: translateY(-100%); opacity: 0; }
+    }
+    .animate-goal-banner {
+      animation: goal-slide 6s ease-in-out infinite;
+    }
+  </style>
+</head>
+<body class="bg-court-navy text-text-primary min-h-screen font-body-md antialiased selection:bg-stadium-emerald selection:text-court-navy pb-12">
+<!-- TOP HEADER: Web / Mobile Hybrid TopAppBar Navigation Anchor -->
+<header class="w-full px-4 md:px-6 flex justify-between items-center h-16 max-w-full bg-court-navy/90 backdrop-blur-md sticky top-0 z-50 shadow-sm border-b border-court-border">
+<div class="flex items-center gap-3">
+<div class="w-9 h-9 rounded bg-court-surface-elevated border border-court-border flex items-center justify-center text-stadium-emerald shadow-inner">
+<span class="material-symbols-outlined" data-icon="sports_soccer">sports_soccer</span>
+</div>
+<div>
+<span class="text-headline-sm font-headline-sm font-bold tracking-wider text-text-primary block leading-none">PITCHPULSE LIVE</span>
+<span class="text-body-sm font-body-sm text-text-muted text-[11px] block mt-0.5">Piala Juara Nusantara 2025</span>
+</div>
+</div>
+<!-- Live Telemetry State & Laravel Reverb Sync Badge -->
+<div class="flex items-center gap-2 md:gap-4">
+<div class="hidden sm:flex items-center gap-2 bg-court-surface border border-court-border px-2.5 py-1 rounded">
+<span class="relative flex h-2 w-2">
+<span class="animate-ping absolute inline-flex h-full w-full rounded-full bg-live-pulse opacity-75"></span>
+<span class="relative inline-flex rounded-full h-2 w-2 bg-live-pulse animate-pulse-sync"></span>
+</span>
+<span class="text-label-badge font-label-badge text-live-pulse tracking-wider">REVERB SYNC</span>
+<span class="text-text-muted text-xs">•</span>
+<span class="text-label-telemetry font-label-telemetry text-text-muted text-xs flex items-center gap-1">
+<span class="material-symbols-outlined text-sm" data-icon="visibility">visibility</span> 1,420 Online
+        </span>
+</div>
+<!-- Action buttons -->
+<button class="p-2 rounded bg-court-surface-elevated border border-court-border text-text-muted hover:text-stadium-emerald transition-colors" title="Ubah Bahasa/Audio">
+<span class="material-symbols-outlined" data-icon="volume_up">volume_up</span>
+</button>
+<button class="p-2 rounded bg-court-surface-elevated border border-court-border text-text-muted hover:text-telemetry-cyan transition-colors" title="Bagikan Siaran">
+<span class="material-symbols-outlined" data-icon="share">share</span>
+</button>
+<button class="p-2 rounded bg-court-surface-elevated border border-court-border text-text-muted hover:text-text-primary" title="Pengaturan Telemetri">
+<span class="material-symbols-outlined" data-icon="tune">tune</span>
+</button>
+</div>
+</header>
+<!-- Mobile Reverb Sticky Indicator Strip -->
+<div class="sm:hidden bg-court-surface border-b border-court-border px-4 py-1.5 flex items-center justify-between text-xs">
+<div class="flex items-center gap-2">
+<span class="relative flex h-2 w-2">
+<span class="animate-ping absolute inline-flex h-full w-full rounded-full bg-live-pulse opacity-75"></span>
+<span class="relative inline-flex rounded-full h-2 w-2 bg-live-pulse"></span>
+</span>
+<span class="text-label-badge font-label-badge text-live-pulse">LIVE • REVERB WEBSOCKET</span>
+</div>
+<div class="flex items-center gap-1 text-text-muted font-label-telemetry text-[11px]">
+<span class="material-symbols-outlined text-[13px] text-stadium-emerald" data-icon="sensors">sensors</span>
+<span class="">1,420 Penonton</span>
+</div>
+</div>
+<main class="max-w-5xl mx-auto px-3 sm:px-6 pt-4 space-y-4">
+<!-- FLOATING LIVE EVENT POP-UP NOTIFICATION BANNER -->
+<div class="relative overflow-hidden rounded bg-stadium-emerald/10 border border-stadium-emerald/40 px-4 py-2.5 flex items-center justify-between shadow-[0_0_20px_-5px_rgba(0,255,135,0.25)]">
+<div class="flex items-center gap-3">
+<div class="w-8 h-8 rounded-full bg-stadium-emerald text-court-navy flex items-center justify-center font-bold">
+<span class="material-symbols-outlined text-court-navy" data-icon="sports_soccer">sports_soccer</span>
+</div>
+<div>
+<div class="flex items-center gap-2">
+<span class="text-label-badge font-label-badge bg-stadium-emerald text-court-navy px-1.5 py-0.5 rounded">GOL TERBARU</span>
+<span class="text-label-telemetry font-label-telemetry text-stadium-emerald">18' BABAK 2</span>
+</div>
+<p class="text-body-md font-body-md font-semibold text-text-primary leading-snug">
+            Garuda Muda FC • <span class="text-stadium-emerald">Rian Pratama #10</span> (Assist: Dimas #7)
+          </p>
+</div>
+</div>
+<div class="hidden sm:block text-right">
+<span class="text-label-badge font-label-badge text-text-muted uppercase">Skor Sementara</span>
+<div class="text-headline-sm font-headline-sm font-bold text-stadium-emerald">3 - 2</div>
+</div>
+</div>
+<!-- MAIN ARENA HERO & 2D FUTSAL PITCH VISUALIZER CARD -->
+<div class="bg-court-surface border border-court-border rounded-lg overflow-hidden shadow-2xl relative">
+<!-- Arena Metadata Bar -->
+<div class="px-4 py-2.5 bg-court-surface-elevated/80 border-b border-court-border flex items-center justify-between">
+<div class="flex items-center gap-2">
+<span class="material-symbols-outlined text-stadium-emerald text-base" data-icon="location_on">location_on</span>
+<span class="text-body-sm font-body-sm text-text-muted font-medium">Court 1 • GOR Patriot Bekasi</span>
+</div>
+<div class="flex items-center gap-2">
+<span class="inline-flex items-center gap-1.5 px-2 py-0.5 rounded bg-live-pulse/20 border border-live-pulse/40 text-live-pulse text-label-badge font-label-badge">
+<span class="w-1.5 h-1.5 rounded-full bg-live-pulse animate-ping"></span>
+            BABAK 2 • 18:42
+          </span>
+<span class="text-label-telemetry font-label-telemetry text-text-muted hidden sm:inline text-xs">BERSIH (STOPWATCH)</span>
+</div>
+</div>
+<!-- Live Broadcast Scoreboard -->
+<div class="p-4 sm:p-6 grid grid-cols-12 items-center gap-2">
+<!-- Home Team (Garuda Muda FC) -->
+<div class="col-span-5 flex flex-col items-center sm:items-start text-center sm:text-left">
+<div class="flex flex-col sm:flex-row items-center gap-3">
+<div class="w-14 h-14 sm:w-16 sm:h-16 rounded bg-court-surface-elevated border-2 border-stadium-emerald/50 p-2 flex items-center justify-center relative shadow-[0_0_15px_-3px_rgba(0,255,135,0.3)]">
+<span class="material-symbols-outlined text-3xl text-stadium-emerald" data-icon="shield">shield</span>
+<span class="absolute -bottom-1 text-[9px] font-label-badge bg-court-navy text-stadium-emerald px-1 rounded border border-stadium-emerald/30">HOME</span>
+</div>
+<div>
+<h2 class="text-headline-sm sm:text-headline-md font-headline-md font-bold text-text-primary tracking-tight">GARUDA MUDA</h2>
+<div class="text-body-sm font-body-sm text-text-muted">Kota Bekasi • Divisi A</div>
+</div>
+</div>
+<!-- Home Futsal Specific Telemetry: Fouls & Timeout -->
+<div class="mt-3 flex items-center gap-3 w-full justify-center sm:justify-start">
+<div class="bg-court-navy/80 border border-court-border px-2.5 py-1 rounded flex items-center gap-1.5" title="Akumulasi Pelanggaran Babak 2">
+<span class="text-text-muted text-xs font-label-badge">FOUL:</span>
+<span class="text-card-yellow font-label-telemetry font-bold text-sm">4/5</span>
+<span class="text-[10px] text-card-red font-bold animate-pulse">⚠️ 10M</span>
+</div>
+<div class="bg-court-navy/80 border border-court-border px-2 py-1 rounded flex items-center gap-1" title="Sisa Time Out Babak 2">
+<span class="material-symbols-outlined text-text-muted text-xs" data-icon="timer">timer</span>
+<span class="text-xs text-text-muted font-label-telemetry">TO:</span>
+<span class="text-stadium-emerald text-xs font-label-badge">1 Sisa</span>
+</div>
+</div>
+</div>
+<!-- Center Score Digit Display -->
+<div class="col-span-2 flex flex-col items-center justify-center">
+<div class="flex items-center justify-center gap-2">
+<span class="text-display-hero-mobile sm:text-label-score font-label-score text-stadium-emerald tracking-tighter">3</span>
+<span class="text-headline-lg font-headline-lg text-text-muted font-light">:</span>
+<span class="text-display-hero-mobile sm:text-label-score font-label-score text-text-primary tracking-tighter">2</span>
+</div>
+<div class="mt-1">
+<span class="text-[10px] sm:text-xs font-label-badge text-text-muted tracking-widest bg-court-surface-elevated px-2 py-0.5 rounded border border-court-border">AGR: 5-4</span>
+</div>
+</div>
+<!-- Away Team (Bintang Timur FA) -->
+<div class="col-span-5 flex flex-col items-center sm:items-end text-center sm:text-right">
+<div class="flex flex-col-reverse sm:flex-row items-center gap-3">
+<div>
+<h2 class="text-headline-sm sm:text-headline-md font-headline-md font-bold text-text-primary tracking-tight">BINTANG TIMUR</h2>
+<div class="text-body-sm font-body-sm text-text-muted">Surabaya • Divisi A</div>
+</div>
+<div class="w-14 h-14 sm:w-16 sm:h-16 rounded bg-court-surface-elevated border-2 border-telemetry-cyan/50 p-2 flex items-center justify-center relative shadow-[0_0_15px_-3px_rgba(0,229,255,0.3)]">
+<span class="material-symbols-outlined text-3xl text-telemetry-cyan" data-icon="stars">stars</span>
+<span class="absolute -bottom-1 text-[9px] font-label-badge bg-court-navy text-telemetry-cyan px-1 rounded border border-telemetry-cyan/30">AWAY</span>
+</div>
+</div>
+<!-- Away Futsal Specific Telemetry: Fouls & Timeout -->
+<div class="mt-3 flex items-center gap-3 w-full justify-center sm:justify-end">
+<div class="bg-court-navy/80 border border-court-border px-2 py-1 rounded flex items-center gap-1" title="Sisa Time Out Babak 2">
+<span class="material-symbols-outlined text-text-muted text-xs" data-icon="timer">timer</span>
+<span class="text-xs text-text-muted font-label-telemetry">TO:</span>
+<span class="text-card-red text-xs font-label-badge">0 Habis</span>
+</div>
+<div class="bg-court-navy/80 border border-court-border px-2.5 py-1 rounded flex items-center gap-1.5" title="Akumulasi Pelanggaran Babak 2">
+<span class="text-text-muted text-xs font-label-badge">FOUL:</span>
+<span class="text-text-primary font-label-telemetry font-bold text-sm">3/5</span>
+<span class="text-[10px] text-stadium-emerald font-bold">AMAN</span>
+</div>
+</div>
+</div>
+</div>
+<!-- 2D Futsal Interactive Tactical Visualizer Field Canvas -->
+<div class="relative bg-court-navy border-t border-court-border mx-3 mb-3 sm:mx-6 sm:mb-6 rounded-lg overflow-hidden h-48 sm:h-56 flex items-center justify-center">
+<!-- Pitch Markings (White hairline lines) -->
+<div class="absolute inset-2 sm:inset-3 border-2 border-court-border/70 rounded flex items-center justify-between">
+<!-- Left Penalty Area (Futsal D-zone) -->
+<div class="w-16 sm:w-24 h-full border-r-2 border-court-border/70 relative flex items-center justify-center">
+<div class="w-2 h-2 rounded-full bg-stadium-emerald/40 absolute left-8"></div>
+<!-- 10m Penalty Spot -->
+<div class="w-1.5 h-1.5 rounded-full bg-court-border absolute right-2" title="Titik Second Penalty 10 Meter"></div>
+</div>
+<!-- Half Court Line & Center Circle -->
+<div class="h-full w-0.5 bg-court-border/80 relative flex items-center justify-center">
+<div class="w-16 h-16 sm:w-20 sm:h-20 rounded-full border-2 border-court-border/80 absolute"></div>
+<div class="w-2 h-2 rounded-full bg-stadium-emerald absolute shadow-[0_0_8px_#00FF87]"></div>
+</div>
+<!-- Right Penalty Area -->
+<div class="w-16 sm:w-24 h-full border-l-2 border-court-border/70 relative flex items-center justify-center">
+<!-- 10m Penalty Spot -->
+<div class="w-1.5 h-1.5 rounded-full bg-court-border absolute left-2" title="Titik Second Penalty 10 Meter"></div>
+<div class="w-2 h-2 rounded-full bg-telemetry-cyan/40 absolute right-8"></div>
+</div>
+</div>
+<!-- Dynamic Live Position Markers on Court -->
+<!-- Ball Position with Pulse -->
+<div class="absolute left-[58%] top-[42%] flex flex-col items-center pointer-events-none transition-all duration-700">
+<div class="w-4 h-4 rounded-full bg-white text-court-navy flex items-center justify-center shadow-[0_0_12px_#ffffff] z-20">
+<span class="w-2 h-2 rounded-full bg-court-navy"></span>
+</div>
+<span class="text-[9px] font-label-badge bg-court-navy/90 text-stadium-emerald px-1 rounded mt-0.5 border border-stadium-emerald/50">SERANGAN #10</span>
+</div>
+<!-- Player Nodes: Garuda Muda (Home Emerald) -->
+<div class="absolute left-[52%] top-[38%] flex items-center justify-center">
+<div class="w-6 h-6 rounded-full bg-stadium-emerald text-court-navy text-[11px] font-bold flex items-center justify-center border-2 border-court-navy shadow-md">10</div>
+</div>
+<div class="absolute left-[38%] top-[68%] flex items-center justify-center">
+<div class="w-6 h-6 rounded-full bg-stadium-emerald text-court-navy text-[11px] font-bold flex items-center justify-center border-2 border-court-navy shadow-md">7</div>
+</div>
+<div class="absolute left-[28%] top-[25%] flex items-center justify-center">
+<div class="w-6 h-6 rounded-full bg-stadium-emerald text-court-navy text-[11px] font-bold flex items-center justify-center border-2 border-court-navy shadow-md">3</div>
+</div>
+<div class="absolute left-[12%] top-[48%] flex items-center justify-center">
+<div class="w-6 h-6 rounded-full bg-stadium-emerald text-court-navy text-[10px] font-bold flex items-center justify-center border-2 border-court-navy shadow-md">GK</div>
+</div>
+<!-- Player Nodes: Bintang Timur (Away Cyan & Red Card Deficit 4-men) -->
+<div class="absolute left-[66%] top-[45%] flex items-center justify-center">
+<div class="w-6 h-6 rounded-full bg-telemetry-cyan text-court-navy text-[11px] font-bold flex items-center justify-center border-2 border-court-navy shadow-md">9</div>
+</div>
+<div class="absolute left-[75%] top-[28%] flex items-center justify-center">
+<div class="w-6 h-6 rounded-full bg-telemetry-cyan text-court-navy text-[11px] font-bold flex items-center justify-center border-2 border-court-navy shadow-md">4</div>
+</div>
+<div class="absolute left-[74%] top-[72%] flex items-center justify-center">
+<div class="w-6 h-6 rounded-full bg-telemetry-cyan text-court-navy text-[11px] font-bold flex items-center justify-center border-2 border-court-navy shadow-md">8</div>
+</div>
+<div class="absolute right-[8%] top-[48%] flex items-center justify-center">
+<div class="w-6 h-6 rounded-full bg-telemetry-cyan text-court-navy text-[10px] font-bold flex items-center justify-center border-2 border-court-navy shadow-md">GK</div>
+</div>
+<!-- Live Power Play / 4-Player Indicator overlay -->
+<div class="absolute bottom-2 left-3 right-3 flex items-center justify-between text-[11px] font-label-badge bg-court-surface/90 px-3 py-1 rounded border border-court-border backdrop-blur">
+<span class="text-stadium-emerald flex items-center gap-1">
+<span class="w-1.5 h-1.5 rounded-full bg-stadium-emerald"></span> Garuda: 5 Pemain Penuh
+          </span>
+<span class="text-card-red flex items-center gap-1 font-semibold">
+<span class="w-1.5 h-1.5 rounded-full bg-card-red animate-ping"></span> Sanksi Kartu Merah (1:18 tersisa main 4 orang)
+          </span>
+</div>
+</div>
+</div>
+<!-- FAN REACTION QUICK ENGAGEMENT BAR -->
+<div class="bg-court-surface border border-court-border rounded-lg p-3 sm:p-4">
+<div class="flex items-center justify-between mb-2">
+<span class="text-body-sm font-body-sm text-text-muted flex items-center gap-1.5">
+<span class="material-symbols-outlined text-stadium-emerald text-sm" data-icon="forum">forum</span> Dukung Tim Favorit (Real-time Tap)
+        </span>
+<span class="text-label-badge font-label-badge text-telemetry-cyan">9,842 Reaksi</span>
+</div>
+<div class="grid grid-cols-4 gap-2">
+<button class="bg-court-surface-elevated hover:bg-court-surface-elevated/70 border border-court-border active:scale-95 transition-all p-2 rounded flex flex-col items-center justify-center">
+<span class="text-xl sm:text-2xl">⚽</span>
+<span class="text-label-badge font-label-badge text-text-primary text-[11px] mt-1">3.4k</span>
+</button>
+<button class="bg-court-surface-elevated hover:bg-court-surface-elevated/70 border border-court-border active:scale-95 transition-all p-2 rounded flex flex-col items-center justify-center">
+<span class="text-xl sm:text-2xl">🔥</span>
+<span class="text-label-badge font-label-badge text-text-primary text-[11px] mt-1">4.1k</span>
+</button>
+<button class="bg-court-surface-elevated hover:bg-court-surface-elevated/70 border border-court-border active:scale-95 transition-all p-2 rounded flex flex-col items-center justify-center">
+<span class="text-xl sm:text-2xl">👏</span>
+<span class="text-label-badge font-label-badge text-text-primary text-[11px] mt-1">1.8k</span>
+</button>
+<button class="bg-court-surface-elevated hover:bg-court-surface-elevated/70 border border-court-border active:scale-95 transition-all p-2 rounded flex flex-col items-center justify-center">
+<span class="text-xl sm:text-2xl">📣</span>
+<span class="text-label-badge font-label-badge text-text-primary text-[11px] mt-1">512</span>
+</button>
+</div>
+<!-- Live Match Winner Prediction Poll -->
+<div class="mt-3 pt-3 border-t border-court-border/60">
+<div class="flex justify-between items-center text-xs mb-1">
+<span class="font-medium text-text-primary">Polling: Siapa Pemenang Laga Ini?</span>
+<span class="text-label-badge font-label-badge text-text-muted">Total 2,150 Suara</span>
+</div>
+<div class="w-full bg-court-navy h-4 rounded-full overflow-hidden flex border border-court-border p-0.5">
+<div class="bg-stadium-emerald h-full rounded-l-full text-[9px] font-bold text-court-navy flex items-center justify-center transition-all duration-500" style="width: 62%;">
+            GARUDA 62%
+          </div>
+<div class="bg-telemetry-cyan h-full rounded-r-full text-[9px] font-bold text-court-navy flex items-center justify-center transition-all duration-500" style="width: 38%;">
+            BINTANG 38%
+          </div>
+</div>
+</div>
+</div>
+<!-- PUBLIC CONTENT TABS (Lini Masa, Statistik, Susunan Pemain, Klasemen, Top Skor) -->
+<div class="border-b border-court-border flex items-center gap-2 overflow-x-auto no-scrollbar scroll-smooth">
+<button class="border-b-2 border-stadium-emerald text-stadium-emerald font-semibold py-3 px-3 flex items-center gap-2 whitespace-nowrap text-headline-sm font-headline-sm">
+<span class="material-symbols-outlined text-lg" data-icon="stream">stream</span> Lini Masa
+      </button>
+<button class="text-text-muted hover:text-text-primary py-3 px-3 transition-colors duration-150 flex items-center gap-2 whitespace-nowrap text-headline-sm font-headline-sm">
+<span class="material-symbols-outlined text-lg" data-icon="analytics">analytics</span> Statistik Laga
+      </button>
+<button class="text-text-muted hover:text-text-primary py-3 px-3 transition-colors duration-150 flex items-center gap-2 whitespace-nowrap text-headline-sm font-headline-sm">
+<span class="material-symbols-outlined text-lg" data-icon="groups">groups</span> Susunan Pemain
+      </button>
+<button class="text-text-muted hover:text-text-primary py-3 px-3 transition-colors duration-150 flex items-center gap-2 whitespace-nowrap text-headline-sm font-headline-sm">
+<span class="material-symbols-outlined text-lg" data-icon="table_chart">table_chart</span> Klasemen Grup
+      </button>
+<button class="text-text-muted hover:text-text-primary py-3 px-3 transition-colors duration-150 flex items-center gap-2 whitespace-nowrap text-headline-sm font-headline-sm">
+<span class="material-symbols-outlined text-lg" data-icon="military_tech">military_tech</span> Top Skor
+      </button>
+</div>
+<!-- MAIN TWO-COLUMN CONTENT GRID: Desktop split (8 cols left timeline, 4 cols right sidebar widgets) -->
+<div class="grid grid-cols-1 lg:grid-cols-12 gap-4">
+<!-- LEFT SECTION (8 Cols): Vertical Real-Time Event Timeline -->
+<section class="lg:col-span-8 space-y-3">
+<!-- Reactive Auto-Scroll / Live Update Stream Alert -->
+<div class="flex items-center justify-between bg-court-surface-elevated/90 border border-court-border px-3.5 py-2 rounded">
+<div class="flex items-center gap-2">
+<span class="inline-block w-2 h-2 rounded-full bg-stadium-emerald animate-pulse"></span>
+<span class="text-body-sm font-body-sm font-medium text-stadium-emerald">Pembaruan Langsung Baru Saja Tiba</span>
+</div>
+<span class="text-label-badge font-label-badge text-text-muted text-[11px]">AUTO-REFRESH AKTIF</span>
+</div>
+<!-- Vertical Timeline Card -->
+<div class="bg-court-surface border border-court-border rounded-lg p-4 sm:p-5 relative">
+<h3 class="text-headline-sm font-headline-sm font-bold text-text-primary mb-4 flex items-center gap-2">
+<span class="material-symbols-outlined text-stadium-emerald" data-icon="timeline">timeline</span>
+            Perjalanan Laga (Reverse Chronology)
+          </h3>
+<!-- Vertical Timeline Axis -->
+<div class="relative pl-6 space-y-6 before:absolute before:left-3 before:top-2 before:bottom-2 before:w-0.5 before:bg-court-border">
+<!-- EVENT 1: 18' Goal Garuda Muda -->
+<div class="relative flex items-start gap-3">
+<!-- Event Icon Pin -->
+<div class="absolute -left-6 w-6 h-6 rounded-full bg-court-navy border-2 border-stadium-emerald flex items-center justify-center text-stadium-emerald shadow-[0_0_8px_rgba(0,255,135,0.4)]">
+<span class="material-symbols-outlined text-sm" data-icon="sports_soccer">sports_soccer</span>
+</div>
+<div class="w-full bg-court-surface-elevated border border-court-border p-3 rounded hover:border-stadium-emerald/50 transition-colors">
+<div class="flex items-center justify-between">
+<span class="text-label-badge font-label-badge bg-stadium-emerald/20 text-stadium-emerald px-1.5 py-0.5 rounded">18' BABAK 2</span>
+<span class="text-label-telemetry font-label-telemetry text-stadium-emerald font-bold">GOL! (3 - 2)</span>
+</div>
+<div class="mt-1 text-text-primary font-semibold">
+                  Garuda Muda FC • Rian Pratama (#10)
+                </div>
+<div class="text-body-sm font-body-sm text-text-muted mt-0.5">
+                  Tendangan keras mendatar memanfaatkan assist matang Dimas Wahyu (#7) pasca skema kick-in cepat.
+                </div>
+</div>
+</div>
+<!-- EVENT 2: 16' Yellow Card Bintang Timur -->
+<div class="relative flex items-start gap-3">
+<div class="absolute -left-6 w-6 h-6 rounded-full bg-court-navy border-2 border-card-yellow flex items-center justify-center text-card-yellow shadow-[0_0_8px_rgba(255,214,0,0.3)]">
+<span class="material-symbols-outlined text-sm" data-icon="warning">warning</span>
+</div>
+<div class="w-full bg-court-surface-elevated border border-court-border p-3 rounded">
+<div class="flex items-center justify-between">
+<span class="text-label-badge font-label-badge bg-card-yellow/20 text-card-yellow px-1.5 py-0.5 rounded">16' BABAK 2</span>
+<span class="text-label-badge font-label-badge text-card-yellow">KARTU KUNING 🟨</span>
+</div>
+<div class="mt-1 text-text-primary font-semibold">
+                  Bintang Timur FA • Joko Santoso (#4)
+                </div>
+<div class="text-body-sm font-body-sm text-text-muted mt-0.5">
+                  Pelanggaran taktikal menahan laju serangan balik cepat (Foul ke-3 Bintang Timur babak 2).
+                </div>
+</div>
+</div>
+<!-- EVENT 3: 15' Timeout Bintang Timur -->
+
+<!-- EVENT 4: 12' Goal Bintang Timur -->
+<div class="relative flex items-start gap-3">
+<div class="absolute -left-6 w-6 h-6 rounded-full bg-court-navy border-2 border-telemetry-cyan flex items-center justify-center text-telemetry-cyan">
+<span class="material-symbols-outlined text-sm" data-icon="sports_soccer">sports_soccer</span>
+</div>
+<div class="w-full bg-court-surface-elevated border border-court-border p-3 rounded">
+<div class="flex items-center justify-between">
+<span class="text-label-badge font-label-badge bg-telemetry-cyan/20 text-telemetry-cyan px-1.5 py-0.5 rounded">12' BABAK 2</span>
+<span class="text-label-telemetry font-label-telemetry text-telemetry-cyan font-bold">GOL! (2 - 2)</span>
+</div>
+<div class="mt-1 text-text-primary font-semibold">
+                  Bintang Timur FA • Kevin Anggara (#9)
+                </div>
+<div class="text-body-sm font-body-sm text-text-muted mt-0.5">
+                  Finishing tajam tiang dua menyambut umpan silang mendatar.
+                </div>
+</div>
+</div>
+<!-- EVENT 5: 10' Direct Red Card Bintang Timur -->
+<div class="relative flex items-start gap-3">
+<div class="absolute -left-6 w-6 h-6 rounded-full bg-court-navy border-2 border-card-red flex items-center justify-center text-card-red shadow-[0_0_8px_rgba(255,42,77,0.4)]">
+<span class="material-symbols-outlined text-sm" data-icon="gavel">gavel</span>
+</div>
+<div class="w-full bg-court-surface-elevated border border-card-red/40 p-3 rounded">
+<div class="flex items-center justify-between">
+<span class="text-label-badge font-label-badge bg-card-red/20 text-card-red px-1.5 py-0.5 rounded">10' BABAK 2</span>
+<span class="text-label-badge font-label-badge text-card-red font-bold">KARTU MERAH LANGSUNG 🟥</span>
+</div>
+<div class="mt-1 text-text-primary font-semibold">
+                  Bintang Timur FA • Dani Saputra (#5)
+                </div>
+<div class="text-body-sm font-body-sm text-text-muted mt-0.5">
+                  Pelanggaran keras peluang gol bersih di luar lingkaran penalti. Hukuman 2 menit bermain 4 orang untuk Bintang Timur FA.
+                </div>
+</div>
+</div>
+<!-- EVENT 6: 20' HT Halftime Mark -->
+<div class="relative flex items-start gap-3">
+<div class="absolute -left-6 w-6 h-6 rounded-full bg-court-surface-elevated border-2 border-court-border flex items-center justify-center text-text-muted">
+<span class="material-symbols-outlined text-sm" data-icon="sports_score">sports_score</span>
+</div>
+<div class="w-full bg-court-navy/80 border border-court-border p-2.5 rounded flex items-center justify-between">
+<div>
+<span class="text-label-badge font-label-badge text-text-muted">20' HT JEDA BABAK PERTAMA</span>
+<p class="text-body-sm font-body-sm text-text-muted">Peluit tanda turun minum ditiup wasit utama.</p>
+</div>
+<div class="text-headline-sm font-headline-sm font-bold text-text-primary">
+                  SKOR HT: 2 - 1
+                </div>
+</div>
+</div><div class="relative flex items-start gap-3"><div class="absolute -left-6 w-6 h-6 rounded-full bg-court-navy border-2 border-stadium-emerald flex items-center justify-center text-stadium-emerald"><span class="material-symbols-outlined text-sm" data-icon="sports">sports</span></div><div class="w-full bg-court-surface-elevated/70 border border-court-border p-2.5 rounded"><div class="flex items-center justify-between"><span class="text-label-badge font-label-badge bg-court-surface text-stadium-emerald px-1.5 py-0.5 rounded border border-court-border">00' BABAK 1</span><span class="text-label-badge font-label-badge text-stadium-emerald">KICK-OFF &amp; LINEUP</span></div><div class="mt-0.5 text-text-primary text-sm font-medium">Peluit Pertama Pertandingan Dibunyikan</div><div class="text-body-sm font-body-sm text-text-muted">Starting five kedua tim telah memasuki arena pertandingan resmi.</div></div></div>
+</div>
+</div>
+<!-- Live Match Statistics Summary Grid -->
+<div class="bg-court-surface border border-court-border rounded-lg p-4">
+<h3 class="text-headline-sm font-headline-sm font-bold text-text-primary mb-3 flex items-center gap-2">
+<span class="material-symbols-outlined text-telemetry-cyan" data-icon="query_stats">query_stats</span>
+            Statistik Futsal Langsung
+          </h3>
+<div class="space-y-3">
+<!-- Stat Item: Total Tembakan -->
+<div>
+<div class="flex justify-between text-xs font-label-badge mb-1">
+<span class="text-stadium-emerald">14</span>
+<span class="text-text-muted uppercase">Total Tembakan (On Target)</span>
+<span class="text-telemetry-cyan">11</span>
+</div>
+<div class="w-full bg-court-navy h-2 rounded-full overflow-hidden flex">
+<div class="bg-stadium-emerald h-full" style="width: 56%"></div>
+<div class="bg-telemetry-cyan h-full" style="width: 44%"></div>
+</div>
+</div>
+<!-- Stat Item: Pelanggaran / Fouls -->
+<div>
+<div class="flex justify-between text-xs font-label-badge mb-1">
+<span class="text-stadium-emerald">4</span>
+<span class="text-text-muted uppercase">Akumulasi Foul (Babak 2)</span>
+<span class="text-telemetry-cyan">3</span>
+</div>
+<div class="w-full bg-court-navy h-2 rounded-full overflow-hidden flex">
+<div class="bg-stadium-emerald h-full" style="width: 57%"></div>
+<div class="bg-telemetry-cyan h-full" style="width: 43%"></div>
+</div>
+</div>
+<!-- Stat Item: Penguasaan Bola / Ball Possession -->
+
+<!-- Stat Item: Sepak Pojok / Corner Kicks -->
+<div>
+<div class="flex justify-between text-xs font-label-badge mb-1">
+<span class="text-stadium-emerald">6</span>
+<span class="text-text-muted uppercase">Sepak Pojok (Kick-in D-Zone)</span>
+<span class="text-telemetry-cyan">4</span>
+</div>
+<div class="w-full bg-court-navy h-2 rounded-full overflow-hidden flex">
+<div class="bg-stadium-emerald h-full" style="width: 60%"></div>
+<div class="bg-telemetry-cyan h-full" style="width: 40%"></div>
+</div>
+</div>
+</div>
+</div><div class="bg-court-surface border border-court-border rounded-lg p-4 sm:p-5"><div class="flex items-center justify-between mb-3 border-b border-court-border pb-2.5"><h3 class="text-headline-sm font-headline-sm font-bold text-text-primary flex items-center gap-2"><span class="material-symbols-outlined text-stadium-emerald" data-icon="groups">groups</span>Susunan Pemain (Starting 5 &amp; Cadangan)</h3><span class="text-label-badge font-label-badge text-text-muted text-[11px]">FUTSAL MATCH ROSTER</span></div><div class="grid grid-cols-1 md:grid-cols-2 gap-4"><div class="bg-court-navy/80 border border-court-border rounded p-3"><div class="flex items-center justify-between pb-2 mb-2 border-b border-court-border"><div class="flex items-center gap-1.5"><span class="w-2.5 h-2.5 rounded-full bg-stadium-emerald"></span><span class="font-bold text-text-primary text-sm">GARUDA MUDA FC</span></div><span class="text-label-badge font-label-badge text-stadium-emerald text-[10px]">HOME</span></div><div class="mb-3"><span class="text-[10px] font-label-badge text-text-muted block uppercase mb-1.5">Starting Five (Inti)</span><div class="space-y-1 text-xs"><div class="flex items-center justify-between bg-court-surface-elevated px-2 py-1 rounded"><span class="text-text-primary font-medium flex items-center gap-2"><span class="text-stadium-emerald font-bold font-label-telemetry w-4">1</span> Ardiansyah (GK)</span><span class="text-[10px] text-text-muted font-label-badge">KIPER</span></div><div class="flex items-center justify-between bg-court-surface-elevated px-2 py-1 rounded"><span class="text-text-primary font-medium flex items-center gap-2"><span class="text-stadium-emerald font-bold font-label-telemetry w-4">3</span> Rendy Juliansyah</span><span class="text-[10px] text-text-muted font-label-badge">ANCHOR</span></div><div class="flex items-center justify-between bg-court-surface-elevated px-2 py-1 rounded"><span class="text-text-primary font-medium flex items-center gap-2"><span class="text-stadium-emerald font-bold font-label-telemetry w-4">7</span> Dimas Wahyu</span><span class="text-[10px] text-text-muted font-label-badge">FLANK</span></div><div class="flex items-center justify-between bg-court-surface-elevated px-2 py-1 rounded"><span class="text-text-primary font-medium flex items-center gap-2"><span class="text-stadium-emerald font-bold font-label-telemetry w-4">10</span> Rian Pratama (C)</span><span class="text-[10px] text-stadium-emerald font-label-badge">PIVOT ⚽</span></div><div class="flex items-center justify-between bg-court-surface-elevated px-2 py-1 rounded"><span class="text-text-primary font-medium flex items-center gap-2"><span class="text-stadium-emerald font-bold font-label-telemetry w-4">11</span> Bagas Ramli</span><span class="text-[10px] text-text-muted font-label-badge">FLANK</span></div></div></div><div><span class="text-[10px] font-label-badge text-text-muted block uppercase mb-1">Pemain Cadangan (Bench)</span><div class="text-body-sm font-body-sm text-text-muted text-[11px] leading-relaxed bg-court-surface/60 p-2 rounded border border-court-border">#12 M. Ihsan (GK), #5 Teguh Wijaya, #8 Aldi Firmansyah, #14 Firman Septian, #17 Rio Febrianto</div></div></div><div class="bg-court-navy/80 border border-court-border rounded p-3"><div class="flex items-center justify-between pb-2 mb-2 border-b border-court-border"><div class="flex items-center gap-1.5"><span class="w-2.5 h-2.5 rounded-full bg-telemetry-cyan"></span><span class="font-bold text-text-primary text-sm">BINTANG TIMUR FA</span></div><span class="text-label-badge font-label-badge text-telemetry-cyan text-[10px]">AWAY</span></div><div class="mb-3"><span class="text-[10px] font-label-badge text-text-muted block uppercase mb-1.5">Starting Five (Inti)</span><div class="space-y-1 text-xs"><div class="flex items-center justify-between bg-court-surface-elevated px-2 py-1 rounded"><span class="text-text-primary font-medium flex items-center gap-2"><span class="text-telemetry-cyan font-bold font-label-telemetry w-4">20</span> Ahmad Habibi (GK)</span><span class="text-[10px] text-text-muted font-label-badge">KIPER</span></div><div class="flex items-center justify-between bg-court-surface-elevated px-2 py-1 rounded"><span class="text-text-primary font-medium flex items-center gap-2"><span class="text-telemetry-cyan font-bold font-label-telemetry w-4">4</span> Joko Santoso</span><span class="text-[10px] text-card-yellow font-label-badge">ANCHOR 🟨</span></div><div class="flex items-center justify-between bg-court-surface-elevated px-2 py-1 rounded"><span class="text-text-primary font-medium flex items-center gap-2"><span class="text-telemetry-cyan font-bold font-label-telemetry w-4">5</span> Dani Saputra</span><span class="text-[10px] text-card-red font-label-badge">FLANK 🟥 OUT</span></div><div class="flex items-center justify-between bg-court-surface-elevated px-2 py-1 rounded"><span class="text-text-primary font-medium flex items-center gap-2"><span class="text-telemetry-cyan font-bold font-label-telemetry w-4">8</span> Aditya Maulana</span><span class="text-[10px] text-text-muted font-label-badge">FLANK</span></div><div class="flex items-center justify-between bg-court-surface-elevated px-2 py-1 rounded"><span class="text-text-primary font-medium flex items-center gap-2"><span class="text-telemetry-cyan font-bold font-label-telemetry w-4">9</span> Kevin Anggara (C)</span><span class="text-[10px] text-telemetry-cyan font-label-badge">PIVOT ⚽</span></div></div></div><div><span class="text-[10px] font-label-badge text-text-muted block uppercase mb-1">Pemain Cadangan (Bench)</span><div class="text-body-sm font-body-sm text-text-muted text-[11px] leading-relaxed bg-court-surface/60 p-2 rounded border border-court-border">#1 Surya Gemilang (GK), #6 Ilham Bagus, #13 Farhan Rizal, #15 Hendra Kusuma, #18 Gilang Permana</div></div></div></div></div>
+</section>
+<!-- RIGHT SECTION (4 Cols): Standings, Top Scorer & Mini Telemetry Sidebar -->
+<aside class="lg:col-span-4 space-y-4">
+<!-- WIDGET 1: Mini Live Standings Table (Grup A) -->
+<div class="bg-court-surface border border-court-border rounded-lg overflow-hidden">
+<div class="px-4 py-3 bg-court-surface-elevated border-b border-court-border flex items-center justify-between">
+<h4 class="text-headline-sm font-headline-sm font-bold text-text-primary flex items-center gap-1.5">
+<span class="material-symbols-outlined text-stadium-emerald text-base" data-icon="table_chart">table_chart</span>
+              Klasemen Live Grup A
+            </h4>
+<span class="text-label-badge font-label-badge text-text-muted text-[10px]">LIVE SCORE EFFECT</span>
+</div>
+<div class="overflow-x-auto">
+<table class="w-full text-left text-xs">
+<thead class="bg-court-navy text-text-muted font-label-badge border-b border-court-border">
+<tr>
+<th class="py-2 px-3">#</th>
+<th class="py-2 px-2">TIM</th>
+<th class="py-2 px-1 text-center">M</th>
+<th class="py-2 px-1 text-center">SG</th>
+<th class="py-2 px-3 text-right">POIN</th>
+</tr>
+</thead>
+<tbody class="divide-y divide-court-border font-body-sm">
+<!-- Row 1: Garuda Muda (Qualifying Slot 1) -->
+<tr class="bg-court-surface border-l-4 border-stadium-emerald">
+<td class="py-2.5 px-3 font-label-telemetry font-bold text-stadium-emerald">1</td>
+<td class="py-2.5 px-2">
+<div class="font-bold text-text-primary">Garuda Muda FC</div>
+<span class="text-[10px] text-stadium-emerald font-label-badge">▲ Naik ke Posisi 1</span>
+</td>
+<td class="py-2.5 px-1 text-center font-label-telemetry">3</td>
+<td class="py-2.5 px-1 text-center font-label-telemetry text-stadium-emerald">+5</td>
+<td class="py-2.5 px-3 text-right font-label-telemetry font-bold text-stadium-emerald">9</td>
+</tr>
+<!-- Row 2: Bintang Timur (Qualifying Slot 2) -->
+<tr class="bg-court-surface/70 border-l-4 border-stadium-emerald/50">
+<td class="py-2.5 px-3 font-label-telemetry font-bold text-text-primary">2</td>
+<td class="py-2.5 px-2">
+<div class="font-semibold text-text-primary">Bintang Timur FA</div>
+<span class="text-[10px] text-card-red font-label-badge">▼ Turun ke Posisi 2</span>
+</td>
+<td class="py-2.5 px-1 text-center font-label-telemetry">3</td>
+<td class="py-2.5 px-1 text-center font-label-telemetry text-telemetry-cyan">+3</td>
+<td class="py-2.5 px-3 text-right font-label-telemetry font-bold text-text-primary">6</td>
+</tr>
+<!-- Row 3: Rajawali Futsal -->
+<tr class="bg-court-surface/40">
+<td class="py-2.5 px-3 font-label-telemetry text-text-muted">3</td>
+<td class="py-2.5 px-2">
+<div class="text-text-muted font-medium">Rajawali Futsal</div>
+</td>
+<td class="py-2.5 px-1 text-center font-label-telemetry text-text-muted">2</td>
+<td class="py-2.5 px-1 text-center font-label-telemetry text-text-muted">-2</td>
+<td class="py-2.5 px-3 text-right font-label-telemetry font-bold text-text-muted">3</td>
+</tr>
+<!-- Row 4: Kancil Emas -->
+<tr class="bg-court-surface/40">
+<td class="py-2.5 px-3 font-label-telemetry text-text-muted">4</td>
+<td class="py-2.5 px-2">
+<div class="text-text-muted font-medium">Kancil Emas United</div>
+</td>
+<td class="py-2.5 px-1 text-center font-label-telemetry text-text-muted">2</td>
+<td class="py-2.5 px-1 text-center font-label-telemetry text-text-muted">-6</td>
+<td class="py-2.5 px-3 text-right font-label-telemetry font-bold text-text-muted">0</td>
+</tr>
+</tbody>
+</table>
+</div>
+<div class="p-2 bg-court-navy text-[11px] text-text-muted text-center border-t border-court-border">
+            Posisi 1 &amp; 2 lolos otomatis ke Babak Semifinal
+          </div>
+</div>
+<!-- WIDGET 2: Top Scorer Mini Leaderboard -->
+<div class="bg-court-surface border border-court-border rounded-lg p-4">
+<div class="flex items-center justify-between mb-3">
+<h4 class="text-headline-sm font-headline-sm font-bold text-text-primary flex items-center gap-1.5">
+<span class="material-symbols-outlined text-card-yellow text-base" data-icon="military_tech">military_tech</span>
+              Top Skor Sementara
+            </h4>
+<span class="text-label-badge font-label-badge text-stadium-emerald">SEPATU EMAS</span>
+</div>
+<div class="space-y-2.5">
+<!-- Rank 1 Top Scorer (Rian Pratama - on field now) -->
+<div class="flex items-center justify-between p-2 rounded bg-court-surface-elevated border border-stadium-emerald/30">
+<div class="flex items-center gap-2.5">
+<span class="w-6 h-6 rounded bg-stadium-emerald text-court-navy text-xs font-bold flex items-center justify-center font-label-telemetry">1</span>
+<div>
+<div class="text-sm font-bold text-text-primary flex items-center gap-1">
+                    Rian Pratama <span class="w-1.5 h-1.5 rounded-full bg-stadium-emerald animate-ping"></span>
+</div>
+<div class="text-[11px] text-text-muted">Garuda Muda FC • #10</div>
+</div>
+</div>
+<div class="text-right">
+<span class="text-headline-sm font-headline-sm font-bold text-stadium-emerald">6</span>
+<span class="text-[10px] text-text-muted block leading-none">GOL</span>
+</div>
+</div>
+<!-- Rank 2 Top Scorer (Kevin Anggara - on field now) -->
+<div class="flex items-center justify-between p-2 rounded bg-court-surface-elevated/60 border border-court-border">
+<div class="flex items-center gap-2.5">
+<span class="w-6 h-6 rounded bg-court-navy text-text-muted text-xs font-bold flex items-center justify-center font-label-telemetry">2</span>
+<div>
+<div class="text-sm font-semibold text-text-primary">Kevin Anggara</div>
+<div class="text-[11px] text-text-muted">Bintang Timur FA • #9</div>
+</div>
+</div>
+<div class="text-right">
+<span class="text-headline-sm font-headline-sm font-bold text-telemetry-cyan">5</span>
+<span class="text-[10px] text-text-muted block leading-none">GOL</span>
+</div>
+</div>
+<!-- Rank 3 Top Scorer -->
+<div class="flex items-center justify-between p-2 rounded bg-court-surface-elevated/40 border border-court-border">
+<div class="flex items-center gap-2.5">
+<span class="w-6 h-6 rounded bg-court-navy text-text-muted text-xs font-bold flex items-center justify-center font-label-telemetry">3</span>
+<div>
+<div class="text-sm font-medium text-text-primary">Fajar Ramadhan</div>
+<div class="text-[11px] text-text-muted">Rajawali Futsal • #11</div>
+</div>
+</div>
+<div class="text-right">
+<span class="text-headline-sm font-headline-sm font-bold text-text-muted">4</span>
+<span class="text-[10px] text-text-muted block leading-none">GOL</span>
+</div>
+</div>
+</div>
+</div>
+<!-- WIDGET 3: Official Match Broadcast Details & System Status -->
+<div class="bg-court-surface border border-court-border rounded-lg p-3.5 space-y-2">
+<div class="text-label-badge font-label-badge text-text-muted">INFORMASI PERANGKAT PERTANDINGAN</div>
+<div class="grid grid-cols-2 gap-2 text-xs">
+<div class="bg-court-navy p-2 rounded border border-court-border">
+<span class="text-text-muted block text-[10px]">WASIT UTAMA</span>
+<span class="text-text-primary font-medium">Bambang Irawan (FIFA)</span>
+</div>
+<div class="bg-court-navy p-2 rounded border border-court-border">
+<span class="text-text-muted block text-[10px]">WASIT KEDUA</span>
+<span class="text-text-primary font-medium">Aris Munandar (Nasional)</span>
+</div>
+<div class="bg-court-navy p-2 rounded border border-court-border">
+<span class="text-text-muted block text-[10px]">TIMEKEEPER</span>
+<span class="text-text-primary font-medium">Ferry S. (Meja Kontrol)</span>
+</div>
+<div class="bg-court-navy p-2 rounded border border-court-border">
+<span class="text-text-muted block text-[10px]">LATENSI REVERB</span>
+<span class="text-stadium-emerald font-label-telemetry font-bold">42 ms (Stable)</span>
+</div>
+</div>
+</div>
+</aside>
+</div>
+</main>
+<!-- Interactive Alpine.js-ready Vanilla Script for Live Feedback Simulation -->
+<script>
+    // Quick Fan Reaction click bounce counter
+    document.querySelectorAll('.grid button').forEach(button => {
+      button.addEventListener('click', function() {
+        const countSpan = this.querySelector('span:last-child');
+        if (countSpan) {
+          let current = parseFloat(countSpan.innerText.replace('k', '')) || 0;
+          if (countSpan.innerText.includes('k')) {
+            current = (current + 0.1).toFixed(1) + 'k';
+          } else {
+            current = parseInt(countSpan.innerText) + 1;
+          }
+          countSpan.innerText = current;
+          this.classList.add('border-stadium-emerald');
+          setTimeout(() => this.classList.remove('border-stadium-emerald'), 400);
+        }
+      });
+    });
+  </script>
+
+
+</body></html>

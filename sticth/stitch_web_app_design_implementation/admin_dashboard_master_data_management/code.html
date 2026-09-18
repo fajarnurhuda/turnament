@@ -1,0 +1,1082 @@
+<!DOCTYPE html>
+
+<html class="dark" lang="id"><head>
+<meta charset="utf-8"/>
+<meta content="width=device-width, initial-scale=1.0" name="viewport"/>
+<title>FUTSAL PRO CONTROL - Admin Management Dashboard</title>
+<!-- Google Fonts: Space Grotesk, Inter, JetBrains Mono -->
+<link href="https://fonts.googleapis.com" rel="preconnect"/>
+<link crossorigin="" href="https://fonts.gstatic.com" rel="preconnect"/>
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&amp;family=JetBrains+Mono:wght@400;500;600;700&amp;family=Space+Grotesk:wght@500;600;700&amp;display=swap" rel="stylesheet"/>
+<!-- Material Symbols Outlined -->
+<link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&amp;display=swap" rel="stylesheet"/>
+<link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&amp;display=swap" rel="stylesheet"/>
+<!-- Tailwind CSS v3 via CDN -->
+<script src="https://cdn.tailwindcss.com?plugins=forms,container-queries"></script>
+<script id="tailwind-config">
+    tailwind.config = {
+      darkMode: "class",
+      theme: {
+        extend: {
+          "colors": {
+            "on-tertiary-container": "#c40044",
+            "surface-container-lowest": "#0b0e17",
+            "tertiary": "#fffaf9",
+            "inverse-surface": "#e0e2ef",
+            "court-surface-elevated": "#1A2338",
+            "on-surface": "#e0e2ef",
+            "outline": "#849585",
+            "primary": "#f1ffef",
+            "on-tertiary-fixed-variant": "#910030",
+            "inverse-primary": "#006d36",
+            "surface-container-low": "#181b25",
+            "surface-bright": "#363943",
+            "surface": "#10131c",
+            "card-red": "#FF2A4D",
+            "tertiary-container": "#ffd4d7",
+            "text-muted": "#798FA8",
+            "on-primary": "#003919",
+            "error": "#ffb4ab",
+            "on-primary-fixed": "#00210c",
+            "text-primary": "#F0F6FC",
+            "surface-variant": "#32343f",
+            "outline-variant": "#3b4b3d",
+            "primary-container": "#00ff87",
+            "surface-container-high": "#272a34",
+            "tertiary-fixed": "#ffd9dc",
+            "background": "#10131c",
+            "court-surface": "#121826",
+            "on-primary-fixed-variant": "#005227",
+            "inverse-on-surface": "#2d303a",
+            "card-yellow": "#FFD600",
+            "secondary-fixed": "#9cf0ff",
+            "court-border": "#22304C",
+            "secondary": "#bdf4ff",
+            "telemetry-cyan": "#00E5FF",
+            "primary-fixed-dim": "#00e478",
+            "on-error-container": "#ffdad6",
+            "on-secondary": "#00363d",
+            "tertiary-fixed-dim": "#ffb2ba",
+            "on-tertiary": "#670020",
+            "on-tertiary-fixed": "#400011",
+            "error-container": "#93000a",
+            "surface-container": "#1c1f29",
+            "secondary-container": "#00e3fd",
+            "on-surface-variant": "#b9cbb9",
+            "stadium-emerald": "#00FF87",
+            "on-secondary-container": "#00616d",
+            "on-background": "#e0e2ef",
+            "surface-container-highest": "#32343f",
+            "on-error": "#690005",
+            "court-navy": "#0B0E17",
+            "primary-fixed": "#60ff98",
+            "on-primary-container": "#007138",
+            "surface-tint": "#00e478",
+            "secondary-fixed-dim": "#00daf3",
+            "on-secondary-fixed-variant": "#004f58",
+            "live-pulse": "#FF3366",
+            "on-secondary-fixed": "#001f24",
+            "surface-dim": "#10131c"
+          },
+          "borderRadius": {
+            "DEFAULT": "0.125rem",
+            "lg": "0.25rem",
+            "xl": "0.5rem",
+            "full": "0.75rem"
+          },
+          "spacing": {
+            "margin-lg": "2.5rem",
+            "gutter": "1rem",
+            "space-md": "1rem",
+            "space-sm": "0.5rem",
+            "space-xl": "2.5rem",
+            "space-xs": "0.25rem",
+            "margin-md": "1.5rem",
+            "margin": "1rem",
+            "gutter-lg": "1.5rem",
+            "space-lg": "1.5rem"
+          },
+          "fontFamily": {
+            "headline-lg": ["Space Grotesk"],
+            "display-hero": ["Space Grotesk"],
+            "headline-lg-mobile": ["Space Grotesk"],
+            "label-telemetry": ["JetBrains Mono"],
+            "body-sm": ["Inter"],
+            "body-md": ["Inter"],
+            "headline-sm": ["Space Grotesk"],
+            "body-lg": ["Inter"],
+            "display-hero-mobile": ["Space Grotesk"],
+            "label-score": ["Space Grotesk"],
+            "headline-md": ["Space Grotesk"],
+            "label-badge": ["JetBrains Mono"]
+          },
+          "fontSize": {
+            "headline-lg": ["32px", { "lineHeight": "40px", "letterSpacing": "-0.02em", "fontWeight": "700" }],
+            "display-hero": ["64px", { "lineHeight": "72px", "letterSpacing": "-0.03em", "fontWeight": "700" }],
+            "headline-lg-mobile": ["24px", { "lineHeight": "32px", "letterSpacing": "-0.01em", "fontWeight": "700" }],
+            "label-telemetry": ["14px", { "lineHeight": "18px", "letterSpacing": "0.05em", "fontWeight": "600" }],
+            "body-sm": ["12px", { "lineHeight": "16px", "fontWeight": "400" }],
+            "body-md": ["14px", { "lineHeight": "20px", "fontWeight": "400" }],
+            "headline-sm": ["16px", { "lineHeight": "24px", "fontWeight": "600" }],
+            "body-lg": ["16px", { "lineHeight": "24px", "fontWeight": "400" }],
+            "display-hero-mobile": ["40px", { "lineHeight": "48px", "letterSpacing": "-0.02em", "fontWeight": "700" }],
+            "label-score": ["48px", { "lineHeight": "52px", "letterSpacing": "-0.02em", "fontWeight": "700" }],
+            "headline-md": ["20px", { "lineHeight": "28px", "fontWeight": "600" }],
+            "label-badge": ["11px", { "lineHeight": "14px", "letterSpacing": "0.08em", "fontWeight": "700" }]
+          }
+        },
+      },
+    }
+  </script>
+<style>
+    .material-symbols-outlined {
+      font-family: 'Material Symbols Outlined';
+      font-weight: normal;
+      font-style: normal;
+      font-size: 20px;
+      line-height: 1;
+      display: inline-block;
+      text-transform: none;
+      letter-spacing: normal;
+      word-wrap: normal;
+      white-space: nowrap;
+      direction: ltr;
+    }
+    .glow-emerald {
+      box-shadow: 0 0 24px -4px rgba(0, 255, 135, 0.22);
+    }
+    .glow-cyan {
+      box-shadow: 0 0 20px -3px rgba(0, 229, 255, 0.25);
+    }
+    .glow-red {
+      box-shadow: 0 0 24px -4px rgba(255, 42, 77, 0.3);
+    }
+  </style>
+</head>
+<body class="bg-court-navy text-text-primary min-h-screen flex flex-col font-body-md text-body-md antialiased selection:bg-stadium-emerald selection:text-court-navy">
+<!-- TOP APP BAR (Shared Component Anchor) -->
+<header class="docked full-width top-0 sticky z-50 backdrop-blur-md border-b border-court-border bg-court-navy/90 w-full px-6 flex justify-between items-center h-16 max-w-full shadow-sm">
+<!-- Brand & Live Arena Indicator -->
+<div class="flex items-center gap-6">
+<div class="flex items-center gap-3">
+<div class="w-9 h-9 rounded-lg bg-court-surface-elevated border border-court-border flex items-center justify-center text-stadium-emerald glow-emerald">
+<span class="material-symbols-outlined text-stadium-emerald" data-icon="sports_soccer">sports_soccer</span>
+</div>
+<div>
+<span class="text-headline-md font-headline-md font-bold tracking-wider text-text-primary block leading-none">FUTSAL PRO CONTROL</span>
+<div class="flex items-center gap-2 mt-1">
+<span class="relative flex h-2 w-2">
+<span class="animate-ping absolute inline-flex h-full w-full rounded-full bg-stadium-emerald opacity-75"></span>
+<span class="relative inline-flex rounded-full h-2 w-2 bg-stadium-emerald"></span>
+</span>
+<span class="font-label-badge text-label-badge text-stadium-emerald tracking-wider uppercase">REVERB WS: CONNECTED (12ms)</span>
+</div>
+</div>
+</div>
+<div class="hidden lg:flex items-center gap-2 bg-court-surface border border-court-border px-3 py-1.5 rounded-lg">
+<span class="material-symbols-outlined text-telemetry-cyan text-sm" data-icon="emoji_events">emoji_events</span>
+<span class="font-label-telemetry text-label-telemetry text-text-primary">Piala Juara Nusantara 2025 - U-17 Putra</span>
+<button class="text-text-muted hover:text-text-primary text-xs ml-1 flex items-center">
+<span class="material-symbols-outlined text-sm" data-icon="expand_more">expand_more</span>
+</button>
+</div>
+</div>
+<!-- Navigation Links & System Badges (Desktop) -->
+<nav class="hidden xl:flex items-center gap-6">
+<a class="border-b-2 border-stadium-emerald text-stadium-emerald font-semibold py-4 flex items-center gap-2 font-body-md text-body-md" href="#">
+<span class="material-symbols-outlined" data-icon="tune">tune</span>
+        Master Data
+      </a>
+<a class="text-text-muted hover:text-text-primary py-4 transition-colors duration-150 flex items-center gap-2 font-body-md text-body-md" href="#">
+<span class="material-symbols-outlined" data-icon="sensors">sensors</span>
+        Live Match
+      </a>
+<a class="text-text-muted hover:text-text-primary py-4 transition-colors duration-150 flex items-center gap-2 font-body-md text-body-md" href="#">
+<span class="material-symbols-outlined" data-icon="calendar_month">calendar_month</span>
+        Schedule &amp; Scores
+      </a>
+<a class="text-text-muted hover:text-text-primary py-4 transition-colors duration-150 flex items-center gap-2 font-body-md text-body-md" href="#">
+<span class="material-symbols-outlined" data-icon="table_chart">table_chart</span>
+        Standings
+      </a>
+<a class="text-text-muted hover:text-text-primary py-4 transition-colors duration-150 flex items-center gap-2 font-body-md text-body-md" href="#">
+<span class="material-symbols-outlined" data-icon="leaderboard">leaderboard</span>
+        Leaderboard
+      </a>
+</nav>
+<!-- Trailing Actions & Operator Desk Profile -->
+<div class="flex items-center gap-3">
+<button class="hidden sm:flex items-center gap-2 bg-court-surface-elevated hover:bg-court-border border border-court-border text-text-primary px-3 py-1.5 rounded text-xs font-label-telemetry transition-colors" title="Buka Operator Desk">
+<span class="material-symbols-outlined text-telemetry-cyan text-base" data-icon="desktop_windows">desktop_windows</span>
+        Operator Desk
+      </button>
+<div class="flex items-center gap-1 border-x border-court-border px-2">
+<button class="p-2 text-text-muted hover:text-stadium-emerald transition-colors relative" title="Sensor &amp; IO Telemetry">
+<span class="material-symbols-outlined" data-icon="sensors">sensors</span>
+<span class="w-1.5 h-1.5 rounded-full bg-stadium-emerald absolute top-2 right-2"></span>
+</button>
+<button class="p-2 text-text-muted hover:text-stadium-emerald transition-colors relative" title="Notifikasi Pertandingan">
+<span class="material-symbols-outlined" data-icon="notifications">notifications</span>
+<span class="w-1.5 h-1.5 rounded-full bg-card-red absolute top-2 right-2"></span>
+</button>
+<button class="p-2 text-text-muted hover:text-telemetry-cyan transition-colors" onclick="toggleAuthDrawer()" title="Konfigurasi Akun &amp; Akses">
+<span class="material-symbols-outlined" data-icon="settings">settings</span>
+</button>
+</div>
+<!-- Operator User Profile Card -->
+<div class="flex items-center gap-3 pl-2">
+<div class="w-9 h-9 rounded-full bg-court-surface border border-stadium-emerald/40 overflow-hidden flex items-center justify-center relative">
+<img class="w-full h-full object-cover" data-alt="Close up photographic portrait of a professional futsal tournament operator wearing a dark esports jacket and tactical communication headset inside a dark illuminated arena control room with stadium neon lights reflection." src="https://lh3.googleusercontent.com/aida-public/AB6AXuB8STSV1mv3V3t02FP1MHphZD4t8Ylbc1yU2c7c6NilI2mr5_Y74pWIRf4bjRPHe4ZUjpMrpynWwID33Z3pSNw7iatV8GxUNgtH60N2eS4aGHIEB9x2QEPU3WXSVcwOVkL-0rHllQF-FGzSUG1XsZLUrLDkYcWqNQ2QuT_bwinaCPkeGomdyIU55O12O68mIT10Kpy_TOQfz1fjBoqysbf-gnLLuVC0Lc-aKjWOtRLL3WQnUC1-mIER"/>
+</div>
+<div class="hidden md:block text-left">
+<div class="font-body-md text-body-md font-semibold text-text-primary leading-tight">Super Admin</div>
+<div class="font-label-badge text-label-badge text-stadium-emerald tracking-wide">Panitia Pusat - Court 1</div>
+</div>
+<button class="text-text-muted hover:text-card-red transition-colors p-1" onclick="toggleAuthDrawer()" title="Kunci Terminal / Ganti Akun">
+<span class="material-symbols-outlined text-lg" data-icon="logout">logout</span>
+</button>
+</div>
+</div>
+</header>
+<!-- MAIN WRAPPER: SIDEBAR + CONTENT CANVAS -->
+<div class="flex-1 flex overflow-hidden">
+<!-- SIDEBAR NAVIGATION (Shared Component Anchor) -->
+<aside class="w-64 h-[calc(100vh-4rem)] bg-court-surface border-r border-court-border flex flex-col justify-between shrink-0 overflow-y-auto hidden lg:flex">
+<div>
+<!-- Tournament Badge Mini Header -->
+<div class="p-4 border-b border-court-border flex items-center gap-3 bg-court-surface-elevated/40">
+<div class="w-10 h-10 rounded bg-court-surface border border-court-border flex items-center justify-center text-stadium-emerald font-headline-sm font-bold">
+            U17
+          </div>
+<div class="overflow-hidden">
+<div class="font-headline-sm text-headline-sm text-text-primary truncate">Arena Pro Cup 2025</div>
+<div class="font-label-badge text-label-badge text-text-muted">Court 1 • Division A</div>
+</div>
+</div>
+<!-- Navigation Tab Links -->
+<div class="py-3">
+<div class="px-4 py-1.5 font-label-badge text-label-badge text-text-muted uppercase tracking-wider">Tournament Control</div>
+<a class="flex items-center gap-3 px-4 py-3 text-text-muted hover:text-text-primary hover:bg-court-surface-elevated/50 font-normal transition-colors" href="#">
+<span class="material-symbols-outlined" data-icon="dashboard">dashboard</span>
+<span class="font-body-md text-body-md">Dashboard Ringkasan</span>
+</a>
+<a class="flex items-center justify-between px-4 py-3 text-text-muted hover:text-text-primary hover:bg-court-surface-elevated/50 font-normal transition-colors" href="#">
+<div class="flex items-center gap-3">
+<span class="material-symbols-outlined text-live-pulse" data-icon="stream">stream</span>
+<span class="font-body-md text-body-md">Live Control Room</span>
+</div>
+<span class="font-label-badge text-label-badge bg-live-pulse/20 text-live-pulse px-1.5 py-0.5 rounded animate-pulse">LIVE 2</span>
+</a>
+<!-- Active Master Data Section -->
+<div class="mt-1">
+<a class="flex items-center gap-3 px-4 py-3 bg-court-surface-elevated text-stadium-emerald border-l-4 border-stadium-emerald font-medium" href="#">
+<span class="material-symbols-outlined text-stadium-emerald" data-icon="tune">tune</span>
+<span class="font-body-md text-body-md font-semibold">Master Data &amp; Roster</span>
+</a>
+<div class="bg-court-navy/60 py-1 pl-11 pr-3 space-y-0.5 text-xs font-body-sm">
+<a class="block py-1.5 text-text-muted hover:text-stadium-emerald transition-colors" href="#">Kategori Kelompok Usia</a>
+<a class="block py-1.5 text-stadium-emerald font-semibold flex items-center justify-between" href="#">
+<span>Tim Futsal Terdaftar</span>
+<span class="font-label-badge text-label-badge bg-court-surface-elevated px-1.5 rounded">24</span>
+</a>
+<a class="block py-1.5 text-text-muted hover:text-stadium-emerald transition-colors" href="#">Roster Pemain Aktif</a>
+<a class="block py-1.5 text-text-muted hover:text-stadium-emerald transition-colors" href="#">Grup &amp; Babak Eliminasi</a>
+</div>
+</div>
+<a class="flex items-center gap-3 px-4 py-3 text-text-muted hover:text-text-primary hover:bg-court-surface-elevated/50 font-normal transition-colors" href="#">
+<span class="material-symbols-outlined" data-icon="sports_soccer">sports_soccer</span>
+<span class="font-body-md text-body-md">Jadwal &amp; Fixtures</span>
+</a>
+<a class="flex items-center gap-3 px-4 py-3 text-text-muted hover:text-text-primary hover:bg-court-surface-elevated/50 font-normal transition-colors" href="#">
+<span class="material-symbols-outlined" data-icon="table_chart">table_chart</span>
+<span class="font-body-md text-body-md">Klasemen &amp; Poin</span>
+</a>
+<a class="flex items-center gap-3 px-4 py-3 text-text-muted hover:text-text-primary hover:bg-court-surface-elevated/50 font-normal transition-colors" href="#">
+<span class="material-symbols-outlined" data-icon="analytics">analytics</span>
+<span class="font-body-md text-body-md">Disiplin &amp; Top Scorer</span>
+</a>
+<a class="flex items-center gap-3 px-4 py-3 text-text-muted hover:text-text-primary hover:bg-court-surface-elevated/50 font-normal transition-colors" href="#">
+<span class="material-symbols-outlined" data-icon="history_toggle_off">history_toggle_off</span>
+<span class="font-body-md text-body-md">Audit Log &amp; Sesi Admin</span>
+</a>
+</div>
+</div>
+<!-- Emergency Match Stop Action & Footer Diagnostics -->
+<div class="p-4 border-t border-court-border space-y-3 bg-court-surface">
+<button class="w-full py-2 px-3 bg-card-red/10 border border-card-red/40 hover:bg-card-red text-white hover:text-court-navy text-xs font-label-telemetry rounded flex items-center justify-center gap-2 transition-colors">
+<span class="material-symbols-outlined text-sm" data-icon="warning">warning</span>
+          Emergency Stop (Buzzer)
+        </button>
+<div class="space-y-1 pt-1 text-xs">
+<div class="flex items-center justify-between text-text-muted px-1">
+<span class="flex items-center gap-2">
+<span class="material-symbols-outlined text-sm text-text-muted" data-icon="tune">tune</span>
+              System Diagnostics
+            </span>
+<span class="font-label-badge text-stadium-emerald">OK</span>
+</div>
+<div class="flex items-center justify-between text-text-muted px-1">
+<span class="flex items-center gap-2">
+<span class="material-symbols-outlined text-sm text-text-muted" data-icon="volume_up">volume_up</span>
+              Arena PA Feed
+            </span>
+<span class="font-label-badge text-telemetry-cyan">STEREO</span>
+</div>
+</div>
+</div>
+</aside>
+<!-- CONTENT CANVAS (Administrative Management Space) -->
+<main class="flex-1 overflow-y-auto bg-court-navy p-4 md:p-6 lg:p-8 space-y-6">
+<!-- HEADER CONTEXT & ACTIONS -->
+<div class="flex flex-col md:flex-row md:items-center justify-between gap-4 pb-4 border-b border-court-border">
+<div>
+<div class="flex items-center gap-2">
+<span class="font-label-badge text-label-badge text-stadium-emerald uppercase bg-stadium-emerald/10 border border-stadium-emerald/30 px-2 py-0.5 rounded">Livewire 3 Engine</span>
+<span class="font-label-badge text-label-badge text-telemetry-cyan uppercase bg-telemetry-cyan/10 border border-telemetry-cyan/30 px-2 py-0.5 rounded">Database: MariaDB Sync</span>
+</div>
+<h1 class="font-headline-lg text-headline-lg font-bold text-text-primary mt-1">Master Manajemen Tim &amp; Roster Turnamen</h1>
+<p class="text-text-muted font-body-md text-body-md">Pengelolaan identitas tim, legalitas pemain, penetapan kategori usia, dan verifikasi ofisial.</p>
+</div>
+<!-- Action cluster -->
+<div class="flex items-center gap-3">
+<button class="bg-court-surface-elevated hover:bg-court-border border border-court-border text-text-primary px-3.5 py-2.5 rounded font-label-telemetry text-xs flex items-center gap-2 transition-all">
+<span class="material-symbols-outlined text-telemetry-cyan" data-icon="file_upload">file_upload</span>
+            Bulk Import CSV/Excel
+          </button>
+<button class="bg-stadium-emerald hover:bg-stadium-emerald/90 text-court-navy font-bold px-4 py-2.5 rounded font-body-md text-body-md flex items-center gap-2 transition-all glow-emerald" onclick="togglePlayerDrawer()">
+<span class="material-symbols-outlined text-base" data-icon="group_add">group_add</span>
+            + Tambah Tim Baru
+          </button>
+</div>
+</div>
+<!-- 1. OVERVIEW SUMMARY STATS BENTO GRID -->
+<section class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4">
+<!-- Card 1: Total Tim -->
+<div class="bg-court-surface border border-court-border rounded p-4 relative overflow-hidden">
+<div class="absolute right-3 top-3 text-court-border/40">
+<span class="material-symbols-outlined text-4xl" data-icon="shield">shield</span>
+</div>
+<span class="font-label-badge text-label-badge text-text-muted uppercase">Total Tim Terdaftar</span>
+<div class="flex items-baseline gap-2 mt-1">
+<span class="font-headline-lg text-headline-lg font-bold text-text-primary">24</span>
+<span class="font-label-badge text-label-badge text-stadium-emerald bg-stadium-emerald/10 px-1.5 py-0.5 rounded">100% Kuota Penuh</span>
+</div>
+<div class="mt-3 flex items-center justify-between text-xs text-text-muted pt-2 border-t border-court-border/60">
+<span>U-17: 12 Tim</span>
+<span>U-20: 8 Tim</span>
+<span>Umum: 4 Tim</span>
+</div>
+</div>
+<!-- Card 2: Total Pemain -->
+<div class="bg-court-surface border border-court-border rounded p-4 relative overflow-hidden">
+<div class="absolute right-3 top-3 text-court-border/40">
+<span class="material-symbols-outlined text-4xl" data-icon="groups">groups</span>
+</div>
+<span class="font-label-badge text-label-badge text-text-muted uppercase">Pemain Terverifikasi</span>
+<div class="flex items-baseline gap-2 mt-1">
+<span class="font-headline-lg text-headline-lg font-bold text-stadium-emerald">288</span>
+<span class="font-label-telemetry text-label-telemetry text-text-muted">/ 290 NIK Sah</span>
+</div>
+<div class="mt-3 flex items-center justify-between text-xs text-text-muted pt-2 border-t border-court-border/60">
+<span class="flex items-center gap-1 text-stadium-emerald">
+<span class="material-symbols-outlined text-xs" data-icon="verified">verified</span> 288 Lolos Medis
+            </span>
+<span class="text-card-red">2 Pending Foto</span>
+</div>
+</div>
+<!-- Card 3: Laga & Jadwal -->
+<div class="bg-court-surface border border-court-border rounded p-4 relative overflow-hidden">
+<div class="absolute right-3 top-3 text-court-border/40">
+<span class="material-symbols-outlined text-4xl" data-icon="sports_score">sports_score</span>
+</div>
+<span class="font-label-badge text-label-badge text-text-muted uppercase">Status Pertandingan</span>
+<div class="flex items-baseline gap-2 mt-1">
+<span class="font-headline-lg text-headline-lg font-bold text-text-primary">48</span>
+<span class="font-label-badge text-label-badge text-live-pulse bg-live-pulse/15 px-1.5 py-0.5 rounded flex items-center gap-1">
+<span class="w-1.5 h-1.5 rounded-full bg-live-pulse animate-ping"></span> 2 LIVE LAPANGAN
+            </span>
+</div>
+<div class="mt-3 flex items-center justify-between text-xs text-text-muted pt-2 border-t border-court-border/60 font-label-telemetry">
+<span>12 Laga Selesai</span>
+<span>34 Terjadwal</span>
+</div>
+</div>
+<!-- Card 4: Disiplin Kartu -->
+<div class="bg-court-surface border border-court-border rounded p-4 relative overflow-hidden">
+<div class="absolute right-3 top-3 text-court-border/40">
+<span class="material-symbols-outlined text-4xl" data-icon="style">style</span>
+</div>
+<span class="font-label-badge text-label-badge text-text-muted uppercase">Rekap Disiplin Wasit</span>
+<div class="flex items-baseline gap-3 mt-1">
+<div class="flex items-center gap-1.5">
+<span class="w-3 h-4 bg-card-yellow rounded-xs inline-block"></span>
+<span class="font-headline-lg text-headline-lg font-bold text-text-primary">18</span>
+</div>
+<div class="flex items-center gap-1.5">
+<span class="w-3 h-4 bg-card-red rounded-xs inline-block"></span>
+<span class="font-headline-lg text-headline-lg font-bold text-text-primary">2</span>
+</div>
+<span class="font-label-badge text-label-badge text-text-muted ml-auto">Rata-rata 1.6 / Game</span>
+</div>
+<div class="mt-3 flex items-center justify-between text-xs text-text-muted pt-2 border-t border-court-border/60">
+<span class="text-card-yellow">1 Akumulasi Skorsing</span>
+<span class="text-card-red">1 Kartu Merah Langsung</span>
+</div>
+</div>
+</section>
+<!-- 2. MASTER DATA TABS & TOOLBAR PANEL -->
+<section class="bg-court-surface border border-court-border rounded-lg overflow-hidden shadow-lg">
+<!-- Navigation Tabs for Master Data Entities -->
+<div class="flex flex-wrap items-center border-b border-court-border bg-court-surface-elevated/40 px-4">
+<button class="py-3.5 px-4 font-headline-sm text-headline-sm font-semibold border-b-2 border-stadium-emerald text-stadium-emerald flex items-center gap-2">
+<span class="material-symbols-outlined text-stadium-emerald" data-icon="shield">shield</span>
+            Master Tim (24)
+          </button>
+<button class="py-3.5 px-4 font-headline-sm text-headline-sm font-medium text-text-muted hover:text-text-primary border-b-2 border-transparent transition-colors flex items-center gap-2" onclick="togglePlayerDrawer()">
+<span class="material-symbols-outlined" data-icon="person">person</span>
+            Master Pemain &amp; Roster (288)
+          </button>
+<button class="py-3.5 px-4 font-headline-sm text-headline-sm font-medium text-text-muted hover:text-text-primary border-b-2 border-transparent transition-colors flex items-center gap-2">
+<span class="material-symbols-outlined" data-icon="category">category</span>
+            Kategori Usia (3)
+          </button>
+<button class="py-3.5 px-4 font-headline-sm text-headline-sm font-medium text-text-muted hover:text-text-primary border-b-2 border-transparent transition-colors flex items-center gap-2">
+<span class="material-symbols-outlined" data-icon="account_tree">account_tree</span>
+            Grup &amp; Babak Gugur
+          </button>
+<div class="ml-auto hidden md:flex items-center gap-2 text-xs font-label-telemetry text-text-muted py-2">
+<span class="inline-block w-2 h-2 rounded-full bg-stadium-emerald"></span>
+            Auto-save Livewire Aktif
+          </div>
+</div>
+<!-- Filter & Search Toolbar (Livewire Controller Bar) -->
+<div class="p-4 bg-court-surface flex flex-col md:flex-row gap-3 items-center justify-between border-b border-court-border">
+<div class="flex flex-1 flex-col sm:flex-row items-center gap-3 w-full">
+<!-- Search Bar Input -->
+<div class="relative w-full sm:w-80">
+<span class="material-symbols-outlined absolute left-3 top-2.5 text-text-muted text-lg" data-icon="search">search</span>
+<input class="w-full bg-court-surface-elevated border border-court-border rounded px-3 py-2 pl-9 text-xs text-text-primary placeholder:text-text-muted focus:border-stadium-emerald focus:ring-1 focus:ring-stadium-emerald outline-none transition-all" placeholder="Cari nama tim, manajer, atau kota..." type="text"/>
+</div>
+<!-- Category Filter Dropdown -->
+<div class="w-full sm:w-52">
+<select class="w-full bg-court-surface-elevated border border-court-border rounded px-3 py-2 text-xs text-text-primary focus:border-stadium-emerald focus:ring-1 focus:ring-stadium-emerald outline-none">
+<option value="">Semua Kategori Usia</option>
+<option selected="" value="u17">U-17 Putra (Aktif)</option>
+<option value="u20">U-20 Putra</option>
+<option value="umum">Umum Terbuka</option>
+</select>
+</div>
+<!-- Group Filter Dropdown -->
+<div class="w-full sm:w-44">
+<select class="w-full bg-court-surface-elevated border border-court-border rounded px-3 py-2 text-xs text-text-primary focus:border-stadium-emerald focus:ring-1 focus:ring-stadium-emerald outline-none">
+<option value="">Semua Grup</option>
+<option value="a">Grup A (Court 1)</option>
+<option value="b">Grup B (Court 1)</option>
+<option value="c">Grup C (Court 2)</option>
+<option value="d">Grup D (Court 2)</option>
+</select>
+</div>
+</div>
+<!-- Quick Actions & Export -->
+<div class="flex items-center gap-2 w-full md:w-auto justify-end">
+<span class="text-xs font-label-telemetry text-text-muted">Menampilkan 1-4 dari 24 Tim</span>
+<button class="p-2 border border-court-border bg-court-surface-elevated hover:text-stadium-emerald rounded text-text-muted" title="Refresh Livewire Model">
+<span class="material-symbols-outlined text-base" data-icon="refresh">refresh</span>
+</button>
+<button class="p-2 border border-court-border bg-court-surface-elevated hover:text-telemetry-cyan rounded text-text-muted" title="Ekspor PDF Roster">
+<span class="material-symbols-outlined text-base" data-icon="print">print</span>
+</button>
+</div>
+</div>
+<!-- 3. LIVEWIRE REACTIVE DATA TABLE -->
+<div class="overflow-x-auto">
+<table class="w-full text-left border-collapse">
+<thead>
+<tr class="border-b border-court-border bg-court-surface-elevated/70 text-text-muted font-label-telemetry text-xs uppercase tracking-wider">
+<th class="py-3 px-4 w-12 text-center">#</th>
+<th class="py-3 px-4">Klub / Tim Futsal</th>
+<th class="py-3 px-4">Kategori &amp; Grup</th>
+<th class="py-3 px-4">Manajer &amp; Pelatih</th>
+<th class="py-3 px-4 text-center">Roster Pemain</th>
+<th class="py-3 px-4 text-center">Status Berkas</th>
+<th class="py-3 px-4 text-right">Aksi Manajemen</th>
+</tr>
+</thead>
+<tbody class="divide-y divide-court-border/60 text-body-md font-body-md">
+<!-- Row 1: Garuda Muda FC -->
+<tr class="hover:bg-court-surface-elevated/40 transition-colors group">
+<td class="py-3.5 px-4 text-center font-label-telemetry text-text-muted">01</td>
+<td class="py-3.5 px-4">
+<div class="flex items-center gap-3">
+<div class="w-10 h-10 rounded-md bg-court-surface-elevated border border-court-border flex items-center justify-center font-headline-sm font-bold text-stadium-emerald group-hover:border-stadium-emerald transition-colors">
+                      GM
+                    </div>
+<div>
+<div class="font-headline-sm text-headline-sm text-text-primary font-bold">Garuda Muda FC</div>
+<div class="text-xs text-text-muted flex items-center gap-1 font-label-badge">
+<span class="material-symbols-outlined text-xs text-stadium-emerald" data-icon="location_on">location_on</span>
+                        Kota Jakarta Timur • Id: #TM-2025-01
+                      </div>
+</div>
+</div>
+</td>
+<td class="py-3.5 px-4">
+<div class="flex flex-col">
+<span class="font-label-badge text-xs text-telemetry-cyan font-semibold">U-17 Putra</span>
+<span class="text-xs text-text-muted font-label-telemetry">Grup A (Unggulan 1)</span>
+</div>
+</td>
+<td class="py-3.5 px-4">
+<div class="text-xs">
+<div class="text-text-primary font-medium">Bambang Pamungkas, S.Pd</div>
+<div class="text-text-muted">Pelatih: Coach Hendra (AFC Level 1)</div>
+</div>
+</td>
+<td class="py-3.5 px-4 text-center">
+<div class="inline-flex flex-col items-center">
+<span class="font-label-telemetry text-stadium-emerald font-bold text-sm">12 / 14</span>
+<span class="font-label-badge text-label-badge text-text-muted">2 Kiper • 10 Flank/Piv</span>
+</div>
+</td>
+<td class="py-3.5 px-4 text-center">
+<span class="inline-flex items-center gap-1 px-2.5 py-1 rounded bg-stadium-emerald/10 border border-stadium-emerald/30 text-stadium-emerald text-xs font-label-badge">
+<span class="material-symbols-outlined text-xs" data-icon="check_circle">check_circle</span>
+                    Terverifikasi Penuh
+                  </span>
+</td>
+<td class="py-3.5 px-4 text-right">
+<div class="flex items-center justify-end gap-1.5">
+<button class="px-2.5 py-1.5 bg-court-surface-elevated hover:bg-stadium-emerald hover:text-court-navy border border-court-border text-xs rounded text-text-primary font-label-telemetry transition-colors flex items-center gap-1" onclick="togglePlayerDrawer()">
+<span class="material-symbols-outlined text-sm" data-icon="groups">groups</span>
+                      Roster
+                    </button>
+<button class="p-1.5 bg-court-surface-elevated hover:bg-court-border border border-court-border rounded text-text-muted hover:text-telemetry-cyan transition-colors" title="Edit Data Klub">
+<span class="material-symbols-outlined text-sm" data-icon="edit">edit</span>
+</button>
+<button class="p-1.5 bg-court-surface-elevated hover:bg-card-red/20 border border-court-border rounded text-text-muted hover:text-card-red transition-colors" title="Hapus Tim">
+<span class="material-symbols-outlined text-sm" data-icon="delete">delete</span>
+</button>
+</div>
+</td>
+</tr>
+<!-- Row 2: Bintang Timur FA -->
+<tr class="hover:bg-court-surface-elevated/40 transition-colors group">
+<td class="py-3.5 px-4 text-center font-label-telemetry text-text-muted">02</td>
+<td class="py-3.5 px-4">
+<div class="flex items-center gap-3">
+<div class="w-10 h-10 rounded-md bg-court-surface-elevated border border-court-border flex items-center justify-center font-headline-sm font-bold text-telemetry-cyan group-hover:border-telemetry-cyan transition-colors">
+                      BT
+                    </div>
+<div>
+<div class="font-headline-sm text-headline-sm text-text-primary font-bold">Bintang Timur FA</div>
+<div class="text-xs text-text-muted flex items-center gap-1 font-label-badge">
+<span class="material-symbols-outlined text-xs text-stadium-emerald" data-icon="location_on">location_on</span>
+                        Kota Surabaya • Id: #TM-2025-04
+                      </div>
+</div>
+</div>
+</td>
+<td class="py-3.5 px-4">
+<div class="flex flex-col">
+<span class="font-label-badge text-xs text-telemetry-cyan font-semibold">U-17 Putra</span>
+<span class="text-xs text-text-muted font-label-telemetry">Grup A (Unggulan 2)</span>
+</div>
+</td>
+<td class="py-3.5 px-4">
+<div class="text-xs">
+<div class="text-text-primary font-medium">H. Syafril Nasution</div>
+<div class="text-text-muted">Pelatih: Rakhmat Hidayat</div>
+</div>
+</td>
+<td class="py-3.5 px-4 text-center">
+<div class="inline-flex flex-col items-center">
+<span class="font-label-telemetry text-stadium-emerald font-bold text-sm">14 / 14</span>
+<span class="font-label-badge text-label-badge text-text-muted">3 Kiper • 11 Outfield</span>
+</div>
+</td>
+<td class="py-3.5 px-4 text-center">
+<span class="inline-flex items-center gap-1 px-2.5 py-1 rounded bg-stadium-emerald/10 border border-stadium-emerald/30 text-stadium-emerald text-xs font-label-badge">
+<span class="material-symbols-outlined text-xs" data-icon="check_circle">check_circle</span>
+                    Terverifikasi Penuh
+                  </span>
+</td>
+<td class="py-3.5 px-4 text-right">
+<div class="flex items-center justify-end gap-1.5">
+<button class="px-2.5 py-1.5 bg-court-surface-elevated hover:bg-stadium-emerald hover:text-court-navy border border-court-border text-xs rounded text-text-primary font-label-telemetry transition-colors flex items-center gap-1" onclick="togglePlayerDrawer()">
+<span class="material-symbols-outlined text-sm" data-icon="groups">groups</span>
+                      Roster
+                    </button>
+<button class="p-1.5 bg-court-surface-elevated hover:bg-court-border border border-court-border rounded text-text-muted hover:text-telemetry-cyan transition-colors" title="Edit Data Klub">
+<span class="material-symbols-outlined text-sm" data-icon="edit">edit</span>
+</button>
+<button class="p-1.5 bg-court-surface-elevated hover:bg-card-red/20 border border-court-border rounded text-text-muted hover:text-card-red transition-colors" title="Hapus Tim">
+<span class="material-symbols-outlined text-sm" data-icon="delete">delete</span>
+</button>
+</div>
+</td>
+</tr>
+<!-- Row 3: Rajawali Selatan -->
+<tr class="hover:bg-court-surface-elevated/40 transition-colors group">
+<td class="py-3.5 px-4 text-center font-label-telemetry text-text-muted">03</td>
+<td class="py-3.5 px-4">
+<div class="flex items-center gap-3">
+<div class="w-10 h-10 rounded-md bg-court-surface-elevated border border-court-border flex items-center justify-center font-headline-sm font-bold text-card-yellow group-hover:border-card-yellow transition-colors">
+                      RS
+                    </div>
+<div>
+<div class="font-headline-sm text-headline-sm text-text-primary font-bold">Rajawali Selatan</div>
+<div class="text-xs text-text-muted flex items-center gap-1 font-label-badge">
+<span class="material-symbols-outlined text-xs text-stadium-emerald" data-icon="location_on">location_on</span>
+                        Makassar • Id: #TM-2025-09
+                      </div>
+</div>
+</div>
+</td>
+<td class="py-3.5 px-4">
+<div class="flex flex-col">
+<span class="font-label-badge text-xs text-telemetry-cyan font-semibold">U-17 Putra</span>
+<span class="text-xs text-text-muted font-label-telemetry">Grup B</span>
+</div>
+</td>
+<td class="py-3.5 px-4">
+<div class="text-xs">
+<div class="text-text-primary font-medium">Daeng Marzuki</div>
+<div class="text-text-muted">Pelatih: Syamsul Bachri</div>
+</div>
+</td>
+<td class="py-3.5 px-4 text-center">
+<div class="inline-flex flex-col items-center">
+<span class="font-label-telemetry text-card-yellow font-bold text-sm">10 / 14</span>
+<span class="font-label-badge text-label-badge text-card-yellow">Kurang 2 Pemain</span>
+</div>
+</td>
+<td class="py-3.5 px-4 text-center">
+<span class="inline-flex items-center gap-1 px-2.5 py-1 rounded bg-card-yellow/10 border border-card-yellow/30 text-card-yellow text-xs font-label-badge">
+<span class="material-symbols-outlined text-xs" data-icon="pending">pending</span>
+                    Verifikasi Dokumen NIK
+                  </span>
+</td>
+<td class="py-3.5 px-4 text-right">
+<div class="flex items-center justify-end gap-1.5">
+<button class="px-2.5 py-1.5 bg-court-surface-elevated hover:bg-stadium-emerald hover:text-court-navy border border-court-border text-xs rounded text-text-primary font-label-telemetry transition-colors flex items-center gap-1" onclick="togglePlayerDrawer()">
+<span class="material-symbols-outlined text-sm" data-icon="groups">groups</span>
+                      Roster
+                    </button>
+<button class="p-1.5 bg-court-surface-elevated hover:bg-court-border border border-court-border rounded text-text-muted hover:text-telemetry-cyan transition-colors" title="Edit Data Klub">
+<span class="material-symbols-outlined text-sm" data-icon="edit">edit</span>
+</button>
+<button class="p-1.5 bg-court-surface-elevated hover:bg-card-red/20 border border-court-border rounded text-text-muted hover:text-card-red transition-colors" title="Hapus Tim">
+<span class="material-symbols-outlined text-sm" data-icon="delete">delete</span>
+</button>
+</div>
+</td>
+</tr>
+<!-- Row 4: Blacksteel Academy -->
+<tr class="hover:bg-court-surface-elevated/40 transition-colors group">
+<td class="py-3.5 px-4 text-center font-label-telemetry text-text-muted">04</td>
+<td class="py-3.5 px-4">
+<div class="flex items-center gap-3">
+<div class="w-10 h-10 rounded-md bg-court-surface-elevated border border-court-border flex items-center justify-center font-headline-sm font-bold text-live-pulse group-hover:border-live-pulse transition-colors">
+                      BA
+                    </div>
+<div>
+<div class="font-headline-sm text-headline-sm text-text-primary font-bold">Blacksteel Academy</div>
+<div class="text-xs text-text-muted flex items-center gap-1 font-label-badge">
+<span class="material-symbols-outlined text-xs text-stadium-emerald" data-icon="location_on">location_on</span>
+                        Manokwari / Jayapura • Id: #TM-2025-11
+                      </div>
+</div>
+</div>
+</td>
+<td class="py-3.5 px-4">
+<div class="flex flex-col">
+<span class="font-label-badge text-xs text-telemetry-cyan font-semibold">U-17 Putra</span>
+<span class="text-xs text-text-muted font-label-telemetry">Grup B (Juara Bertahan)</span>
+</div>
+</td>
+<td class="py-3.5 px-4">
+<div class="text-xs">
+<div class="text-text-primary font-medium">Yohanis Tibo</div>
+<div class="text-text-muted">Pelatih: Coach Fransisco (Brazil)</div>
+</div>
+</td>
+<td class="py-3.5 px-4 text-center">
+<div class="inline-flex flex-col items-center">
+<span class="font-label-telemetry text-stadium-emerald font-bold text-sm">14 / 14</span>
+<span class="font-label-badge text-label-badge text-text-muted">2 Kiper • 12 Outfield</span>
+</div>
+</td>
+<td class="py-3.5 px-4 text-center">
+<span class="inline-flex items-center gap-1 px-2.5 py-1 rounded bg-stadium-emerald/10 border border-stadium-emerald/30 text-stadium-emerald text-xs font-label-badge">
+<span class="material-symbols-outlined text-xs" data-icon="check_circle">check_circle</span>
+                    Terverifikasi Penuh
+                  </span>
+</td>
+<td class="py-3.5 px-4 text-right">
+<div class="flex items-center justify-end gap-1.5">
+<button class="px-2.5 py-1.5 bg-court-surface-elevated hover:bg-stadium-emerald hover:text-court-navy border border-court-border text-xs rounded text-text-primary font-label-telemetry transition-colors flex items-center gap-1" onclick="togglePlayerDrawer()">
+<span class="material-symbols-outlined text-sm" data-icon="groups">groups</span>
+                      Roster
+                    </button>
+<button class="p-1.5 bg-court-surface-elevated hover:bg-court-border border border-court-border rounded text-text-muted hover:text-telemetry-cyan transition-colors" title="Edit Data Klub">
+<span class="material-symbols-outlined text-sm" data-icon="edit">edit</span>
+</button>
+<button class="p-1.5 bg-court-surface-elevated hover:bg-card-red/20 border border-court-border rounded text-text-muted hover:text-card-red transition-colors" title="Hapus Tim">
+<span class="material-symbols-outlined text-sm" data-icon="delete">delete</span>
+</button>
+</div>
+</td>
+</tr>
+</tbody>
+</table>
+</div>
+<!-- Table Pagination Footer -->
+<div class="p-4 bg-court-surface-elevated/30 border-t border-court-border flex flex-col sm:flex-row items-center justify-between gap-3 text-xs">
+<div class="text-text-muted font-label-telemetry">
+            Showing <span class="text-text-primary font-bold">1</span> to <span class="text-text-primary font-bold">4</span> of <span class="text-text-primary font-bold">24</span> teams
+          </div>
+<div class="flex items-center gap-1">
+<button class="px-2.5 py-1 rounded border border-court-border bg-court-surface text-text-muted hover:text-text-primary disabled:opacity-40" disabled="">Sebelumnya</button>
+<button class="px-3 py-1 rounded bg-stadium-emerald text-court-navy font-bold">1</button>
+<button class="px-3 py-1 rounded border border-court-border bg-court-surface text-text-muted hover:text-text-primary">2</button>
+<button class="px-3 py-1 rounded border border-court-border bg-court-surface text-text-muted hover:text-text-primary">3</button>
+<button class="px-2.5 py-1 rounded border border-court-border bg-court-surface text-text-muted hover:text-text-primary">Selanjutnya</button>
+</div>
+</div>
+</section>
+<!-- 4. LIVE MATCH STREAM TELEMETRY PREVIEW (Tournament Room Status) -->
+<section class="grid grid-cols-1 lg:grid-cols-12 gap-6">
+<!-- Live Field Scoreboard & Control Link -->
+<div class="lg:col-span-8 bg-court-surface border border-court-border rounded-lg p-5">
+<div class="flex items-center justify-between mb-4">
+<div class="flex items-center gap-2">
+<span class="w-2.5 h-2.5 rounded-full bg-live-pulse animate-ping"></span>
+<h2 class="font-headline-sm text-headline-sm font-bold text-text-primary">Pertandingan Live Berjalan: Court 1</h2>
+</div>
+<span class="font-label-badge text-label-badge text-live-pulse bg-live-pulse/15 px-2 py-0.5 rounded border border-live-pulse/30">BABAK 2 • 14:28</span>
+</div>
+<!-- High-Contrast Arena Scoreboard -->
+<div class="bg-court-navy border border-court-border rounded p-4 flex items-center justify-between">
+<!-- Home Team -->
+<div class="flex items-center gap-4 flex-1">
+<div class="w-12 h-12 rounded bg-court-surface-elevated border border-court-border flex items-center justify-center font-bold text-stadium-emerald text-lg">
+                GM
+              </div>
+<div>
+<div class="font-headline-md text-headline-md font-bold text-text-primary">Garuda Muda</div>
+<div class="font-label-badge text-label-badge text-stadium-emerald">Fouls: 4 • Timeouts: 1</div>
+</div>
+</div>
+<!-- Central Score Telemetry -->
+<div class="flex flex-col items-center px-6">
+<div class="font-label-score text-label-score text-text-primary font-bold tracking-wider flex items-center gap-2">
+<span>3</span>
+<span class="text-court-border">:</span>
+<span>2</span>
+</div>
+<span class="font-label-telemetry text-xs text-text-muted">MATCH #14 • GRUP A</span>
+</div>
+<!-- Away Team -->
+<div class="flex items-center gap-4 flex-1 justify-end text-right">
+<div>
+<div class="font-headline-md text-headline-md font-bold text-text-primary">Bintang Timur</div>
+<div class="font-label-badge text-label-badge text-telemetry-cyan">Fouls: 3 • Timeouts: 0</div>
+</div>
+<div class="w-12 h-12 rounded bg-court-surface-elevated border border-court-border flex items-center justify-center font-bold text-telemetry-cyan text-lg">
+                BT
+              </div>
+</div>
+</div>
+<!-- Operator Quick Control Pad -->
+<div class="grid grid-cols-2 sm:grid-cols-4 gap-2 mt-4">
+<button class="py-2 px-3 bg-stadium-emerald text-court-navy font-bold rounded text-xs font-label-telemetry flex items-center justify-center gap-1.5 glow-emerald hover:opacity-90">
+<span class="material-symbols-outlined text-sm" data-icon="sports_soccer">sports_soccer</span>
+              + Goal GM (Home)
+            </button>
+<button class="py-2 px-3 bg-court-surface-elevated hover:bg-court-border border border-court-border text-xs text-text-primary rounded font-label-telemetry flex items-center justify-center gap-1.5">
+<span class="w-2.5 h-3.5 bg-card-yellow rounded-xs"></span>
+              + Foul GM
+            </button>
+<button class="py-2 px-3 bg-court-surface-elevated hover:bg-court-border border border-court-border text-xs text-text-primary rounded font-label-telemetry flex items-center justify-center gap-1.5">
+<span class="w-2.5 h-3.5 bg-card-yellow rounded-xs"></span>
+              + Foul BT
+            </button>
+<button class="py-2 px-3 bg-telemetry-cyan text-court-navy font-bold rounded text-xs font-label-telemetry flex items-center justify-center gap-1.5 glow-cyan hover:opacity-90">
+<span class="material-symbols-outlined text-sm" data-icon="sports_soccer">sports_soccer</span>
+              + Goal BT (Away)
+            </button>
+</div>
+</div>
+<!-- Real-Time Event Log Stream -->
+<div class="lg:col-span-4 bg-court-surface border border-court-border rounded-lg p-5 flex flex-col justify-between">
+<div>
+<div class="flex items-center justify-between mb-3">
+<h3 class="font-headline-sm text-headline-sm font-semibold text-text-primary">Log Pertandingan Terkini</h3>
+<span class="font-label-badge text-label-badge text-stadium-emerald">LIVE FEED</span>
+</div>
+<!-- Timeline nodes -->
+<div class="space-y-3 relative before:absolute before:inset-0 before:left-3.5 before:w-0.5 before:bg-court-border">
+<!-- Event 1 -->
+<div class="relative flex items-start gap-3 text-xs">
+<div class="w-7 h-7 rounded-full bg-stadium-emerald text-court-navy flex items-center justify-center font-bold z-10 shrink-0">
+<span class="material-symbols-outlined text-sm" data-icon="sports_soccer">sports_soccer</span>
+</div>
+<div class="flex-1 bg-court-surface-elevated p-2 rounded border border-court-border">
+<div class="flex items-center justify-between">
+<span class="font-headline-sm text-xs font-bold text-text-primary">GOL! Garuda Muda</span>
+<span class="font-label-badge text-stadium-emerald">34'20"</span>
+</div>
+<div class="text-text-muted text-[11px] mt-0.5">#10 Muhammad Ardiansyah (Pivot) assist #7 Revan</div>
+</div>
+</div>
+<!-- Event 2 -->
+<div class="relative flex items-start gap-3 text-xs">
+<div class="w-7 h-7 rounded-full bg-card-yellow text-court-navy flex items-center justify-center font-bold z-10 shrink-0">
+<span class="material-symbols-outlined text-sm" data-icon="warning">warning</span>
+</div>
+<div class="flex-1 bg-court-surface-elevated p-2 rounded border border-court-border">
+<div class="flex items-center justify-between">
+<span class="font-headline-sm text-xs font-bold text-text-primary">Kartu Kuning</span>
+<span class="font-label-badge text-card-yellow">28'11"</span>
+</div>
+<div class="text-text-muted text-[11px] mt-0.5">#4 Fajar Pratama (Bintang Timur) - Pelanggaran Taktikal</div>
+</div>
+</div>
+<!-- Event 3 -->
+<div class="relative flex items-start gap-3 text-xs">
+<div class="w-7 h-7 rounded-full bg-telemetry-cyan text-court-navy flex items-center justify-center font-bold z-10 shrink-0">
+<span class="material-symbols-outlined text-sm" data-icon="swap_horiz">swap_horiz</span>
+</div>
+<div class="flex-1 bg-court-surface-elevated p-2 rounded border border-court-border">
+<div class="flex items-center justify-between">
+<span class="font-headline-sm text-xs font-bold text-text-primary">Power Play Switch</span>
+<span class="font-label-badge text-telemetry-cyan">21'05"</span>
+</div>
+<div class="text-text-muted text-[11px] mt-0.5">BT ganti GK terbang: #8 Rizky Kurniawan masuk</div>
+</div>
+</div>
+</div>
+</div>
+<a class="mt-4 block text-center py-2 bg-court-surface-elevated hover:bg-court-border border border-court-border text-xs font-label-telemetry text-stadium-emerald rounded transition-colors" href="#">
+            Buka Full Operator Control Desk →
+          </a>
+</div>
+</section>
+</main>
+</div>
+<!-- 5. MASTER PEMAIN / QUICK ROSTER DRAWER (Blueprint Required Sub-panel) -->
+<div class="fixed inset-0 z-50 overflow-hidden hidden" id="playerDrawer">
+<!-- Backdrop blur overlay -->
+<div class="absolute inset-0 bg-court-navy/80 backdrop-blur-sm transition-opacity" onclick="togglePlayerDrawer()"></div>
+<div class="fixed inset-y-0 right-0 max-w-full flex pl-10">
+<div class="w-screen max-w-md bg-court-surface border-l border-court-border shadow-2xl flex flex-col justify-between">
+<!-- Drawer Header -->
+<div class="p-6 border-b border-court-border bg-court-surface-elevated/40">
+<div class="flex items-center justify-between">
+<div class="flex items-center gap-2">
+<span class="material-symbols-outlined text-stadium-emerald" data-icon="groups">groups</span>
+<h2 class="font-headline-md text-headline-md font-bold text-text-primary">Roster Pemain Tim</h2>
+</div>
+<button class="p-1 rounded text-text-muted hover:text-text-primary" onclick="togglePlayerDrawer()">
+<span class="material-symbols-outlined" data-icon="close">close</span>
+</button>
+</div>
+<div class="mt-2 text-xs text-text-muted">
+            Klub: <span class="text-stadium-emerald font-bold">Garuda Muda FC</span> • Kategori: U-17 Putra • Total: 12 Pemain
+          </div>
+</div>
+<!-- Drawer Body: Player Schema Cards List -->
+<div class="p-6 overflow-y-auto space-y-3 flex-1">
+<div class="flex items-center justify-between mb-2">
+<span class="font-label-badge text-label-badge text-text-muted uppercase">Line-up &amp; Status Kartu</span>
+<button class="text-xs text-stadium-emerald hover:underline font-label-telemetry">+ Tambah Pemain</button>
+</div>
+<!-- Player Card 1 (Pivot) -->
+<div class="p-3 bg-court-surface-elevated border border-court-border rounded flex items-center justify-between hover:border-stadium-emerald transition-colors">
+<div class="flex items-center gap-3">
+<div class="w-10 h-10 rounded bg-court-navy border border-stadium-emerald/40 overflow-hidden shrink-0">
+<img class="w-full h-full object-cover" data-alt="Dynamic close up sports portrait of an Indonesian teenage male futsal player in a green official jersey, with intense athletic focus under dark stadium lighting and neon green backlight accents." src="https://lh3.googleusercontent.com/aida-public/AB6AXuCvEYmYPmcCfVl4goOjmv8ku7rukzeNECIGf1umWlRzxQuYbQC77qW_kchNVH7Pl5rsNn00vKN4HzOT1yDHgcxi-TOzSa2OUHnqAN86s7-IgDji170RpUoNWNNSCXSz6DXKbc5TxvPvQ9_KnKJMn9r4zMd-GP8n8l9Q8-LzfFylD9ZPXmvFyJUQX1McCFtZbCrS79pMyk3YBRDTGH4NBTzB8qdgmWP9Cy3Lpkaswc7jJKkY2CFOgGgR"/>
+</div>
+<div>
+<div class="flex items-center gap-1.5">
+<span class="font-label-telemetry font-bold text-stadium-emerald text-sm">#10</span>
+<span class="font-body-md text-body-md font-bold text-text-primary">M. Ardiansyah</span>
+</div>
+<div class="flex items-center gap-2 mt-0.5 text-xs">
+<span class="font-label-badge text-label-badge bg-stadium-emerald/15 text-stadium-emerald px-1.5 py-0.5 rounded">PIV (Pivot)</span>
+<span class="text-text-muted font-label-badge">NIK Sah • 16 Thn</span>
+</div>
+</div>
+</div>
+<div class="flex items-center gap-1 text-xs">
+<span class="font-label-badge text-stadium-emerald">AKTIF</span>
+</div>
+</div>
+<!-- Player Card 2 (Goalkeeper) -->
+<div class="p-3 bg-court-surface-elevated border border-court-border rounded flex items-center justify-between hover:border-stadium-emerald transition-colors">
+<div class="flex items-center gap-3">
+<div class="w-10 h-10 rounded bg-court-navy border border-court-border overflow-hidden shrink-0">
+<img class="w-full h-full object-cover" data-alt="Portrait of a young male futsal goalkeeper wearing padded dark goalkeeper jersey and specialized glove straps, illuminated by dramatic blue and neon side lighting in a modern sports arena." src="https://lh3.googleusercontent.com/aida-public/AB6AXuDsfQhBgbFkg6u9fMZ6B5DkLP3pA-U-CBAQy1H5akJCGOJhtiln-LVgTByZzOs5_lzjWwaq9H8UzgPGknroRasrs7D1aqnRNTqwy0SWLIqrVvfZN-c36Z5S5mDO4iCvRypevJHVpuWgPDyy33i58A1CIh6k0v42oUdbx6qjlbIQPOQ9ouwx1pDa_Pc_ksgiMk6AjRkuUdgXKErIQ4qkbgU7X8xf5HJ-JCekcrGBOyl01kFs1HCOrjA3"/>
+</div>
+<div>
+<div class="flex items-center gap-1.5">
+<span class="font-label-telemetry font-bold text-telemetry-cyan text-sm">#01</span>
+<span class="font-body-md text-body-md font-bold text-text-primary">Bagus Prasetyo</span>
+</div>
+<div class="flex items-center gap-2 mt-0.5 text-xs">
+<span class="font-label-badge text-label-badge bg-telemetry-cyan/15 text-telemetry-cyan px-1.5 py-0.5 rounded">GK (Kiper)</span>
+<span class="text-text-muted font-label-badge">Kapten • 17 Thn</span>
+</div>
+</div>
+</div>
+<div class="flex items-center gap-1 text-xs">
+<span class="font-label-badge text-stadium-emerald">AKTIF</span>
+</div>
+</div>
+<!-- Player Card 3 (Flank - Yellow Card) -->
+<div class="p-3 bg-court-surface-elevated border border-court-border rounded flex items-center justify-between hover:border-stadium-emerald transition-colors">
+<div class="flex items-center gap-3">
+<div class="w-10 h-10 rounded bg-court-navy border border-card-yellow/40 overflow-hidden shrink-0">
+<img class="w-full h-full object-cover" data-alt="Portrait photograph of an Indonesian youth futsal flank winger player with short athletic haircut and tactical dark green match kit against an arena floodlit backdrop." src="https://lh3.googleusercontent.com/aida-public/AB6AXuC0QlWrEnk8bK69Qp_OmJXjLXwnirM_gWTrLkpAKuyWjN2Rcl_36QXYNKiG5p3bZyYhmuO_r3ca_UKLhoPcCkdvm9eG8t8HLBYjjDwcDzwcipzJ6sMeNPH-abXMhb9OR_dtuuoArHDlDVs1ucYT2HuwtEnnySDAoeaeC-7Q1blpHHtQYRRnM4CWg4nsHUKhPUsPZeYqrfpYJhBwTwWM9ghYGdhmwBcZPxALoeQCBx3wCV-8AbSlz5nL"/>
+</div>
+<div>
+<div class="flex items-center gap-1.5">
+<span class="font-label-telemetry font-bold text-text-primary text-sm">#07</span>
+<span class="font-body-md text-body-md font-bold text-text-primary">Revan Maulana</span>
+</div>
+<div class="flex items-center gap-2 mt-0.5 text-xs">
+<span class="font-label-badge text-label-badge bg-court-navy text-text-muted px-1.5 py-0.5 rounded border border-court-border">FLA (Flank)</span>
+<span class="text-text-muted font-label-badge">16 Thn</span>
+</div>
+</div>
+</div>
+<div class="flex items-center gap-1.5">
+<span class="w-3 h-4 bg-card-yellow rounded-xs" title="1 Kartu Kuning"></span>
+<span class="font-label-badge text-card-yellow text-xs">1 K</span>
+</div>
+</div>
+<!-- Player Card 4 (Defender / Anchor) -->
+<div class="p-3 bg-court-surface-elevated border border-court-border rounded flex items-center justify-between hover:border-stadium-emerald transition-colors">
+<div class="flex items-center gap-3">
+<div class="w-10 h-10 rounded bg-court-navy border border-court-border overflow-hidden shrink-0">
+<img class="w-full h-full object-cover" data-alt="Close up athletic portrait of a strong teenage futsal defender wearing an official dark green team uniform, focused expression under technical sports stadium arena lighting." src="https://lh3.googleusercontent.com/aida-public/AB6AXuDTgooxyc_yLhIfFYPVqoyuZKjLXJiuvww1gVo7SO9znJ70zveXnH2yR5JG3XG48zz8hBGI-HdTFEuhWDGj1OvpNTrZS61YKytnGwNWKOlp8MmKud2jRPt_gRFC6AQAbqL654a3RQTzYw-DpwjuFNgP47R6Q17RVOT4sKbKIDwwg_rx0390_N_-XuN8y5lzxfDljNin5kOq3MB_291EYBRd3dJ0QzJuXdy1gkRQeo-g5qRrqZSMuI18"/>
+</div>
+<div>
+<div class="flex items-center gap-1.5">
+<span class="font-label-telemetry font-bold text-text-primary text-sm">#05</span>
+<span class="font-body-md text-body-md font-bold text-text-primary">Rio Ferdinand S.</span>
+</div>
+<div class="flex items-center gap-2 mt-0.5 text-xs">
+<span class="font-label-badge text-label-badge bg-court-navy text-text-muted px-1.5 py-0.5 rounded border border-court-border">DEF (Anchor)</span>
+<span class="text-text-muted font-label-badge">17 Thn</span>
+</div>
+</div>
+</div>
+<div class="flex items-center gap-1 text-xs">
+<span class="font-label-badge text-stadium-emerald">AKTIF</span>
+</div>
+</div>
+</div>
+<!-- Drawer Footer Actions -->
+<div class="p-6 border-t border-court-border bg-court-surface-elevated/20 space-y-2">
+<button class="w-full py-2.5 bg-stadium-emerald text-court-navy font-bold rounded text-xs font-body-md flex items-center justify-center gap-2 glow-emerald">
+<span class="material-symbols-outlined text-base" data-icon="id_card">id_card</span>
+            Cetak Kartu Tanda Atlet (ID Card)
+          </button>
+<button class="w-full py-2 border border-court-border text-text-muted hover:text-text-primary text-xs rounded" onclick="togglePlayerDrawer()">
+            Tutup Panel
+          </button>
+</div>
+</div>
+</div>
+</div>
+<!-- 6. FLOATING MODAL: OPERATOR AUTHENTICATION & FORTIFY PORTAL -->
+<div class="fixed inset-0 z-50 flex items-center justify-center p-4 hidden" id="authDrawer">
+<!-- Backdrop overlay -->
+<div class="absolute inset-0 bg-court-navy/85 backdrop-blur-md" onclick="toggleAuthDrawer()"></div>
+<!-- Modal Box -->
+<div class="relative bg-court-surface border border-court-border rounded-lg max-w-md w-full p-6 shadow-2xl z-10 space-y-4">
+<div class="flex items-center justify-between border-b border-court-border pb-3">
+<div class="flex items-center gap-2">
+<div class="w-7 h-7 rounded bg-stadium-emerald/10 border border-stadium-emerald/30 flex items-center justify-center text-stadium-emerald">
+<span class="material-symbols-outlined text-sm" data-icon="lock">lock</span>
+</div>
+<div>
+<h3 class="font-headline-sm text-headline-sm font-bold text-text-primary">Portal Administrator Turnamen</h3>
+<span class="font-label-badge text-label-badge text-stadium-emerald">Laravel Fortify / Livewire Auth</span>
+</div>
+</div>
+<button class="text-text-muted hover:text-text-primary" onclick="toggleAuthDrawer()">
+<span class="material-symbols-outlined" data-icon="close">close</span>
+</button>
+</div>
+<!-- Quick Role Switcher Pill Bar -->
+<div>
+<label class="block font-label-badge text-label-badge text-text-muted uppercase mb-1.5">Pilih Peran Operator</label>
+<div class="grid grid-cols-2 gap-1.5 text-xs font-label-telemetry">
+<button class="p-2 rounded bg-stadium-emerald text-court-navy font-bold flex items-center justify-center gap-1">
+<span class="material-symbols-outlined text-sm" data-icon="admin_panel_settings">admin_panel_settings</span>
+            Super Admin
+          </button>
+<button class="p-2 rounded bg-court-surface-elevated border border-court-border text-text-muted hover:text-text-primary flex items-center justify-center gap-1">
+<span class="material-symbols-outlined text-sm" data-icon="timer">timer</span>
+            Timekeeper Meja
+          </button>
+</div>
+</div>
+<!-- Credentials Form -->
+<div class="space-y-3 pt-1">
+<div>
+<label class="block text-xs font-label-telemetry text-text-muted mb-1">Email / NIP Wasit Resmi</label>
+<input class="w-full bg-court-surface-elevated border border-court-border rounded px-3 py-2 text-xs text-text-primary focus:border-stadium-emerald focus:ring-1 focus:ring-stadium-emerald outline-none" type="text" value="operator.court1@futsalpro.id"/>
+</div>
+<div>
+<div class="flex items-center justify-between text-xs mb-1">
+<label class="font-label-telemetry text-text-muted">Kata Sandi / PIN Meja</label>
+<a class="text-telemetry-cyan hover:underline text-[11px]" href="#">Lupa PIN?</a>
+</div>
+<input class="w-full bg-court-surface-elevated border border-court-border rounded px-3 py-2 text-xs text-text-primary focus:border-stadium-emerald focus:ring-1 focus:ring-stadium-emerald outline-none" type="password" value="••••••••••••"/>
+</div>
+<div class="flex items-center justify-between text-xs pt-1">
+<label class="flex items-center gap-2 cursor-pointer text-text-muted">
+<input checked="" class="rounded border-court-border bg-court-surface text-stadium-emerald focus:ring-stadium-emerald" type="checkbox"/>
+            Ingat Sesi Perangkat Ini
+          </label>
+<span class="font-label-badge text-stadium-emerald flex items-center gap-1">
+<span class="w-1.5 h-1.5 rounded-full bg-stadium-emerald"></span> SSL Verified
+          </span>
+</div>
+</div>
+<!-- Submit & Session Info -->
+<div class="pt-2 space-y-2">
+<button class="w-full py-2.5 bg-stadium-emerald hover:bg-stadium-emerald/90 text-court-navy font-bold rounded text-xs font-headline-sm tracking-wide glow-emerald transition-all flex items-center justify-center gap-2" onclick="toggleAuthDrawer()">
+<span class="material-symbols-outlined text-base" data-icon="login">login</span>
+          Autentikasi &amp; Masuk Terminal
+        </button>
+<p class="text-[11px] text-center text-text-muted font-label-telemetry">
+          Tersambung ke Node WebSocket: <span class="text-text-primary font-semibold">reverb.futsalpro.internal:8080</span>
+</p>
+</div>
+</div>
+</div>
+<!-- VANILLA JS MICRO-INTERACTIONS -->
+<script>
+    function togglePlayerDrawer() {
+      const drawer = document.getElementById('playerDrawer');
+      if (drawer.classList.contains('hidden')) {
+        drawer.classList.remove('hidden');
+      } else {
+        drawer.classList.add('hidden');
+      }
+    }
+
+    function toggleAuthDrawer() {
+      const modal = document.getElementById('authDrawer');
+      if (modal.classList.contains('hidden')) {
+        modal.classList.remove('hidden');
+      } else {
+        modal.classList.add('hidden');
+      }
+    }
+  </script>
+</body></html>
