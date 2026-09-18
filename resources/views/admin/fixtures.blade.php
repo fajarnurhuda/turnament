@@ -1,6 +1,6 @@
 @extends('layouts.app')
 
-@section('title', 'Master Jadwal & Fixture Pertandingan - FUTSAL PRO')
+@section('title', 'Master Jadwal & Fixture Pertandingan - LDII CUP TANJUNG PINANG')
 
 @section('content')
     <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8 space-y-8" x-data="{ createModal: false, editModal: false, editData: {}, editUrl: '', selectedVenueId: '' }">
@@ -133,8 +133,12 @@
                         <!-- Home Team -->
                         <div class="md:col-span-4 flex items-center gap-3">
                             <div
-                                class="w-10 h-10 rounded-lg bg-court-navy border border-court-border flex items-center justify-center font-headline font-bold text-sm text-stadium-emerald flex-shrink-0">
-                                {{ $m->homeTeam->initials }}
+                                class="w-10 h-10 rounded-lg bg-court-navy border border-court-border flex items-center justify-center font-headline font-bold text-sm text-stadium-emerald flex-shrink-0 overflow-hidden p-1">
+                                @if ($m->homeTeam->logo)
+                                    <img src="{{ $m->homeTeam->logo_url }}" alt="{{ $m->homeTeam->name }}" class="w-full h-full object-contain">
+                                @else
+                                    {{ $m->homeTeam->initials }}
+                                @endif
                             </div>
                             <div>
                                 <h3 class="font-headline font-bold text-base text-text-primary">{{ $m->homeTeam->name }}
@@ -173,8 +177,12 @@
                                 <span class="text-[10px] font-mono text-text-muted">TANDANG (AWAY)</span>
                             </div>
                             <div
-                                class="w-10 h-10 rounded-lg bg-court-navy border border-court-border flex items-center justify-center font-headline font-bold text-sm text-telemetry-cyan flex-shrink-0">
-                                {{ $m->awayTeam->initials }}
+                                class="w-10 h-10 rounded-lg bg-court-navy border border-court-border flex items-center justify-center font-headline font-bold text-sm text-telemetry-cyan flex-shrink-0 overflow-hidden p-1">
+                                @if ($m->awayTeam->logo)
+                                    <img src="{{ $m->awayTeam->logo_url }}" alt="{{ $m->awayTeam->name }}" class="w-full h-full object-contain">
+                                @else
+                                    {{ $m->awayTeam->initials }}
+                                @endif
                             </div>
                         </div>
                     </div>
@@ -249,8 +257,9 @@
 
         @if (auth()->user()->isAdmin())
             <!-- MODAL CREATE FIXTURE (WIDE LAYOUT MAX-W-4XL) -->
+            <template x-teleport="body">
             <div x-show="createModal" x-cloak
-                class="fixed inset-0 z-50 bg-black/80 backdrop-blur-sm flex items-center justify-center p-4">
+                class="fixed inset-0 z-[100] bg-black/80 backdrop-blur-sm flex items-center justify-center p-4">
                 <div
                     class="bg-court-surface rounded-2xl border border-court-border max-w-4xl w-full p-6 sm:p-8 space-y-6 shadow-2xl max-h-[90vh] overflow-y-auto">
                     <!-- Modal Header -->
@@ -562,10 +571,12 @@
                     </form>
                 </div>
             </div>
+            </template>
 
             <!-- MODAL EDIT JADWAL & VENUE (WIDE LAYOUT MAX-W-4XL) -->
+            <template x-teleport="body">
             <div x-show="editModal" x-cloak
-                class="fixed inset-0 z-50 bg-black/80 backdrop-blur-sm flex items-center justify-center p-4">
+                class="fixed inset-0 z-[100] bg-black/80 backdrop-blur-sm flex items-center justify-center p-4">
                 <div
                     class="bg-court-surface rounded-2xl border border-court-border max-w-4xl w-full p-6 sm:p-8 space-y-6 shadow-2xl max-h-[90vh] overflow-y-auto">
                     <!-- Modal Header -->
@@ -849,6 +860,7 @@
                     </form>
                 </div>
             </div>
+            </template>
         @endif
 
     </div>

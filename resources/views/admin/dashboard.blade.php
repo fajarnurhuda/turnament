@@ -1,6 +1,6 @@
 @extends('layouts.app')
 
-@section('title', 'Admin Dashboard & Master Data Management - FUTSAL PRO')
+@section('title', 'Admin Dashboard & Master Data Management - LDII CUP TANJUNG PINANG')
 
 @section('content')
 <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8 space-y-8" 
@@ -20,6 +20,9 @@
         editReferee: null,
         categoryFormUrl: '{{ route('admin.categories.store') }}',
         categoryMethod: 'POST',
+        teamFormUrl: '{{ route('admin.teams.store') }}',
+        teamMethod: 'POST',
+        logoPreview: null,
         venueFormUrl: '{{ route('admin.venues.store') }}',
         venueMethod: 'POST',
         operatorFormUrl: '{{ route('admin.operators.store') }}',
@@ -137,7 +140,7 @@
                     <span class="material-symbols-outlined text-sm">add_circle</span>
                     TAMBAH KATEGORI BARU
                 </button>
-                <button x-show="tab === 'teams'" @click="teamModal = true; editTeam = null" class="px-4 py-2 rounded text-xs font-headline font-bold bg-stadium-emerald hover:bg-stadium-emerald/90 text-court-navy transition-all shadow-[0_0_12px_rgba(0,255,135,0.2)] flex items-center gap-1.5">
+                <button x-show="tab === 'teams'" @click="editTeam = null; teamFormUrl = '{{ route('admin.teams.store') }}'; teamMethod = 'POST'; logoPreview = null; teamModal = true" class="px-4 py-2 rounded text-xs font-headline font-bold bg-stadium-emerald hover:bg-stadium-emerald/90 text-court-navy transition-all shadow-[0_0_12px_rgba(0,255,135,0.2)] flex items-center gap-1.5">
                     <span class="material-symbols-outlined text-sm">add_circle</span>
                     TAMBAH TIM BARU
                 </button>
@@ -243,35 +246,55 @@
         <div x-show="tab === 'teams'" class="p-6">
             <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
                 @forelse($teams as $tm)
-                    <div class="p-5 rounded-xl bg-court-surface-elevated border border-court-border space-y-4 hover:border-court-border/80 transition-all">
-                        <div class="flex items-start justify-between">
-                            <div class="flex items-center gap-3">
-                                <div class="w-12 h-12 rounded-lg bg-court-navy border border-court-border flex items-center justify-center font-headline font-black text-base text-stadium-emerald">
-                                    {{ $tm->initials }}
+                    <div class="p-5 rounded-xl bg-court-surface-elevated border border-court-border space-y-4 hover:border-court-border/80 transition-all flex flex-col justify-between">
+                        <div class="space-y-3">
+                            <div class="flex items-start justify-between">
+                                <div class="flex items-center gap-3">
+                                    <div class="w-12 h-12 rounded-lg bg-court-navy border border-court-border flex items-center justify-center font-headline font-black text-base text-stadium-emerald flex-shrink-0 overflow-hidden p-1">
+                                        @if($tm->logo)
+                                            <img src="{{ $tm->logo_url }}" alt="{{ $tm->name }}" class="w-full h-full object-contain">
+                                        @else
+                                            {{ $tm->initials }}
+                                        @endif
+                                    </div>
+                                    <div>
+                                        <h3 class="font-headline font-bold text-base text-text-primary">{{ $tm->name }}</h3>
+                                        <span class="text-xs font-mono text-telemetry-cyan">{{ $tm->code ?? '-' }} &bull; {{ $tm->category->name }}</span>
+                                    </div>
                                 </div>
-                                <div>
-                                    <h3 class="font-headline font-bold text-base text-text-primary">{{ $tm->name }}</h3>
-                                    <span class="text-xs font-mono text-telemetry-cyan">{{ $tm->code ?? '-' }} &bull; {{ $tm->category->name }}</span>
-                                </div>
+                            </div>
+
+                            <div class="text-xs font-mono text-text-muted space-y-1 py-2 border-y border-court-border/40">
+                                <p>Manajer: <strong class="text-text-primary">{{ $tm->manager_name ?? '-' }}</strong></p>
+                                <p>Kontak: <strong class="text-text-primary">{{ $tm->manager_contact ?? '-' }}</strong></p>
+                                <p>Jumlah Pemain Terdaftar: <strong class="text-stadium-emerald">{{ $tm->players_count }} Pemain</strong></p>
                             </div>
                         </div>
 
-                        <div class="text-xs font-mono text-text-muted space-y-1 py-2 border-y border-court-border/40">
-                            <p>Manajer: <strong class="text-text-primary">{{ $tm->manager_name ?? '-' }}</strong></p>
-                            <p>Kontak: <strong class="text-text-primary">{{ $tm->manager_contact ?? '-' }}</strong></p>
-                            <p>Jumlah Pemain Terdaftar: <strong class="text-stadium-emerald">{{ $tm->players_count }} Pemain</strong></p>
-                        </div>
-
-                        <div class="flex items-center justify-between pt-1">
+                        <div class="flex items-center justify-between pt-1 border-t border-court-border/60">
                             <a href="{{ route('admin.dashboard', ['category_id' => $selectedCategoryId, 'team_id' => $tm->id]) }}" @click="tab = 'players'" class="text-xs font-mono text-stadium-emerald hover:underline">
                                 Lihat Pemain &rarr;
                             </a>
 
                             <div class="flex items-center gap-2">
-                                <form action="{{ route('admin.teams.destroy', $tm->id) }}" method="POST" onsubmit="return confirm('Hapus tim {{ $tm->name }}?')">
+                                <button type="button" @click="editTeam = {
+                                    id: {{ $tm->id }},
+                                    category_id: {{ $tm->category_id }},
+                                    name: '{{ addslashes($tm->name) }}',
+                                    code: '{{ addslashes($tm->code ?? '') }}',
+                                    manager_name: '{{ addslashes($tm->manager_name ?? '') }}',
+                                    manager_contact: '{{ addslashes($tm->manager_contact ?? '') }}',
+                                    logo_url: '{{ $tm->logo_url ?? '' }}'
+                                }; teamFormUrl = '/admin/teams/{{ $tm->id }}'; teamMethod = 'PUT'; logoPreview = '{{ $tm->logo_url ?? '' }}'; teamModal = true"
+                                class="px-2.5 py-1 rounded bg-court-navy hover:bg-court-border text-telemetry-cyan font-bold text-xs font-mono transition-colors flex items-center gap-1">
+                                    <span class="material-symbols-outlined text-xs">edit</span>
+                                    Edit
+                                </button>
+
+                                <form action="{{ route('admin.teams.destroy', $tm->id) }}" method="POST" onsubmit="return confirm('Hapus tim {{ addslashes($tm->name) }}?')">
                                     @csrf
                                     @method('DELETE')
-                                    <button type="submit" class="p-1.5 rounded bg-court-navy hover:bg-card-red/20 text-text-muted hover:text-card-red border border-court-border transition-colors">
+                                    <button type="submit" class="p-1.5 rounded bg-court-navy hover:bg-card-red/20 text-text-muted hover:text-card-red border border-court-border transition-colors" title="Hapus Tim {{ $tm->name }}">
                                         <span class="material-symbols-outlined text-sm">delete</span>
                                     </button>
                                 </form>
@@ -568,61 +591,106 @@
         </div>
     </div>
 
-    <!-- MODAL 1: CREATE TEAM -->
-    <div x-show="teamModal" x-cloak class="fixed inset-0 z-50 bg-black/80 backdrop-blur-sm flex items-center justify-center p-4">
-        <div class="bg-court-surface rounded-xl border border-court-border max-w-md w-full p-6 space-y-4 shadow-2xl">
+    <!-- MODAL 1: CREATE / EDIT TEAM -->
+    <template x-teleport="body">
+    <div x-show="teamModal" x-cloak class="fixed inset-0 z-[100] bg-black/80 backdrop-blur-sm flex items-center justify-center p-4">
+        <div class="bg-court-surface rounded-xl border border-court-border max-w-lg w-full p-6 space-y-4 shadow-2xl">
             <div class="flex items-center justify-between pb-3 border-b border-court-border">
-                <h3 class="font-headline font-bold text-base text-text-primary uppercase">Pendaftaran Tim Baru</h3>
+                <h3 class="font-headline font-bold text-base text-stadium-emerald uppercase flex items-center gap-2">
+                    <span class="material-symbols-outlined text-lg">shield</span>
+                    <span x-text="editTeam ? 'Edit Data Tim Futsal' : 'Pendaftaran Tim Baru'">Pendaftaran Tim Baru</span>
+                </h3>
                 <button @click="teamModal = false" class="text-text-muted hover:text-text-primary">
                     <span class="material-symbols-outlined">close</span>
                 </button>
             </div>
 
-            <form action="{{ route('admin.teams.store') }}" method="POST" class="space-y-4 text-xs font-mono">
+            <form :action="teamFormUrl" method="POST" enctype="multipart/form-data" class="space-y-4 text-xs font-mono">
                 @csrf
+                <template x-if="teamMethod === 'PUT'">
+                    <input type="hidden" name="_method" value="PUT">
+                </template>
+
                 <div class="space-y-1">
-                    <label class="block text-text-muted uppercase">Kategori Turnamen</label>
-                    <select name="category_id" required class="w-full py-2 px-3 rounded bg-court-navy border border-court-border text-text-primary focus:border-stadium-emerald">
+                    <label class="block text-text-muted uppercase font-bold">Kategori Turnamen</label>
+                    <select name="category_id" required class="w-full py-2 px-3 rounded bg-court-navy border border-court-border text-text-primary focus:border-stadium-emerald font-sans">
                         @foreach($categories as $c)
-                            <option value="{{ $c->id }}" {{ $selectedCategoryId == $c->id ? 'selected' : '' }}>{{ $c->name }}</option>
+                            <option value="{{ $c->id }}" :selected="editTeam ? editTeam.category_id == {{ $c->id }} : ({{ $selectedCategoryId == $c->id ? 'true' : 'false' }})">{{ $c->name }}</option>
                         @endforeach
                     </select>
                 </div>
 
-                <div class="space-y-1">
-                    <label class="block text-text-muted uppercase">Nama Tim Futsal</label>
-                    <input type="text" name="name" required placeholder="Contoh: Garuda Futsal Academy" class="w-full py-2 px-3 rounded bg-court-navy border border-court-border text-text-primary focus:border-stadium-emerald font-sans">
+                <div class="grid grid-cols-1 sm:grid-cols-3 gap-3">
+                    <div class="sm:col-span-2 space-y-1">
+                        <label class="block text-text-muted uppercase font-bold">Nama Tim Futsal</label>
+                        <input type="text" name="name" :value="editTeam ? editTeam.name : ''" required placeholder="Contoh: Garuda Futsal Academy" class="w-full py-2 px-3 rounded bg-court-navy border border-court-border text-text-primary focus:border-stadium-emerald font-sans">
+                    </div>
+
+                    <div class="space-y-1">
+                        <label class="block text-text-muted uppercase font-bold">Kode Singkatan</label>
+                        <input type="text" name="code" maxlength="5" :value="editTeam ? editTeam.code : ''" placeholder="GFA" class="w-full py-2 px-3 rounded bg-court-navy border border-court-border text-text-primary focus:border-stadium-emerald uppercase">
+                    </div>
                 </div>
 
-                <div class="space-y-1">
-                    <label class="block text-text-muted uppercase">Kode Singkatan (Maks 5 Karakter)</label>
-                    <input type="text" name="code" maxlength="5" placeholder="Contoh: GFA" class="w-full py-2 px-3 rounded bg-court-navy border border-court-border text-text-primary focus:border-stadium-emerald uppercase">
+                <!-- Logo Upload Section -->
+                <div class="space-y-2 p-3 rounded-lg bg-court-navy/80 border border-court-border">
+                    <label class="block text-text-primary uppercase font-bold flex items-center justify-between">
+                        <span class="flex items-center gap-1.5 text-stadium-emerald">
+                            <span class="material-symbols-outlined text-sm">image</span>
+                            Logo Tim (Opsional)
+                        </span>
+                        <span class="text-[10px] text-text-muted lowercase">png, jpg, webp, svg (maks 2MB)</span>
+                    </label>
+
+                    <div class="flex items-center gap-4">
+                        <!-- Preview Box -->
+                        <div class="w-14 h-14 rounded-lg bg-court-surface border border-court-border flex items-center justify-center overflow-hidden flex-shrink-0 p-1">
+                            <template x-if="logoPreview">
+                                <img :src="logoPreview" alt="Logo Preview" class="w-full h-full object-contain">
+                            </template>
+                            <template x-if="!logoPreview">
+                                <span class="material-symbols-outlined text-2xl text-text-muted/50">shield</span>
+                            </template>
+                        </div>
+
+                        <!-- File Input -->
+                        <div class="flex-1 space-y-1">
+                            <input type="file" name="logo" accept="image/png,image/jpeg,image/webp,image/svg+xml"
+                                   @change="if ($event.target.files && $event.target.files[0]) { logoPreview = URL.createObjectURL($event.target.files[0]) }"
+                                   class="w-full text-[11px] text-text-muted file:mr-3 file:py-1.5 file:px-3 file:rounded file:border-0 file:text-xs file:font-mono file:font-bold file:bg-stadium-emerald/20 file:text-stadium-emerald hover:file:bg-stadium-emerald/30 cursor-pointer">
+                            <p class="text-[10px] text-text-muted">Logo akan otomatis muncul di seluruh tampilan publik, jadwal, klasemen, dan scoreboard.</p>
+                        </div>
+                    </div>
                 </div>
 
-                <div class="space-y-1">
-                    <label class="block text-text-muted uppercase">Nama Manajer / Pelatih</label>
-                    <input type="text" name="manager_name" placeholder="Contoh: Coach Hendra" class="w-full py-2 px-3 rounded bg-court-navy border border-court-border text-text-primary focus:border-stadium-emerald font-sans">
+                <div class="grid grid-cols-1 sm:grid-cols-2 gap-3">
+                    <div class="space-y-1">
+                        <label class="block text-text-muted uppercase font-bold">Nama Manajer / Pelatih</label>
+                        <input type="text" name="manager_name" :value="editTeam ? editTeam.manager_name : ''" placeholder="Contoh: Coach Hendra" class="w-full py-2 px-3 rounded bg-court-navy border border-court-border text-text-primary focus:border-stadium-emerald font-sans">
+                    </div>
+
+                    <div class="space-y-1">
+                        <label class="block text-text-muted uppercase font-bold">Nomor Kontak / WhatsApp</label>
+                        <input type="text" name="manager_contact" :value="editTeam ? editTeam.manager_contact : ''" placeholder="08123456789" class="w-full py-2 px-3 rounded bg-court-navy border border-court-border text-text-primary focus:border-stadium-emerald">
+                    </div>
                 </div>
 
-                <div class="space-y-1">
-                    <label class="block text-text-muted uppercase">Nomor Kontak / WhatsApp</label>
-                    <input type="text" name="manager_contact" placeholder="08123456789" class="w-full py-2 px-3 rounded bg-court-navy border border-court-border text-text-primary focus:border-stadium-emerald">
-                </div>
-
-                <div class="pt-4 flex items-center justify-end gap-3">
+                <div class="pt-4 flex items-center justify-end gap-3 border-t border-court-border/60">
                     <button type="button" @click="teamModal = false" class="px-4 py-2 rounded bg-court-navy hover:bg-court-border text-text-muted font-bold transition-colors">
                         BATAL
                     </button>
                     <button type="submit" class="px-5 py-2 rounded bg-stadium-emerald hover:bg-stadium-emerald/90 text-court-navy font-headline font-bold uppercase transition-all shadow-[0_0_12px_rgba(0,255,135,0.3)]">
-                        SIMPAN TIM
+                        <span x-text="editTeam ? 'PERBARUI TIM' : 'SIMPAN TIM'">SIMPAN TIM</span>
                     </button>
                 </div>
             </form>
         </div>
     </div>
+    </template>
 
     <!-- MODAL 2: CREATE PLAYER -->
-    <div x-show="playerModal" x-cloak class="fixed inset-0 z-50 bg-black/80 backdrop-blur-sm flex items-center justify-center p-4">
+    <template x-teleport="body">
+    <div x-show="playerModal" x-cloak class="fixed inset-0 z-[100] bg-black/80 backdrop-blur-sm flex items-center justify-center p-4">
         <div class="bg-court-surface rounded-xl border border-court-border max-w-md w-full p-6 space-y-4 shadow-2xl">
             <div class="flex items-center justify-between pb-3 border-b border-court-border">
                 <h3 class="font-headline font-bold text-base text-text-primary uppercase">Pendaftaran Pemain Skuad</h3>
@@ -680,9 +748,11 @@
             </form>
         </div>
     </div>
+    </template>
 
     <!-- MODAL 3: CREATE / EDIT CATEGORY -->
-    <div x-show="categoryModal" x-cloak class="fixed inset-0 z-50 bg-black/80 backdrop-blur-sm flex items-center justify-center p-4">
+    <template x-teleport="body">
+    <div x-show="categoryModal" x-cloak class="fixed inset-0 z-[100] bg-black/80 backdrop-blur-sm flex items-center justify-center p-4">
         <div class="bg-court-surface rounded-xl border border-court-border max-w-md w-full p-6 space-y-4 shadow-2xl">
             <div class="flex items-center justify-between pb-3 border-b border-court-border">
                 <h3 class="font-headline font-bold text-base text-stadium-emerald uppercase flex items-center gap-2">
@@ -721,9 +791,11 @@
             </form>
         </div>
     </div>
+    </template>
 
     <!-- MODAL 4: CREATE / EDIT VENUE -->
-    <div x-show="venueModal" x-cloak class="fixed inset-0 z-50 bg-black/80 backdrop-blur-sm flex items-center justify-center p-4">
+    <template x-teleport="body">
+    <div x-show="venueModal" x-cloak class="fixed inset-0 z-[100] bg-black/80 backdrop-blur-sm flex items-center justify-center p-4">
         <div class="bg-court-surface rounded-xl border border-court-border max-w-lg w-full p-6 space-y-4 shadow-2xl">
             <div class="flex items-center justify-between pb-3 border-b border-court-border">
                 <h3 class="font-headline font-bold text-base text-stadium-emerald uppercase flex items-center gap-2">
@@ -783,9 +855,11 @@
             </form>
         </div>
     </div>
+    </template>
 
     <!-- MODAL 5: CREATE / EDIT OPERATOR WASIT MEJA -->
-    <div x-show="operatorModal" x-cloak class="fixed inset-0 z-50 bg-black/80 backdrop-blur-sm flex items-center justify-center p-4">
+    <template x-teleport="body">
+    <div x-show="operatorModal" x-cloak class="fixed inset-0 z-[100] bg-black/80 backdrop-blur-sm flex items-center justify-center p-4">
         <div class="bg-court-surface rounded-xl border border-court-border max-w-md w-full p-6 space-y-4 shadow-2xl">
             <div class="flex items-center justify-between pb-3 border-b border-court-border">
                 <h3 class="font-headline font-bold text-base text-card-yellow uppercase flex items-center gap-2" x-text="editOperator ? 'Edit Akun Wasit Meja' : 'Pendaftaran Operator Baru'">
@@ -838,9 +912,11 @@
             </form>
         </div>
     </div>
+    </template>
 
     <!-- MODAL 6: CREATE / EDIT WASIT LAPANGAN -->
-    <div x-show="refereeModal" x-cloak class="fixed inset-0 z-50 bg-black/80 backdrop-blur-sm flex items-center justify-center p-4">
+    <template x-teleport="body">
+    <div x-show="refereeModal" x-cloak class="fixed inset-0 z-[100] bg-black/80 backdrop-blur-sm flex items-center justify-center p-4">
         <div class="bg-court-surface rounded-xl border border-court-border max-w-md w-full p-6 space-y-4 shadow-2xl">
             <div class="flex items-center justify-between pb-3 border-b border-court-border">
                 <h3 class="font-headline font-bold text-base text-stadium-emerald uppercase flex items-center gap-2" x-text="editReferee ? 'Edit Data Wasit Lapangan' : 'Pendaftaran Wasit Lapangan Baru'">
@@ -900,6 +976,7 @@
             </form>
         </div>
     </div>
+    </template>
 
 </div>
 @endsection

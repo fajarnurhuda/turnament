@@ -442,8 +442,12 @@
                     <h2 class="text-2xl sm:text-3xl font-headline font-black text-text-primary">{{ $match->homeTeam->name }}</h2>
                     <span class="text-xs font-mono text-stadium-emerald">KANDANG (HOME)</span>
                 </div>
-                <div class="w-20 h-20 rounded-xl bg-court-surface-elevated border border-court-border flex items-center justify-center font-headline font-black text-2xl text-stadium-emerald shadow-inner order-1 md:order-2 flex-shrink-0">
-                    {{ $match->homeTeam->initials }}
+                <div class="w-20 h-20 rounded-xl bg-court-surface-elevated border border-court-border flex items-center justify-center font-headline font-black text-2xl text-stadium-emerald shadow-inner order-1 md:order-2 flex-shrink-0 overflow-hidden p-2">
+                    @if($match->homeTeam->logo)
+                        <img src="{{ $match->homeTeam->logo_url }}" alt="{{ $match->homeTeam->name }}" class="w-full h-full object-contain">
+                    @else
+                        {{ $match->homeTeam->initials }}
+                    @endif
                 </div>
             </div>
 
@@ -472,8 +476,12 @@
 
             <!-- Away Team -->
             <div class="md:col-span-4 flex flex-col md:flex-row items-center justify-start gap-4">
-                <div class="w-20 h-20 rounded-xl bg-court-surface-elevated border border-court-border flex items-center justify-center font-headline font-black text-2xl text-telemetry-cyan shadow-inner flex-shrink-0">
-                    {{ $match->awayTeam->initials }}
+                <div class="w-20 h-20 rounded-xl bg-court-surface-elevated border border-court-border flex items-center justify-center font-headline font-black text-2xl text-telemetry-cyan shadow-inner flex-shrink-0 overflow-hidden p-2">
+                    @if($match->awayTeam->logo)
+                        <img src="{{ $match->awayTeam->logo_url }}" alt="{{ $match->awayTeam->name }}" class="w-full h-full object-contain">
+                    @else
+                        {{ $match->awayTeam->initials }}
+                    @endif
                 </div>
                 <div class="text-center md:text-left">
                     <h2 class="text-2xl sm:text-3xl font-headline font-black text-text-primary">{{ $match->awayTeam->name }}</h2>
@@ -654,7 +662,8 @@
     </div>
 
     <!-- MODAL 1: CATAT GOL -->
-    <div x-show="goalModal" x-cloak class="fixed inset-0 z-50 bg-black/80 backdrop-blur-sm flex items-center justify-center p-4">
+    <template x-teleport="body">
+    <div x-show="goalModal" x-cloak class="fixed inset-0 z-[100] bg-black/80 backdrop-blur-sm flex items-center justify-center p-4">
         <div class="bg-court-surface rounded-xl border border-court-border max-w-md w-full p-6 space-y-4 shadow-2xl">
             <div class="flex items-center justify-between pb-3 border-b border-court-border">
                 <h3 class="font-headline font-bold text-base text-stadium-emerald uppercase flex items-center gap-2">
@@ -747,9 +756,11 @@
             </form>
         </div>
     </div>
+    </template>
 
     <!-- MODAL 2: CATAT KARTU KUNING / MERAH -->
-    <div x-show="cardModal" x-cloak class="fixed inset-0 z-50 bg-black/80 backdrop-blur-sm flex items-center justify-center p-4">
+    <template x-teleport="body">
+    <div x-show="cardModal" x-cloak class="fixed inset-0 z-[100] bg-black/80 backdrop-blur-sm flex items-center justify-center p-4">
         <div class="bg-court-surface rounded-xl border border-court-border max-w-md w-full p-6 space-y-4 shadow-2xl">
             <div class="flex items-center justify-between pb-3 border-b border-court-border">
                 <h3 class="font-headline font-bold text-base text-card-yellow uppercase flex items-center gap-2">
@@ -830,9 +841,11 @@
             </form>
         </div>
     </div>
+    </template>
 
     <!-- MODAL 3: GOL BUNUH DIRI -->
-    <div x-show="ownGoalModal" x-cloak class="fixed inset-0 z-50 bg-black/80 backdrop-blur-sm flex items-center justify-center p-4">
+    <template x-teleport="body">
+    <div x-show="ownGoalModal" x-cloak class="fixed inset-0 z-[100] bg-black/80 backdrop-blur-sm flex items-center justify-center p-4">
         <div class="bg-court-surface rounded-xl border border-court-border max-w-md w-full p-6 space-y-4 shadow-2xl">
             <div class="flex items-center justify-between pb-3 border-b border-court-border">
                 <h3 class="font-headline font-bold text-base text-card-red uppercase flex items-center gap-2">
@@ -878,9 +891,11 @@
             </form>
         </div>
     </div>
+    </template>
 
     <!-- MODAL 4: MANUAL SCORE OVERRIDE -->
-    <div x-show="scoreModal" x-cloak class="fixed inset-0 z-50 bg-black/80 backdrop-blur-sm flex items-center justify-center p-4">
+    <template x-teleport="body">
+    <div x-show="scoreModal" x-cloak class="fixed inset-0 z-[100] bg-black/80 backdrop-blur-sm flex items-center justify-center p-4">
         <div class="bg-court-surface rounded-xl border border-court-border max-w-sm w-full p-6 space-y-4 shadow-2xl">
             <div class="flex items-center justify-between pb-3 border-b border-court-border">
                 <h3 class="font-headline font-bold text-base text-text-primary uppercase">Koreksi Skor Manual</h3>
@@ -913,6 +928,7 @@
             </form>
         </div>
     </div>
+    </template>
 
 </div>
 @endsection

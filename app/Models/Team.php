@@ -46,6 +46,22 @@ class Team extends Model
     }
 
     /**
+     * Helper to get full logo URL.
+     */
+    public function getLogoUrlAttribute(): ?string
+    {
+        if (! $this->logo) {
+            return null;
+        }
+
+        if (str_starts_with($this->logo, 'http://') || str_starts_with($this->logo, 'https://')) {
+            return $this->logo;
+        }
+
+        return asset('storage/'.$this->logo);
+    }
+
+    /**
      * Helper to get a team badge initials if logo is empty.
      */
     public function getInitialsAttribute(): string

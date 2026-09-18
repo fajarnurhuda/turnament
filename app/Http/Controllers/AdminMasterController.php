@@ -12,6 +12,7 @@ use App\Models\Venue;
 use Illuminate\Http\RedirectResponse;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Hash;
+use Illuminate\Support\Facades\Storage;
 use Illuminate\Support\Str;
 use Illuminate\Validation\Rule;
 use Illuminate\View\View;
@@ -132,9 +133,14 @@ class AdminMasterController extends Controller
             'category_id' => ['required', 'exists:categories,id'],
             'name' => ['required', 'string', 'max:255'],
             'code' => ['nullable', 'string', 'max:10'],
+            'logo' => ['nullable', 'image', 'mimes:png,jpg,jpeg,webp,svg', 'max:2048'],
             'manager_name' => ['nullable', 'string', 'max:255'],
             'manager_contact' => ['nullable', 'string', 'max:50'],
         ]);
+
+        if ($request->hasFile('logo')) {
+            $validated['logo'] = $request->file('logo')->store('teams', 'public');
+        }
 
         Team::create($validated);
 
@@ -149,9 +155,17 @@ class AdminMasterController extends Controller
             'category_id' => ['required', 'exists:categories,id'],
             'name' => ['required', 'string', 'max:255'],
             'code' => ['nullable', 'string', 'max:10'],
+            'logo' => ['nullable', 'image', 'mimes:png,jpg,jpeg,webp,svg', 'max:2048'],
             'manager_name' => ['nullable', 'string', 'max:255'],
             'manager_contact' => ['nullable', 'string', 'max:50'],
         ]);
+
+        if ($request->hasFile('logo')) {
+            if ($team->logo && Storage::disk('public')->exists($team->logo)) {
+                Storage::disk('public')->delete($team->logo);
+            }
+            $validated['logo'] = $request->file('logo')->store('teams', 'public');
+        }
 
         $team->update($validated);
 
@@ -161,6 +175,11 @@ class AdminMasterController extends Controller
     public function destroyTeam(int $id): RedirectResponse
     {
         $team = Team::findOrFail($id);
+
+        if ($team->logo && Storage::disk('public')->exists($team->logo)) {
+            Storage::disk('public')->delete($team->logo);
+        }
+
         $team->delete();
 
         return back()->with('success', 'Tim futsal berhasil dihapus.');

@@ -11,6 +11,8 @@ use App\Models\Venue;
 use App\Services\TournamentService;
 use Database\Seeders\TournamentSeeder;
 use Illuminate\Foundation\Testing\RefreshDatabase;
+use Illuminate\Http\UploadedFile;
+use Illuminate\Support\Facades\Storage;
 use Tests\TestCase;
 
 class TournamentFeatureTest extends TestCase
@@ -31,7 +33,8 @@ class TournamentFeatureTest extends TestCase
         $response = $this->get('/');
 
         $response->assertStatus(200);
-        $response->assertSee('FUTSAL PRO CONTROL');
+        $response->assertSee('LDII CUP');
+        $response->assertSee('TANJUNG PINANG');
         $response->assertSee('Fan Center');
     }
 
@@ -681,5 +684,115 @@ class TournamentFeatureTest extends TestCase
         $lastDeleteResponse = $this->actingAs($admin)->delete(route('admin.categories.destroy', $lastCategory->id));
         $lastDeleteResponse->assertSessionHas('error');
         $this->assertDatabaseHas('categories', ['id' => $lastCategory->id]);
+    }
+
+    /**
+     * Test team logo upload, update, deletion, and public rendering.
+     */
+    public function test_team_logo_upload_management_and_public_rendering(): void
+    {
+        Storage::fake('public');
+        $admin = User::where('role', 'admin')->first();
+        $category = Category::first();
+
+        // 1. Create team with logo upload
+        $logoFile = UploadedFile::fake()->image('my_team_logo.png', 200, 200);
+        $response = $this->actingAs($admin)->post(route('admin.teams.store'), [
+            'category_id' => $category->id,
+            'name' => 'Bintang Timur FC',
+            'code' => 'BTF',
+            'manager_name' => 'Coach Budi',
+            'manager_contact' => '08123456789',
+            'logo' => $logoFile,
+        ]);
+
+        $response->assertRedirect();
+        $team = Team::where('name', 'Bintang Timur FC')->first();
+        $this->assertNotNull($team);
+        $this->assertNotNull($team->logo);
+        Storage::disk('public')->assertExists($team->logo);
+        $this->assertStringContainsString('storage/teams/', $team->logo_url);
+
+        // 2. Public fan center and match display
+        $match = GameMatch::where('category_id', $category->id)->first();
+        $match->update(['home_team_id' => $team->id]);
+
+        $publicResponse = $this->get('/');
+        $publicResponse->assertStatus(200);
+        $publicResponse->assertSee($team->logo_url);
+
+        $detailResponse = $this->get(route('matches.show', $match->id));
+        $detailResponse->assertStatus(200);
+        $detailResponse->assertSee($team->logo_url);
+
+        // 3. Update team with a new logo
+        $oldLogoPath = $team->logo;
+        $newLogoFile = UploadedFile::fake()->image('updated_logo.png', 300, 300);
+        $updateResponse = $this->actingAs($admin)->put(route('admin.teams.update', $team->id), [
+            'category_id' => $category->id,
+            'name' => 'Bintang Timur FC Reborn',
+            'code' => 'BTR',
+            'logo' => $newLogoFile,
+        ]);
+
+        $updateResponse->assertRedirect();
+        $team->refresh();
+        $this->assertNotEquals($oldLogoPath, $team->logo);
+        Storage::disk('public')->assertMissing($oldLogoPath);
+        Storage::disk('public')->assertExists($team->logo);
+
+        // 4. Delete team cleans up logo from storage
+        $currentLogoPath = $team->logo;
+        $deleteResponse = $this->actingAs($admin)->delete(route('admin.teams.destroy', $team->id));
+        $deleteResponse->assertRedirect();
+        $this->assertDatabaseMissing('teams', ['id' => $team->id]);
+        Storage::disk('public')->assertMissing($currentLogoPath);
+    }
+
+    /**
+     * Test captcha endpoint returns valid SVG and sets session.
+     */
+    public function test_captcha_endpoint_returns_svg_and_sets_session(): void
+    {
+        $response = $this->get(route('captcha'));
+
+        $response->assertStatus(200);
+        $response->assertHeader('Content-Type', 'image/svg+xml');
+        $this->assertNotEmpty(session('login_captcha'));
+        $this->assertStringContainsString('<svg', $response->getContent());
+    }
+
+    /**
+     * Test login validation requires captcha and fails with invalid captcha.
+     */
+    public function test_login_requires_and_validates_captcha(): void
+    {
+        // 1. Missing captcha fails validation
+        $response = $this->post(route('login'), [
+            'email' => 'admin@futsal.test',
+            'password' => 'password',
+        ]);
+        $response->assertSessionHasErrors('captcha');
+        $this->assertGuest();
+
+        // 2. Invalid captcha fails validation
+        $this->withSession(['login_captcha' => 'abcde']);
+        $invalidResponse = $this->post(route('login'), [
+            'email' => 'admin@futsal.test',
+            'password' => 'password',
+            'captcha' => 'wrongcode',
+        ]);
+        $invalidResponse->assertSessionHasErrors('captcha');
+        $this->assertGuest();
+
+        // 3. Valid captcha succeeds (case-insensitive)
+        $this->withSession(['login_captcha' => 'x7k9p']);
+        $validResponse = $this->post(route('login'), [
+            'email' => 'admin@futsal.test',
+            'password' => 'password',
+            'captcha' => 'X7K9P',
+        ]);
+        $validResponse->assertRedirect(route('admin.dashboard'));
+        $this->assertAuthenticated();
     }
 }

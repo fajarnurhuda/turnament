@@ -46,8 +46,12 @@
                     <h1 class="text-2xl sm:text-3xl font-headline font-black text-text-primary">{{ $match->homeTeam->name }}</h1>
                     <p class="text-xs font-mono text-text-muted">MANAJER: {{ $match->homeTeam->manager_name ?? '-' }}</p>
                 </div>
-                <div class="w-20 h-20 rounded-xl bg-court-surface-elevated border border-court-border flex items-center justify-center font-headline font-black text-2xl text-stadium-emerald shadow-inner order-1 md:order-2 flex-shrink-0">
-                    {{ $match->homeTeam->initials }}
+                <div class="w-20 h-20 rounded-xl bg-court-surface-elevated border border-court-border flex items-center justify-center font-headline font-black text-2xl text-stadium-emerald shadow-inner order-1 md:order-2 flex-shrink-0 overflow-hidden p-2">
+                    @if($match->homeTeam->logo)
+                        <img src="{{ $match->homeTeam->logo_url }}" alt="{{ $match->homeTeam->name }}" class="w-full h-full object-contain">
+                    @else
+                        {{ $match->homeTeam->initials }}
+                    @endif
                 </div>
             </div>
 
@@ -74,8 +78,12 @@
 
             <!-- Away Team -->
             <div class="md:col-span-4 flex flex-col md:flex-row items-center justify-start gap-4">
-                <div class="w-20 h-20 rounded-xl bg-court-surface-elevated border border-court-border flex items-center justify-center font-headline font-black text-2xl text-telemetry-cyan shadow-inner flex-shrink-0">
-                    {{ $match->awayTeam->initials }}
+                <div class="w-20 h-20 rounded-xl bg-court-surface-elevated border border-court-border flex items-center justify-center font-headline font-black text-2xl text-telemetry-cyan shadow-inner flex-shrink-0 overflow-hidden p-2">
+                    @if($match->awayTeam->logo)
+                        <img src="{{ $match->awayTeam->logo_url }}" alt="{{ $match->awayTeam->name }}" class="w-full h-full object-contain">
+                    @else
+                        {{ $match->awayTeam->initials }}
+                    @endif
                 </div>
                 <div class="text-center md:text-left">
                     <h1 class="text-2xl sm:text-3xl font-headline font-black text-text-primary">{{ $match->awayTeam->name }}</h1>
@@ -220,8 +228,12 @@
             <div class="bg-court-surface rounded-xl border border-court-border p-5 space-y-3">
                 <div class="flex items-center justify-between pb-3 border-b border-court-border">
                     <div class="flex items-center gap-2">
-                        <div class="w-6 h-6 rounded bg-court-navy border border-court-border flex items-center justify-center font-headline font-bold text-xs text-stadium-emerald">
-                            {{ $match->homeTeam->initials }}
+                        <div class="w-6 h-6 rounded bg-court-navy border border-court-border flex items-center justify-center font-headline font-bold text-xs text-stadium-emerald flex-shrink-0 overflow-hidden p-0.5">
+                            @if($match->homeTeam->logo)
+                                <img src="{{ $match->homeTeam->logo_url }}" alt="{{ $match->homeTeam->name }}" class="w-full h-full object-contain">
+                            @else
+                                {{ $match->homeTeam->initials }}
+                            @endif
                         </div>
                         <h4 class="font-headline font-bold text-sm text-text-primary">{{ $match->homeTeam->name }}</h4>
                     </div>
@@ -252,8 +264,12 @@
             <div class="bg-court-surface rounded-xl border border-court-border p-5 space-y-3">
                 <div class="flex items-center justify-between pb-3 border-b border-court-border">
                     <div class="flex items-center gap-2">
-                        <div class="w-6 h-6 rounded bg-court-navy border border-court-border flex items-center justify-center font-headline font-bold text-xs text-telemetry-cyan">
-                            {{ $match->awayTeam->initials }}
+                        <div class="w-6 h-6 rounded bg-court-navy border border-court-border flex items-center justify-center font-headline font-bold text-xs text-telemetry-cyan flex-shrink-0 overflow-hidden p-0.5">
+                            @if($match->awayTeam->logo)
+                                <img src="{{ $match->awayTeam->logo_url }}" alt="{{ $match->awayTeam->name }}" class="w-full h-full object-contain">
+                            @else
+                                {{ $match->awayTeam->initials }}
+                            @endif
                         </div>
                         <h4 class="font-headline font-bold text-sm text-text-primary">{{ $match->awayTeam->name }}</h4>
                     </div>

@@ -19,6 +19,7 @@ Route::middleware('guest')->group(function () {
     Route::post('/login', [AuthController::class, 'login']);
     Route::get('/login/quick/{role}', [AuthController::class, 'quickLogin'])->name('login.quick');
 });
+Route::get('/captcha', [AuthController::class, 'captcha'])->name('captcha');
 Route::post('/logout', [AuthController::class, 'logout'])->middleware('auth')->name('logout');
 
 // --- OPERATOR & ADMIN AREA ---

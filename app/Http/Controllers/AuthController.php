@@ -3,13 +3,19 @@
 namespace App\Http\Controllers;
 
 use App\Models\User;
+use App\Services\CaptchaService;
 use Illuminate\Http\RedirectResponse;
 use Illuminate\Http\Request;
+use Illuminate\Http\Response;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\View\View;
 
 class AuthController extends Controller
 {
+    public function __construct(
+        protected CaptchaService $captchaService
+    ) {}
+
     /**
      * Show Operator & Admin Login Portal.
      */
@@ -19,15 +25,40 @@ class AuthController extends Controller
     }
 
     /**
+     * Serve Dynamic SVG CAPTCHA Image.
+     */
+    public function captcha(): Response
+    {
+        $svg = $this->captchaService->generate();
+
+        return response($svg, 200, [
+            'Content-Type' => 'image/svg+xml',
+            'Cache-Control' => 'no-cache, no-store, must-revalidate',
+            'Pragma' => 'no-cache',
+            'Expires' => '0',
+        ]);
+    }
+
+    /**
      * Handle Authentication Request.
      */
     public function login(Request $request): RedirectResponse
     {
-        $credentials = $request->validate([
+        $request->validate([
             'email' => ['required', 'email'],
             'password' => ['required'],
+            'captcha' => ['required', 'string'],
+        ], [
+            'captcha.required' => 'Kode CAPTCHA wajib diisi.',
         ]);
 
+        if (! $this->captchaService->verify($request->input('captcha'))) {
+            return back()->withErrors([
+                'captcha' => 'Kode CAPTCHA tidak cocok atau telah kedaluwarsa. Silakan coba lagi.',
+            ])->onlyInput('email');
+        }
+
+        $credentials = $request->only('email', 'password');
         $remember = $request->boolean('remember');
 
         if (Auth::attempt($credentials, $remember)) {

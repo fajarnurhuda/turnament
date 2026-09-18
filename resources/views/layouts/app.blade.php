@@ -3,7 +3,8 @@
 <head>
     <meta charset="utf-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>@yield('title', 'FUTSAL PRO CONTROL - Sistem Manajemen Turnamen & Fan Center')</title>
+    <title>@yield('title', 'LDII CUP TANJUNG PINANG - Sistem Manajemen Turnamen & Fan Center')</title>
+    <link rel="icon" type="image/png" href="{{ asset('images/logo.png') }}">
 
     <!-- Google Fonts: Space Grotesk, Inter, JetBrains Mono -->
     <link rel="preconnect" href="https://fonts.googleapis.com">
@@ -67,20 +68,20 @@
 <body class="bg-court-navy text-text-primary font-sans antialiased min-h-screen flex flex-col selection:bg-stadium-emerald selection:text-court-navy">
 
     <!-- Top Navigation Bar -->
-    <header class="sticky top-0 z-40 bg-court-navy/90 backdrop-blur-md border-b border-court-border">
+    <header class="sticky top-0 z-30 bg-court-navy/90 backdrop-blur-md border-b border-court-border">
         <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
             <div class="flex items-center justify-between h-16">
                 <!-- Brand / Logo -->
                 <div class="flex items-center gap-4">
                     <a href="{{ route('home') }}" class="flex items-center gap-3 group">
-                        <div class="w-10 h-10 rounded bg-stadium-emerald/10 border border-stadium-emerald/30 flex items-center justify-center text-stadium-emerald group-hover:shadow-[0_0_15px_rgba(0,255,135,0.4)] transition-all">
-                            <span class="material-symbols-outlined text-2xl">sports_soccer</span>
+                        <div class="w-10 h-10 rounded-lg bg-court-surface border border-court-border p-1 flex items-center justify-center group-hover:border-stadium-emerald/50 group-hover:shadow-[0_0_15px_rgba(0,255,135,0.3)] transition-all overflow-hidden flex-shrink-0">
+                            <img src="{{ asset('images/logo.png') }}" alt="LDII CUP TANJUNG PINANG" class="w-full h-full object-contain">
                         </div>
                         <div>
-                            <span class="font-headline font-bold text-lg tracking-wider text-text-primary uppercase flex items-center gap-2">
-                                FUTSAL <span class="text-stadium-emerald">PRO</span> CONTROL
+                            <span class="font-headline font-bold text-base sm:text-lg tracking-wider text-text-primary uppercase flex items-center gap-2 leading-none">
+                                LDII CUP <span class="text-stadium-emerald">TANJUNG PINANG</span>
                             </span>
-                            <span class="text-[10px] font-mono tracking-widest text-text-muted block -mt-1">PITCHPULSE TELEMETRY</span>
+                            <span class="text-[9px] font-mono tracking-widest text-text-muted block mt-1">SISTEM MANAJEMEN TURNAMEN</span>
                         </div>
                     </a>
                 </div>
@@ -190,12 +191,10 @@
         <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 flex flex-col sm:flex-row items-center justify-between gap-4">
             <div class="flex items-center gap-2">
                 <span class="w-2 h-2 rounded-full bg-stadium-emerald"></span>
-                <span>FUTSAL PRO CONTROL &copy; {{ date('Y') }} — PITCHPULSE TELEMETRY ENGINE</span>
+                <span>LDII CUP TANJUNG PINANG &copy; {{ date('Y') }} — SISTEM MANAJEMEN TURNAMEN</span>
             </div>
-            <div class="flex items-center gap-6">
-                <span>MYSQL 8.0</span>
-                <span>LARAVEL 13</span>
-                <span class="text-stadium-emerald">REAL-TIME TELEMETRY READY</span>
+            <div class="flex items-center gap-1.5">
+                <span>Developer : <span class="text-text-primary font-medium">Fajar Nurhuda (Mekarsari)</span> - <a href="https://wa.me/6282284066470" target="_blank" rel="noopener noreferrer" class="text-stadium-emerald hover:underline">0822 8406 6470</a></span>
             </div>
         </div>
     </footer>
