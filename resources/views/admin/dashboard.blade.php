@@ -736,13 +736,13 @@
                     <input type="text" name="name" required placeholder="Contoh: Rian Pratama" class="w-full py-2 px-3 rounded bg-court-navy border border-court-border text-text-primary focus:border-stadium-emerald font-sans">
                 </div>
 
-                <div class="grid grid-cols-2 gap-3">
-                    <div class="space-y-1">
-                        <label class="block text-text-muted uppercase">No. Punggung (1-99)</label>
+                <div class="grid grid-cols-3 gap-3">
+                    <div class="col-span-1 space-y-1">
+                        <label class="block text-text-muted uppercase truncate" title="No. Punggung (1-99)">No. Punggung</label>
                         <input type="number" name="jersey_number" min="1" max="99" required placeholder="7" class="w-full py-2 px-3 rounded bg-court-navy border border-court-border text-text-primary focus:border-stadium-emerald">
                     </div>
 
-                    <div class="space-y-1">
+                    <div class="col-span-2 space-y-1">
                         <label class="block text-text-muted uppercase">Posisi</label>
                         <select name="position" required class="w-full py-2 px-3 rounded bg-court-navy border border-court-border text-text-primary focus:border-stadium-emerald">
                             <option value="GK">GK (Kiper)</option>
