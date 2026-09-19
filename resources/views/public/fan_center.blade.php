@@ -102,25 +102,23 @@
                                     x-text="featured.away_score">{{ $featuredMatch->away_score }}</span>
                             </div>
 
-                            <!-- Status Babak, Stopwatch Digital & Menit Pertandingan -->
-                            <div
-                                class="mt-1.5 sm:mt-3 flex flex-col sm:flex-row items-center gap-1.5 sm:gap-2 font-mono text-[10px] sm:text-xs text-center">
-                                <span class="px-2 py-0.5 rounded font-bold border whitespace-nowrap text-[9px] sm:text-xs"
+                            <!-- Status Babak (Atas) & Stopwatch Digital / Menit Pertandingan (Bawah) -->
+                            <div class="mt-2 flex flex-col items-center gap-1 font-mono text-center">
+                                <span class="px-2.5 py-0.5 rounded text-[10px] sm:text-[11px] font-bold tracking-wider border uppercase whitespace-nowrap"
                                     :class="featured.status_badge.color" x-text="featured.status_badge.text">
                                     {{ $featuredMatch->status_badge['text'] }}
                                 </span>
+
                                 <div x-show="featured.is_live && featured.status !== 'penalty_shootout'"
-                                    class="flex items-center gap-1.5 bg-court-surface px-2 py-0.5 rounded border border-court-border/80">
-                                    <span class="w-2 h-2 rounded-full"
+                                    class="flex items-center justify-center gap-1.5 bg-court-surface/90 px-2.5 py-0.5 rounded border border-court-border/80 text-[10px] sm:text-[11px] shadow-sm">
+                                    <span class="w-1.5 h-1.5 rounded-full flex-shrink-0"
                                         :class="featured.timer_running ? 'bg-stadium-emerald animate-ping' : 'bg-card-yellow'"></span>
-                                    <span
-                                        class="font-headline font-bold text-xs sm:text-sm text-stadium-emerald font-mono tracking-wider"
+                                    <span class="font-bold text-stadium-emerald tracking-wide"
                                         x-text="featured.time_formatted">
                                         {{ $featuredMatch->time_formatted }}
                                     </span>
-                                    <span
-                                        class="text-telemetry-cyan font-bold tracking-wider whitespace-nowrap text-[10px] sm:text-xs">
-                                        (Menit ke-<span
+                                    <span class="text-text-muted font-medium">
+                                        (Menit ke-<span class="text-telemetry-cyan font-bold"
                                             x-text="featured.current_minute">{{ $featuredMatch->current_minute }}</span>')
                                     </span>
                                 </div>

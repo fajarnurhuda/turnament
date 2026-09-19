@@ -63,20 +63,20 @@
                     <span class="text-text-primary" x-text="matchData.away_score">{{ $match->away_score }}</span>
                 </div>
                 
-                <!-- Status Babak & Menit Pertandingan -->
-                <div class="mt-1.5 sm:mt-3 flex flex-col sm:flex-row items-center gap-1 sm:gap-2 font-mono text-[10px] sm:text-xs text-center">
-                    <span class="px-2 py-0.5 rounded font-bold border whitespace-nowrap text-[9px] sm:text-xs"
+                <!-- Status Babak (Atas) & Menit Pertandingan / Stopwatch (Bawah) -->
+                <div class="mt-2 flex flex-col items-center gap-1 font-mono text-center">
+                    <span class="px-2.5 py-0.5 rounded text-[10px] sm:text-[11px] font-bold tracking-wider border uppercase whitespace-nowrap"
                           :class="matchData.status_badge.color"
                           x-text="matchData.status_badge.text">
                         {{ $match->status_badge['text'] }}
                     </span>
-                    <div x-show="matchData.is_live && matchData.status !== 'penalty_shootout'" class="flex items-center gap-1.5 bg-court-surface px-2.5 py-0.5 rounded border border-court-border/80">
-                        <span class="w-2 h-2 rounded-full" :class="matchData.timer_running ? 'bg-stadium-emerald animate-ping' : 'bg-card-yellow'"></span>
-                        <span class="font-headline font-bold text-xs sm:text-sm text-stadium-emerald font-mono tracking-wider" x-text="matchData.time_formatted">
+                    <div x-show="matchData.is_live && matchData.status !== 'penalty_shootout'" class="flex items-center justify-center gap-1.5 bg-court-surface/90 px-2.5 py-0.5 rounded border border-court-border/80 text-[10px] sm:text-[11px] shadow-sm">
+                        <span class="w-1.5 h-1.5 rounded-full flex-shrink-0" :class="matchData.timer_running ? 'bg-stadium-emerald animate-ping' : 'bg-card-yellow'"></span>
+                        <span class="font-bold text-stadium-emerald tracking-wide" x-text="matchData.time_formatted">
                             {{ $match->time_formatted }}
                         </span>
-                        <span class="text-telemetry-cyan font-bold tracking-wider whitespace-nowrap text-[10px] sm:text-xs">
-                            (Menit ke-<span x-text="matchData.current_minute">{{ $match->current_minute }}</span>')
+                        <span class="text-text-muted font-medium">
+                            (Menit ke-<span class="text-telemetry-cyan font-bold" x-text="matchData.current_minute">{{ $match->current_minute }}</span>')
                         </span>
                     </div>
                 </div>
