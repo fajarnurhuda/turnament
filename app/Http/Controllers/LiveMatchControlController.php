@@ -412,6 +412,29 @@ class LiveMatchControlController extends Controller
 
         $validated['match_id'] = $match->id;
 
+        // Deduplication check: prevent identical event submission within 3 seconds (double click protection)
+        $recentDuplicate = MatchEvent::where('match_id', $match->id)
+            ->where('team_id', $validated['team_id'])
+            ->where('event_type', $validated['event_type'])
+            ->where('player_id', $validated['player_id'] ?? null)
+            ->where('minute', $validated['minute'])
+            ->where('created_at', '>=', now()->subSeconds(3))
+            ->first();
+
+        if ($recentDuplicate) {
+            if ($request->wantsJson()) {
+                return response()->json([
+                    'success' => true,
+                    'message' => 'Event pertandingan telah dicatat (terhindar dari klik ganda).',
+                    'event' => $recentDuplicate->load(['player', 'assistPlayer', 'team']),
+                    'home_score' => $match->home_score,
+                    'away_score' => $match->away_score,
+                ]);
+            }
+
+            return back()->with('info', 'Kejadian serupa baru saja dicatat (terhindar dari klik ganda).');
+        }
+
         $event = MatchEvent::create($validated);
 
         // Recalculate match score automatically if goal or own goal

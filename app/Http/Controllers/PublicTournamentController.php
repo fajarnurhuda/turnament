@@ -67,6 +67,14 @@ class PublicTournamentController extends Controller
             }
         }
 
+        if (empty($standingsByGroup) && $categoryId) {
+            $standingsByGroup['Klasemen Utama'] = [
+                'group' => null,
+                'stage' => null,
+                'rows' => $this->tournamentService->calculateStandings($categoryId, null, null),
+            ];
+        }
+
         // Leaderboards
         $topScorers = $this->tournamentService->getTopScorers($categoryId, 5);
         $topAssists = $this->tournamentService->getTopAssists($categoryId, 5);
@@ -193,5 +201,85 @@ class PublicTournamentController extends Controller
             ]);
 
         return response()->json($matches);
+    }
+
+    /**
+     * JSON Endpoint for real-time standings feed.
+     */
+    public function standingsFeed(int $categoryId): JsonResponse
+    {
+        $category = Category::with('stages.groups')->findOrFail($categoryId);
+        $groupStages = $category->stages->where('type', 'group');
+        $standingsByGroup = [];
+
+        foreach ($groupStages as $stage) {
+            if ($stage->groups->count() > 0) {
+                foreach ($stage->groups as $grp) {
+                    $rows = $this->tournamentService->calculateStandings($category->id, $stage->id, $grp->id);
+                    $standingsByGroup[$grp->name] = [
+                        'group_name' => $grp->name,
+                        'rows' => array_map(fn ($r) => [
+                            'position' => $r['position'],
+                            'team_id' => $r['team']->id,
+                            'team_name' => $r['team']->name,
+                            'team_initials' => $r['team']->initials,
+                            'team_logo' => $r['team']->logo_url,
+                            'played' => $r['played'],
+                            'won' => $r['won'],
+                            'draw' => $r['draw'],
+                            'lost' => $r['lost'],
+                            'goals_for' => $r['goals_for'],
+                            'goals_against' => $r['goals_against'],
+                            'goal_diff' => $r['goal_diff'],
+                            'points' => $r['points'],
+                        ], $rows),
+                    ];
+                }
+            } else {
+                $rows = $this->tournamentService->calculateStandings($category->id, $stage->id, null);
+                $standingsByGroup['Klasemen Utama'] = [
+                    'group_name' => 'Klasemen Utama',
+                    'rows' => array_map(fn ($r) => [
+                        'position' => $r['position'],
+                        'team_id' => $r['team']->id,
+                        'team_name' => $r['team']->name,
+                        'team_initials' => $r['team']->initials,
+                        'team_logo' => $r['team']->logo_url,
+                        'played' => $r['played'],
+                        'won' => $r['won'],
+                        'draw' => $r['draw'],
+                        'lost' => $r['lost'],
+                        'goals_for' => $r['goals_for'],
+                        'goals_against' => $r['goals_against'],
+                        'goal_diff' => $r['goal_diff'],
+                        'points' => $r['points'],
+                    ], $rows),
+                ];
+            }
+        }
+
+        if (empty($standingsByGroup)) {
+            $rows = $this->tournamentService->calculateStandings($category->id, null, null);
+            $standingsByGroup['Klasemen Utama'] = [
+                'group_name' => 'Klasemen Utama',
+                'rows' => array_map(fn ($r) => [
+                    'position' => $r['position'],
+                    'team_id' => $r['team']->id,
+                    'team_name' => $r['team']->name,
+                    'team_initials' => $r['team']->initials,
+                    'team_logo' => $r['team']->logo_url,
+                    'played' => $r['played'],
+                    'won' => $r['won'],
+                    'draw' => $r['draw'],
+                    'lost' => $r['lost'],
+                    'goals_for' => $r['goals_for'],
+                    'goals_against' => $r['goals_against'],
+                    'goal_diff' => $r['goal_diff'],
+                    'points' => $r['points'],
+                ], $rows),
+            ];
+        }
+
+        return response()->json($standingsByGroup);
     }
 }

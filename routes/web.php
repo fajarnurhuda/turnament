@@ -12,6 +12,7 @@ Route::get('/', [PublicTournamentController::class, 'index'])->name('home');
 Route::get('/matches/{id}', [PublicTournamentController::class, 'showMatch'])->name('matches.show');
 Route::get('/api/matches/{id}/live', [PublicTournamentController::class, 'liveFeed'])->name('api.matches.live');
 Route::get('/api/matches/live-score', [PublicTournamentController::class, 'allLiveScores'])->name('api.matches.live-score');
+Route::get('/api/categories/{id}/standings', [PublicTournamentController::class, 'standingsFeed'])->name('api.categories.standings');
 
 // --- AUTHENTICATION ---
 Route::middleware('guest')->group(function () {

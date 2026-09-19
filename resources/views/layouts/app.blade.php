@@ -199,6 +199,60 @@
         </div>
     </footer>
 
+    <!-- Global Double-Submit Prevention Guard -->
+    <script>
+        document.addEventListener('submit', function (e) {
+            const form = e.target;
+            if (!form || form.tagName !== 'FORM') return;
+
+            // If form is already submitting, block repeat submissions
+            if (form.dataset.submitting === 'true') {
+                e.preventDefault();
+                e.stopImmediatePropagation();
+                return false;
+            }
+
+            form.dataset.submitting = 'true';
+
+            // Locate submit button
+            const submitBtn = form.querySelector('button[type="submit"], input[type="submit"]');
+            if (submitBtn) {
+                submitBtn.dataset.originalHtml = submitBtn.innerHTML;
+                submitBtn.disabled = true;
+                submitBtn.classList.add('opacity-60', 'cursor-not-allowed', 'pointer-events-none');
+
+                if (submitBtn.innerText && submitBtn.innerText.trim().length > 2) {
+                    submitBtn.innerHTML = '<span class="inline-flex items-center justify-center gap-1.5"><span class="material-symbols-outlined text-sm animate-spin">progress_activity</span> Menyimpan...</span>';
+                }
+            }
+
+            // Safety timeout (5s) to release lock in case of network interruption
+            setTimeout(function () {
+                form.dataset.submitting = 'false';
+                if (submitBtn) {
+                    submitBtn.disabled = false;
+                    submitBtn.classList.remove('opacity-60', 'cursor-not-allowed', 'pointer-events-none');
+                    if (submitBtn.dataset.originalHtml) {
+                        submitBtn.innerHTML = submitBtn.dataset.originalHtml;
+                    }
+                }
+            }, 5000);
+        }, true);
+
+        // Reset any locked forms on page navigation restore (back-forward cache)
+        window.addEventListener('pageshow', function () {
+            document.querySelectorAll('form[data-submitting="true"]').forEach(function (f) {
+                f.dataset.submitting = 'false';
+                const btn = f.querySelector('button[type="submit"], input[type="submit"]');
+                if (btn && btn.dataset.originalHtml) {
+                    btn.disabled = false;
+                    btn.classList.remove('opacity-60', 'cursor-not-allowed', 'pointer-events-none');
+                    btn.innerHTML = btn.dataset.originalHtml;
+                }
+            });
+        });
+    </script>
+
     @stack('scripts')
 </body>
 </html>

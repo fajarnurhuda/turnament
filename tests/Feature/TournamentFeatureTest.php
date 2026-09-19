@@ -4,6 +4,7 @@ namespace Tests\Feature;
 
 use App\Models\Category;
 use App\Models\GameMatch;
+use App\Models\MatchEvent;
 use App\Models\Player;
 use App\Models\Referee;
 use App\Models\Stage;
@@ -1013,5 +1014,86 @@ class TournamentFeatureTest extends TestCase
             'timer_running' => true,
             'status' => 'first_half',
         ]);
+    }
+
+    /**
+     * Test double submit protection prevents duplicate events and duplicate scores.
+     */
+    public function test_rapid_double_submission_prevents_duplicate_event(): void
+    {
+        $operator = User::where('role', 'operator')->first() ?? User::first();
+        $match = GameMatch::first();
+        $player = $match->homeTeam->players->first();
+
+        $initialEventsCount = MatchEvent::where('match_id', $match->id)->count();
+        $initialScore = $match->home_score;
+
+        $payload = [
+            'team_id' => $match->home_team_id,
+            'player_id' => $player->id,
+            'event_type' => 'goal',
+            'minute' => min(14, $match->current_minute),
+            'notes' => 'Tembakan mendatar',
+        ];
+
+        // First submit
+        $res1 = $this->actingAs($operator)->post(route('admin.matches.events.store', $match->id), $payload);
+        $res1->assertSessionHas('success');
+
+        $match->refresh();
+        $this->assertEquals($initialScore + 1, $match->home_score);
+        $this->assertEquals($initialEventsCount + 1, MatchEvent::where('match_id', $match->id)->count());
+
+        // Rapid duplicate submit (simulating double click)
+        $res2 = $this->actingAs($operator)->post(route('admin.matches.events.store', $match->id), $payload);
+        $res2->assertSessionHas('info');
+
+        $match->refresh();
+        // Score and event count must NOT increment again
+        $this->assertEquals($initialScore + 1, $match->home_score);
+        $this->assertEquals($initialEventsCount + 1, MatchEvent::where('match_id', $match->id)->count());
+    }
+
+    /**
+     * Test that when a match finishes (fulltime), the standings table and API feed reflect the result.
+     */
+    public function test_fulltime_match_updates_standings_and_api_feed(): void
+    {
+        $operator = User::where('role', 'operator')->first() ?? User::first();
+        $match = GameMatch::first();
+        $match->update([
+            'status' => 'second_half',
+            'home_score' => 2,
+            'away_score' => 1,
+        ]);
+
+        // Change status to finished (Full Time)
+        $res = $this->actingAs($operator)->post(route('admin.matches.status', $match->id), [
+            'status' => 'finished',
+        ]);
+        $res->assertSessionHas('success');
+
+        $match->refresh();
+        $this->assertEquals('finished', $match->status);
+
+        // Verify standings service calculation includes this finished match
+        $service = app(TournamentService::class);
+        $standings = $service->calculateStandings($match->category_id, $match->stage_id, $match->group_id);
+
+        $homeRow = collect($standings)->first(fn ($r) => $r['team']->id === $match->home_team_id);
+        $awayRow = collect($standings)->first(fn ($r) => $r['team']->id === $match->away_team_id);
+
+        $this->assertNotNull($homeRow);
+        $this->assertNotNull($awayRow);
+        $this->assertGreaterThanOrEqual(1, $homeRow['played']);
+        $this->assertGreaterThanOrEqual(3, $homeRow['points']);
+        $this->assertEquals(1, $homeRow['won']);
+        $this->assertEquals(1, $awayRow['lost']);
+
+        // Verify public API endpoint returns updated standings
+        $apiRes = $this->get(route('api.categories.standings', $match->category_id));
+        $apiRes->assertOk();
+        $data = $apiRes->json();
+        $this->assertNotEmpty($data);
     }
 }

@@ -112,6 +112,14 @@ class AdminFixtureController extends Controller
         $validated['away_score'] = 0;
         $validated['current_minute'] = 0;
 
+        // Auto-assign group_id if stage has single group and group_id is not specified
+        if (! empty($validated['stage_id']) && empty($validated['group_id'])) {
+            $stage = Stage::with('groups')->find($validated['stage_id']);
+            if ($stage && $stage->type === 'group' && $stage->groups->count() === 1) {
+                $validated['group_id'] = $stage->groups->first()->id;
+            }
+        }
+
         $match = GameMatch::create($validated);
 
         if ($request->has('operator_ids')) {
@@ -167,6 +175,14 @@ class AdminFixtureController extends Controller
         }
         if ($request->filled('extra_time_duration_minutes')) {
             $validated['extra_time_duration_minutes'] = (int) $request->input('extra_time_duration_minutes');
+        }
+
+        // Auto-assign group_id if stage has single group and group_id is not specified
+        if (! empty($validated['stage_id']) && empty($validated['group_id'])) {
+            $stage = Stage::with('groups')->find($validated['stage_id']);
+            if ($stage && $stage->type === 'group' && $stage->groups->count() === 1) {
+                $validated['group_id'] = $stage->groups->first()->id;
+            }
         }
 
         $match->update($validated);

@@ -20,6 +20,11 @@ class Team extends Model
         'manager_contact',
     ];
 
+    protected $appends = [
+        'logo_url',
+        'initials',
+    ];
+
     public function category(): BelongsTo
     {
         return $this->belongsTo(Category::class);

@@ -6,6 +6,7 @@ use App\Models\Category;
 use App\Models\GameMatch;
 use App\Models\Group;
 use App\Models\MatchEvent;
+use App\Models\Stage;
 use App\Models\Team;
 use Illuminate\Support\Collection;
 use Illuminate\Support\Facades\DB;
@@ -24,12 +25,24 @@ class TournamentService
             $teamsQuery->where('category_id', $categoryId);
         }
 
-        // Fetch matches that have been finished or are live
+        // Fetch matches that have been finished or are currently in progress
         $matchesQuery = GameMatch::query()
-            ->whereIn('status', ['finished', 'second_half', 'extra_time']);
+            ->whereIn('status', ['finished', 'first_half', 'half_time', 'second_half', 'extra_time', 'penalty_shootout']);
 
         if ($groupId) {
-            $matchesQuery->where('group_id', $groupId);
+            $matchesQuery->where(function ($q) use ($groupId, $stageId) {
+                $q->where('group_id', $groupId);
+                // If a stage is specified, also capture matches belonging to this stage
+                // where group_id is null (e.g. created with "Tanpa Grup / 1 Grup")
+                if ($stageId) {
+                    $stage = Stage::with('groups')->find($stageId);
+                    if (! $stage || $stage->groups->count() <= 1) {
+                        $q->orWhere(function ($sub) use ($stageId) {
+                            $sub->where('stage_id', $stageId)->whereNull('group_id');
+                        });
+                    }
+                }
+            });
         } elseif ($stageId) {
             $matchesQuery->where('stage_id', $stageId);
         } elseif ($categoryId) {
@@ -38,17 +51,25 @@ class TournamentService
 
         $matches = $matchesQuery->get();
 
-        // If specific group is given, limit teams to those who have matches in that group
-        // or all teams in category if not enough match history
-        $teamIds = collect();
-        foreach ($matches as $m) {
-            $teamIds->push($m->home_team_id);
-            $teamIds->push($m->away_team_id);
-        }
-        $teamIds = $teamIds->unique();
+        // Determine teams participating in this standings table
+        if ($groupId) {
+            $stage = $stageId ? Stage::with('groups')->find($stageId) : null;
+            if ($stage && $stage->groups->count() <= 1) {
+                // Single-group stage (e.g. Grup Tunggal): all teams in category are participants
+                $teams = $teamsQuery->get();
+            } else {
+                // Multi-group stage: find all teams involved in any match for this group
+                $allGroupTeamIds = GameMatch::where('group_id', $groupId)
+                    ->pluck('home_team_id')
+                    ->merge(GameMatch::where('group_id', $groupId)->pluck('away_team_id'))
+                    ->unique();
 
-        if ($groupId && $teamIds->isNotEmpty()) {
-            $teams = Team::whereIn('id', $teamIds)->get();
+                if ($allGroupTeamIds->isNotEmpty()) {
+                    $teams = Team::whereIn('id', $allGroupTeamIds)->get();
+                } else {
+                    $teams = $teamsQuery->get();
+                }
+            }
         } else {
             $teams = $teamsQuery->get();
         }
