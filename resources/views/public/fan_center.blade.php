@@ -19,11 +19,21 @@
                 </p>
             </div>
 
-            <!-- Categories List (Smooth Horizontal Scroll on Mobile) -->
+            <!-- Categories List & Theme Switcher (Smooth Horizontal Scroll on Mobile) -->
             <div class="flex items-center gap-2 overflow-x-auto pb-1 max-w-full scrollbar-none">
+                <!-- Tombol Mode Terang / Gelap Fan Center -->
+                <button type="button" onclick="toggleTheme()"
+                    class="px-3.5 py-1.5 sm:py-2 rounded-lg bg-court-surface hover:bg-court-surface-elevated text-text-muted hover:text-text-primary border border-court-border flex items-center gap-1.5 text-xs font-headline font-bold uppercase tracking-wider transition-all whitespace-nowrap shadow-sm group flex-shrink-0"
+                    title="Ubah Mode Tampilan (Terang / Gelap)">
+                    <span class="material-symbols-outlined text-sm text-card-yellow hidden dark:inline">light_mode</span>
+                    <span class="material-symbols-outlined text-sm text-telemetry-cyan inline dark:hidden">dark_mode</span>
+                    <span class="hidden dark:inline">Mode Terang</span>
+                    <span class="inline dark:hidden">Mode Gelap</span>
+                </button>
+
                 @foreach ($categories as $cat)
                     <a href="{{ route('home', ['category' => $cat->slug]) }}"
-                        class="px-3.5 sm:px-4 py-1.5 sm:py-2 rounded text-xs font-headline font-bold uppercase tracking-wider transition-all whitespace-nowrap {{ $activeCategory && $activeCategory->id === $cat->id ? 'bg-stadium-emerald text-court-navy shadow-[0_0_15px_rgba(0,255,135,0.3)]' : 'bg-court-surface hover:bg-court-surface-elevated text-text-muted hover:text-text-primary border border-court-border' }}">
+                        class="px-3.5 sm:px-4 py-1.5 sm:py-2 rounded-lg text-xs font-headline font-bold uppercase tracking-wider transition-all whitespace-nowrap {{ $activeCategory && $activeCategory->id === $cat->id ? 'bg-stadium-emerald text-white dark:text-court-navy shadow-[0_0_15px_rgba(0,255,135,0.3)]' : 'bg-court-surface hover:bg-court-surface-elevated text-text-muted hover:text-text-primary border border-court-border' }}">
                         {{ $cat->name }}
                     </a>
                 @endforeach
@@ -169,7 +179,7 @@
 
                         <div class="flex flex-wrap items-center justify-center gap-2 sm:gap-3 w-full sm:w-auto">
                             <a href="{{ route('matches.show', $featuredMatch->id) }}"
-                                class="w-full sm:w-auto text-center px-4 sm:px-5 py-2 sm:py-2.5 rounded text-xs font-headline font-bold bg-stadium-emerald hover:bg-stadium-emerald/90 text-court-navy uppercase tracking-wider transition-all flex items-center justify-center gap-2 shadow-[0_0_15px_rgba(0,255,135,0.25)]">
+                                class="w-full sm:w-auto text-center px-4 sm:px-5 py-2 sm:py-2.5 rounded text-xs font-headline font-bold bg-stadium-emerald hover:bg-stadium-emerald/90 text-white dark:text-court-navy uppercase tracking-wider transition-all flex items-center justify-center gap-2 shadow-[0_0_15px_rgba(0,255,135,0.25)]">
                                 <span class="material-symbols-outlined text-sm">timeline</span>
                                 Buka Lini Masa & Statistik
                             </a>
@@ -441,7 +451,7 @@
                                 @foreach ($standingsByGroup as $gName => $gData)
                                     <button @click="activeGroup = '{{ $gName }}'"
                                         :class="activeGroup === '{{ $gName }}' ?
-                                            'bg-stadium-emerald text-court-navy font-bold' :
+                                            'bg-stadium-emerald text-white dark:text-court-navy font-bold' :
                                             'text-text-muted hover:text-text-primary'"
                                         class="px-2.5 py-1 rounded transition-colors whitespace-nowrap">
                                         {{ $gName }}
@@ -585,19 +595,19 @@
                         <div
                             class="flex items-center gap-1 bg-court-navy p-1 rounded border border-court-border text-xs font-mono w-full sm:w-auto justify-center">
                             <button @click="statTab = 'scorers'"
-                                :class="statTab === 'scorers' ? 'bg-stadium-emerald text-court-navy font-bold' :
+                                :class="statTab === 'scorers' ? 'bg-stadium-emerald text-white dark:text-court-navy font-bold' :
                                     'text-text-muted hover:text-text-primary'"
                                 class="flex-1 sm:flex-initial px-2.5 py-1 rounded transition-colors text-center">
                                 GOL
                             </button>
                             <button @click="statTab = 'assists'"
-                                :class="statTab === 'assists' ? 'bg-telemetry-cyan text-court-navy font-bold' :
+                                :class="statTab === 'assists' ? 'bg-telemetry-cyan text-white dark:text-court-navy font-bold' :
                                     'text-text-muted hover:text-text-primary'"
                                 class="flex-1 sm:flex-initial px-2.5 py-1 rounded transition-colors text-center">
                                 ASSIST
                             </button>
                             <button @click="statTab = 'cards'"
-                                :class="statTab === 'cards' ? 'bg-card-yellow text-court-navy font-bold' :
+                                :class="statTab === 'cards' ? 'bg-card-yellow text-white dark:text-court-navy font-bold' :
                                     'text-text-muted hover:text-text-primary'"
                                 class="flex-1 sm:flex-initial px-2.5 py-1 rounded transition-colors text-center">
                                 KARTU

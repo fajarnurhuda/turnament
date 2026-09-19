@@ -12,8 +12,12 @@ return new class extends Migration
     public function up(): void
     {
         Schema::table('matches', function (Blueprint $table) {
-            $table->unsignedTinyInteger('home_penalty_score')->nullable()->after('away_score');
-            $table->unsignedTinyInteger('away_penalty_score')->nullable()->after('home_penalty_score');
+            if (! Schema::hasColumn('matches', 'home_penalty_score')) {
+                $table->unsignedTinyInteger('home_penalty_score')->nullable()->after('away_score');
+            }
+            if (! Schema::hasColumn('matches', 'away_penalty_score')) {
+                $table->unsignedTinyInteger('away_penalty_score')->nullable()->after('home_penalty_score');
+            }
             $table->string('status', 30)->default('scheduled')->change();
         });
     }

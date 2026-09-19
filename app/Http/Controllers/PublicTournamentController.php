@@ -6,6 +6,7 @@ use App\Models\Category;
 use App\Models\GameMatch;
 use App\Models\Stage;
 use App\Services\TournamentService;
+use App\Services\VisitorTrackerService;
 use Illuminate\Http\JsonResponse;
 use Illuminate\Http\Request;
 use Illuminate\View\View;
@@ -281,5 +282,13 @@ class PublicTournamentController extends Controller
         }
 
         return response()->json($standingsByGroup);
+    }
+
+    /**
+     * JSON Endpoint for visitor telemetry (online & total views).
+     */
+    public function visitorStats(): JsonResponse
+    {
+        return response()->json(VisitorTrackerService::getStats());
     }
 }
