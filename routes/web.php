@@ -59,6 +59,11 @@ Route::middleware('auth')->prefix('admin')->name('admin.')->group(function () {
         Route::put('/referees/{id}', [AdminMasterController::class, 'updateReferee'])->name('referees.update');
         Route::delete('/referees/{id}', [AdminMasterController::class, 'destroyReferee'])->name('referees.destroy');
 
+        // Stages (Babak / Tahapan Turnamen)
+        Route::post('/stages', [AdminMasterController::class, 'storeStage'])->name('stages.store');
+        Route::put('/stages/{id}', [AdminMasterController::class, 'updateStage'])->name('stages.update');
+        Route::delete('/stages/{id}', [AdminMasterController::class, 'destroyStage'])->name('stages.destroy');
+
         // Fixtures Mutations (Create, Update, Delete)
         Route::post('/fixtures', [AdminFixtureController::class, 'store'])->name('fixtures.store');
         Route::put('/fixtures/{id}', [AdminFixtureController::class, 'update'])->name('fixtures.update');
@@ -76,6 +81,7 @@ Route::middleware('auth')->prefix('admin')->name('admin.')->group(function () {
     Route::post('/matches/{id}/timer/set', [LiveMatchControlController::class, 'setTimer'])->name('matches.timer.set');
     Route::post('/matches/{id}/minute', [LiveMatchControlController::class, 'updateMinute'])->name('matches.minute');
     Route::post('/matches/{id}/score', [LiveMatchControlController::class, 'updateScore'])->name('matches.score');
+    Route::post('/matches/{id}/penalty-score', [LiveMatchControlController::class, 'updatePenaltyScore'])->name('matches.penalty_score');
     Route::post('/matches/{id}/events', [LiveMatchControlController::class, 'addEvent'])->name('matches.events.store');
     Route::delete('/matches/{id}/events/{eventId}', [LiveMatchControlController::class, 'deleteEvent'])->name('matches.events.destroy');
 });

@@ -7,12 +7,14 @@
      x-data="{ 
         tab: '{{ request('tab', request('team_id') ? 'players' : 'teams') }}',
         categoryModal: false,
+        stageModal: false,
         teamModal: false,
         playerModal: false,
         venueModal: false,
         operatorModal: false,
         refereeModal: false,
         editCategory: null,
+        editStage: null,
         editTeam: null,
         editPlayer: null,
         editVenue: null,
@@ -20,9 +22,13 @@
         editReferee: null,
         categoryFormUrl: '{{ route('admin.categories.store') }}',
         categoryMethod: 'POST',
+        stageFormUrl: '{{ route('admin.stages.store') }}',
+        stageMethod: 'POST',
         teamFormUrl: '{{ route('admin.teams.store') }}',
         teamMethod: 'POST',
         logoPreview: null,
+        playerFormUrl: '{{ route('admin.players.store') }}',
+        playerMethod: 'POST',
         venueFormUrl: '{{ route('admin.venues.store') }}',
         venueMethod: 'POST',
         operatorFormUrl: '{{ route('admin.operators.store') }}',
@@ -122,6 +128,10 @@
                     <span class="material-symbols-outlined text-sm">category</span>
                     Kategori ({{ $categories->count() }})
                 </button>
+                <button @click="tab = 'stages'" :class="tab === 'stages' ? 'bg-stadium-emerald text-court-navy font-bold shadow-[0_0_12px_rgba(0,255,135,0.3)]' : 'text-text-muted hover:text-text-primary bg-court-navy border border-court-border'" class="px-4 py-2 rounded text-xs font-headline tracking-wider uppercase transition-colors flex items-center gap-1.5">
+                    <span class="material-symbols-outlined text-sm">account_tree</span>
+                    Tahapan Babak ({{ $stages->count() }})
+                </button>
                 <button @click="tab = 'teams'" :class="tab === 'teams' ? 'bg-stadium-emerald text-court-navy font-bold' : 'text-text-muted hover:text-text-primary bg-court-navy border border-court-border'" class="px-4 py-2 rounded text-xs font-headline tracking-wider uppercase transition-colors">
                     Daftar Tim ({{ $teams->count() }})
                 </button>
@@ -145,11 +155,15 @@
                     <span class="material-symbols-outlined text-sm">add_circle</span>
                     TAMBAH KATEGORI BARU
                 </button>
+                <button x-show="tab === 'stages'" @click="editStage = null; stageFormUrl = '{{ route('admin.stages.store') }}'; stageMethod = 'POST'; stageModal = true" class="px-4 py-2 rounded text-xs font-headline font-bold bg-stadium-emerald hover:bg-stadium-emerald/90 text-court-navy transition-all shadow-[0_0_12px_rgba(0,255,135,0.2)] flex items-center gap-1.5">
+                    <span class="material-symbols-outlined text-sm">add_circle</span>
+                    TAMBAH BABAK BARU
+                </button>
                 <button x-show="tab === 'teams'" @click="editTeam = null; teamFormUrl = '{{ route('admin.teams.store') }}'; teamMethod = 'POST'; logoPreview = null; teamModal = true" class="px-4 py-2 rounded text-xs font-headline font-bold bg-stadium-emerald hover:bg-stadium-emerald/90 text-court-navy transition-all shadow-[0_0_12px_rgba(0,255,135,0.2)] flex items-center gap-1.5">
                     <span class="material-symbols-outlined text-sm">add_circle</span>
                     TAMBAH TIM BARU
                 </button>
-                <button x-show="tab === 'players'" @click="playerModal = true; editPlayer = null" class="px-4 py-2 rounded text-xs font-headline font-bold bg-telemetry-cyan hover:bg-telemetry-cyan/90 text-court-navy transition-all shadow-[0_0_12px_rgba(0,229,255,0.2)] flex items-center gap-1.5">
+                <button x-show="tab === 'players'" @click="editPlayer = null; playerFormUrl = '{{ route('admin.players.store') }}'; playerMethod = 'POST'; playerModal = true" class="px-4 py-2 rounded text-xs font-headline font-bold bg-telemetry-cyan hover:bg-telemetry-cyan/90 text-court-navy transition-all shadow-[0_0_12px_rgba(0,229,255,0.2)] flex items-center gap-1.5">
                     <span class="material-symbols-outlined text-sm">person_add</span>
                     TAMBAH PEMAIN BARU
                 </button>
@@ -218,16 +232,16 @@
                                     name: '{{ addslashes($cat->name) }}',
                                     description: '{{ addslashes($cat->description ?? '') }}'
                                 }; categoryFormUrl = '/admin/categories/{{ $cat->id }}'; categoryMethod = 'PUT'; categoryModal = true"
-                                class="px-2.5 py-1 rounded bg-court-navy hover:bg-court-border text-telemetry-cyan font-bold transition-colors flex items-center gap-1">
-                                    <span class="material-symbols-outlined text-xs">edit</span>
-                                    Edit
+                                class="p-1.5 rounded bg-court-navy hover:bg-telemetry-cyan/20 text-text-muted hover:text-telemetry-cyan border border-court-border transition-colors"
+                                title="Edit Kategori {{ $cat->name }}">
+                                    <span class="material-symbols-outlined text-sm">edit</span>
                                 </button>
 
                                 @if($categories->count() > 1)
                                     <form action="{{ route('admin.categories.destroy', $cat->id) }}" method="POST" onsubmit="return confirm('PERINGATAN HAPUS KATEGORI:\n\nApakah Anda yakin ingin menghapus kategori \'{{ addslashes($cat->name) }}\'?\n\nMenghapus kategori ini juga akan MENGHAPUS SEMUA {{ $cat->teams_count }} Tim dan {{ $cat->matches_count }} Jadwal Pertandingan di dalamnya secara otomatis!\n\nKlik OK jika yakin.')" class="inline">
                                         @csrf
                                         @method('DELETE')
-                                        <button type="submit" class="p-1 rounded bg-court-navy hover:bg-card-red/20 text-text-muted hover:text-card-red transition-colors" title="Hapus Kategori {{ $cat->name }}">
+                                        <button type="submit" class="p-1.5 rounded bg-court-navy hover:bg-card-red/20 text-text-muted hover:text-card-red border border-court-border transition-colors" title="Hapus Kategori {{ $cat->name }}">
                                             <span class="material-symbols-outlined text-sm">delete</span>
                                         </button>
                                     </form>
@@ -242,6 +256,83 @@
                 @empty
                     <div class="col-span-3 p-12 text-center text-text-muted font-mono text-xs">
                         Belum ada kategori turnamen terdaftar. Klik "TAMBAH KATEGORI BARU".
+                    </div>
+                @endforelse
+            </div>
+        </div>
+
+        <!-- TAB STAGES: TAHAPAN BABAK LIST -->
+        <div x-show="tab === 'stages'" class="p-6">
+            <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
+                @forelse($stages as $stg)
+                    <div class="p-5 rounded-xl bg-court-surface-elevated border border-court-border space-y-4 hover:border-court-border/80 transition-all flex flex-col justify-between">
+                        <div class="space-y-3">
+                            <div class="flex items-start justify-between gap-3">
+                                <div class="flex items-center gap-3">
+                                    <div class="w-12 h-12 rounded-lg bg-court-navy border border-court-border flex items-center justify-center font-headline font-black text-lg {{ $stg->type === 'knockout' ? 'text-card-yellow' : 'text-stadium-emerald' }} flex-shrink-0">
+                                        <span class="material-symbols-outlined text-2xl">{{ $stg->type === 'knockout' ? 'military_tech' : 'grid_view' }}</span>
+                                    </div>
+                                    <div>
+                                        <h3 class="font-headline font-bold text-base text-text-primary">{{ $stg->name }}</h3>
+                                        <span class="text-xs font-mono text-telemetry-cyan font-bold">Urutan ke-{{ $stg->order_num }}</span>
+                                    </div>
+                                </div>
+
+                                @if($stg->type === 'knockout')
+                                    <span class="px-2 py-0.5 rounded text-[10px] font-mono font-bold uppercase bg-card-yellow/20 text-card-yellow border border-card-yellow/40">
+                                        SISTEM GUGUR
+                                    </span>
+                                @else
+                                    <span class="px-2 py-0.5 rounded text-[10px] font-mono font-bold uppercase bg-stadium-emerald/20 text-stadium-emerald border border-stadium-emerald/40">
+                                        BABAK GRUP
+                                    </span>
+                                @endif
+                            </div>
+
+                            <div class="grid grid-cols-2 gap-2 pt-2 border-t border-court-border/40 text-xs font-mono">
+                                <div class="p-2 rounded bg-court-navy/60 border border-court-border/60">
+                                    <span class="text-text-muted text-[10px] block">KATEGORI</span>
+                                    <span class="text-text-primary font-bold truncate block">{{ $stg->category?->name }}</span>
+                                </div>
+                                <div class="p-2 rounded bg-court-navy/60 border border-court-border/60">
+                                    <span class="text-text-muted text-[10px] block">TOTAL LAGA</span>
+                                    <span class="text-stadium-emerald font-bold">{{ $stg->matches_count }} Pertandingan</span>
+                                </div>
+                            </div>
+                        </div>
+
+                        <div class="pt-3 border-t border-court-border/60 flex items-center justify-between text-xs font-mono">
+                            <a href="{{ route('admin.fixtures', ['category_id' => $stg->category_id]) }}" class="text-xs font-mono text-stadium-emerald hover:underline flex items-center gap-1 font-bold">
+                                <span>Lihat Jadwal</span>
+                                <span class="material-symbols-outlined text-sm">arrow_forward</span>
+                            </a>
+
+                            <div class="flex items-center gap-2">
+                                <button type="button" @click="editStage = {
+                                    id: {{ $stg->id }},
+                                    category_id: {{ $stg->category_id }},
+                                    name: '{{ addslashes($stg->name) }}',
+                                    type: '{{ $stg->type }}',
+                                    order_num: {{ $stg->order_num }}
+                                }; stageFormUrl = '/admin/stages/{{ $stg->id }}'; stageMethod = 'PUT'; stageModal = true"
+                                class="p-1.5 rounded bg-court-navy hover:bg-telemetry-cyan/20 text-text-muted hover:text-telemetry-cyan border border-court-border transition-colors"
+                                title="Edit Babak {{ $stg->name }}">
+                                    <span class="material-symbols-outlined text-sm">edit</span>
+                                </button>
+
+                                <form action="{{ route('admin.stages.destroy', $stg->id) }}" method="POST" onsubmit="return confirm('PERINGATAN HAPUS BABAK:\n\nApakah Anda yakin ingin menghapus babak \'{{ addslashes($stg->name) }}\'?')" class="inline">
+                                    @csrf
+                                    @method('DELETE')
+                                    <button type="submit" class="p-1.5 rounded bg-court-navy hover:bg-card-red/20 text-text-muted hover:text-card-red border border-court-border transition-colors" title="Hapus Babak {{ $stg->name }}">
+                                        <span class="material-symbols-outlined text-sm">delete</span>
+                                    </button>
+                                </form>
+                            </div>
+                        </div>
+                    </div>
+                @empty
+                    <div class="col-span-3 p-12 text-center text-text-muted font-mono text-xs">
+                        Belum ada tahapan babak terdaftar pada kategori ini. Klik "TAMBAH BABAK BARU".
                     </div>
                 @endforelse
             </div>
@@ -291,9 +382,9 @@
                                     manager_contact: '{{ addslashes($tm->manager_contact ?? '') }}',
                                     logo_url: '{{ $tm->logo_url ?? '' }}'
                                 }; teamFormUrl = '/admin/teams/{{ $tm->id }}'; teamMethod = 'PUT'; logoPreview = '{{ $tm->logo_url ?? '' }}'; teamModal = true"
-                                class="px-2.5 py-1 rounded bg-court-navy hover:bg-court-border text-telemetry-cyan font-bold text-xs font-mono transition-colors flex items-center gap-1">
-                                    <span class="material-symbols-outlined text-xs">edit</span>
-                                    Edit
+                                class="p-1.5 rounded bg-court-navy hover:bg-telemetry-cyan/20 text-text-muted hover:text-telemetry-cyan border border-court-border transition-colors"
+                                title="Edit Tim {{ $tm->name }}">
+                                    <span class="material-symbols-outlined text-sm">edit</span>
                                 </button>
 
                                 <form action="{{ route('admin.teams.destroy', $tm->id) }}" method="POST" onsubmit="return confirm('Hapus tim {{ addslashes($tm->name) }}?')">
@@ -375,13 +466,28 @@
                                 @endif
                             </td>
                             <td class="py-3 px-4 text-right">
-                                <form action="{{ route('admin.players.destroy', $pl->id) }}" method="POST" class="inline" onsubmit="return confirm('Hapus pemain {{ $pl->name }}?')">
-                                    @csrf
-                                    @method('DELETE')
-                                    <button type="submit" class="p-1 rounded bg-court-navy hover:bg-card-red/20 text-text-muted hover:text-card-red border border-court-border transition-colors">
-                                        <span class="material-symbols-outlined text-sm">delete</span>
+                                <div class="flex items-center justify-end gap-2">
+                                    <button type="button" @click="editPlayer = {
+                                        id: {{ $pl->id }},
+                                        team_id: {{ $pl->team_id }},
+                                        name: '{{ addslashes($pl->name) }}',
+                                        jersey_number: {{ $pl->jersey_number }},
+                                        position: '{{ $pl->position }}',
+                                        is_captain: {{ $pl->is_captain ? 'true' : 'false' }}
+                                    }; playerFormUrl = '/admin/players/{{ $pl->id }}'; playerMethod = 'PUT'; playerModal = true"
+                                    class="p-1.5 rounded bg-court-navy hover:bg-telemetry-cyan/20 text-text-muted hover:text-telemetry-cyan border border-court-border transition-colors"
+                                    title="Edit Pemain {{ $pl->name }}">
+                                        <span class="material-symbols-outlined text-sm">edit</span>
                                     </button>
-                                </form>
+
+                                    <form action="{{ route('admin.players.destroy', $pl->id) }}" method="POST" class="inline" onsubmit="return confirm('Hapus pemain {{ $pl->name }}?')">
+                                        @csrf
+                                        @method('DELETE')
+                                        <button type="submit" class="p-1.5 rounded bg-court-navy hover:bg-card-red/20 text-text-muted hover:text-card-red border border-court-border transition-colors" title="Hapus Pemain {{ $pl->name }}">
+                                            <span class="material-symbols-outlined text-sm">delete</span>
+                                        </button>
+                                    </form>
+                                </div>
                             </td>
                         </tr>
                     @empty
@@ -446,8 +552,9 @@
                                     description: '{{ addslashes($vn->description ?? '') }}',
                                     is_active: {{ $vn->is_active ? 'true' : 'false' }}
                                 }; venueFormUrl = '/admin/venues/{{ $vn->id }}'; venueMethod = 'PUT'; venueModal = true"
-                                class="px-2.5 py-1 rounded bg-court-navy hover:bg-court-border text-telemetry-cyan font-bold transition-colors">
-                                    Edit
+                                class="p-1.5 rounded bg-court-navy hover:bg-telemetry-cyan/20 text-text-muted hover:text-telemetry-cyan border border-court-border transition-colors"
+                                title="Edit Venue {{ $vn->name }}">
+                                    <span class="material-symbols-outlined text-sm">edit</span>
                                 </button>
 
                                 <form action="{{ route('admin.venues.destroy', $vn->id) }}" method="POST" onsubmit="return confirm('Hapus venue ini?')" class="inline">
@@ -511,14 +618,15 @@
                                     name: '{{ addslashes($op->name) }}',
                                     email: '{{ addslashes($op->email) }}'
                                 }; operatorFormUrl = '/admin/operators/{{ $op->id }}'; operatorMethod = 'PUT'; operatorModal = true"
-                                class="px-2.5 py-1 rounded bg-court-navy hover:bg-court-border text-telemetry-cyan font-bold transition-colors">
-                                    Edit
+                                class="p-1.5 rounded bg-court-navy hover:bg-telemetry-cyan/20 text-text-muted hover:text-telemetry-cyan border border-court-border transition-colors"
+                                title="Edit Operator {{ $op->name }}">
+                                    <span class="material-symbols-outlined text-sm">edit</span>
                                 </button>
 
                                 <form action="{{ route('admin.operators.destroy', $op->id) }}" method="POST" onsubmit="return confirm('Hapus akun operator wasit meja ini?')" class="inline">
                                     @csrf
                                     @method('DELETE')
-                                    <button type="submit" class="p-1 rounded bg-court-navy hover:bg-card-red/20 text-text-muted hover:text-card-red transition-colors" title="Hapus Operator">
+                                    <button type="submit" class="p-1.5 rounded bg-court-navy hover:bg-card-red/20 text-text-muted hover:text-card-red border border-court-border transition-colors" title="Hapus Operator">
                                         <span class="material-symbols-outlined text-sm">delete</span>
                                     </button>
                                 </form>
@@ -595,14 +703,15 @@
                                     city: '{{ addslashes($rf->city ?? '') }}',
                                     is_active: {{ $rf->is_active ? 'true' : 'false' }}
                                 }; refereeFormUrl = '/admin/referees/{{ $rf->id }}'; refereeMethod = 'PUT'; refereeModal = true"
-                                class="px-2.5 py-1 rounded bg-court-navy hover:bg-court-border text-telemetry-cyan font-bold transition-colors">
-                                    Edit
+                                class="p-1.5 rounded bg-court-navy hover:bg-telemetry-cyan/20 text-text-muted hover:text-telemetry-cyan border border-court-border transition-colors"
+                                title="Edit Wasit {{ $rf->name }}">
+                                    <span class="material-symbols-outlined text-sm">edit</span>
                                 </button>
 
                                 <form action="{{ route('admin.referees.destroy', $rf->id) }}" method="POST" onsubmit="return confirm('Hapus data wasit lapangan ini?')" class="inline">
                                     @csrf
                                     @method('DELETE')
-                                    <button type="submit" class="p-1 rounded bg-court-navy hover:bg-card-red/20 text-text-muted hover:text-card-red transition-colors" title="Hapus Wasit">
+                                    <button type="submit" class="p-1.5 rounded bg-court-navy hover:bg-card-red/20 text-text-muted hover:text-card-red border border-court-border transition-colors" title="Hapus Wasit">
                                         <span class="material-symbols-outlined text-sm">delete</span>
                                     </button>
                                 </form>
@@ -715,61 +824,70 @@
     </div>
     </template>
 
-    <!-- MODAL 2: CREATE PLAYER -->
+    <!-- MODAL 2: CREATE / EDIT PLAYER -->
     <template x-teleport="body">
     <div x-show="playerModal" x-cloak class="fixed inset-0 z-[100] bg-black/80 backdrop-blur-sm flex items-center justify-center p-4">
         <div class="bg-court-surface rounded-xl border border-court-border max-w-md w-full p-6 space-y-4 shadow-2xl">
             <div class="flex items-center justify-between pb-3 border-b border-court-border">
-                <h3 class="font-headline font-bold text-base text-text-primary uppercase">Pendaftaran Pemain Skuad</h3>
+                <h3 class="font-headline font-bold text-base text-telemetry-cyan uppercase flex items-center gap-2">
+                    <span class="material-symbols-outlined text-lg">person</span>
+                    <span x-text="editPlayer ? 'Edit Data Pemain Skuad' : 'Pendaftaran Pemain Skuad'">Pendaftaran Pemain Skuad</span>
+                </h3>
                 <button @click="playerModal = false" class="text-text-muted hover:text-text-primary">
                     <span class="material-symbols-outlined">close</span>
                 </button>
             </div>
 
-            <form action="{{ route('admin.players.store') }}" method="POST" class="space-y-4 text-xs font-mono">
+            <form :action="playerFormUrl" method="POST" class="space-y-4 text-xs font-mono">
                 @csrf
+                <template x-if="playerMethod === 'PUT'">
+                    <input type="hidden" name="_method" value="PUT">
+                </template>
+
                 <div class="space-y-1">
                     <label class="block text-text-muted uppercase">Pilih Tim</label>
                     <select name="team_id" required class="w-full py-2 px-3 rounded bg-court-navy border border-court-border text-text-primary focus:border-stadium-emerald font-sans">
                         @foreach($teams as $t)
-                            <option value="{{ $t->id }}" {{ $selectedTeamId == $t->id ? 'selected' : '' }}>{{ $t->name }} ({{ $t->category->name }})</option>
+                            <option value="{{ $t->id }}" :selected="editPlayer ? editPlayer.team_id == {{ $t->id }} : ({{ $selectedTeamId ?? 'null' }} == {{ $t->id }})">
+                                {{ $t->name }} ({{ $t->category->name }})
+                            </option>
                         @endforeach
                     </select>
                 </div>
 
                 <div class="space-y-1">
                     <label class="block text-text-muted uppercase">Nama Lengkap Pemain</label>
-                    <input type="text" name="name" required placeholder="Contoh: Rian Pratama" class="w-full py-2 px-3 rounded bg-court-navy border border-court-border text-text-primary focus:border-stadium-emerald font-sans">
+                    <input type="text" name="name" required placeholder="Contoh: Rian Pratama" :value="editPlayer ? editPlayer.name : ''" class="w-full py-2 px-3 rounded bg-court-navy border border-court-border text-text-primary focus:border-stadium-emerald font-sans">
                 </div>
 
                 <div class="grid grid-cols-3 gap-3">
                     <div class="col-span-1 space-y-1">
                         <label class="block text-text-muted uppercase truncate" title="No. Punggung (1-99)">No. Punggung</label>
-                        <input type="number" name="jersey_number" min="1" max="99" required placeholder="7" class="w-full py-2 px-3 rounded bg-court-navy border border-court-border text-text-primary focus:border-stadium-emerald">
+                        <input type="number" name="jersey_number" min="1" max="99" required placeholder="7" :value="editPlayer ? editPlayer.jersey_number : ''" class="w-full py-2 px-3 rounded bg-court-navy border border-court-border text-text-primary focus:border-stadium-emerald">
                     </div>
 
                     <div class="col-span-2 space-y-1">
                         <label class="block text-text-muted uppercase">Posisi</label>
                         <select name="position" required class="w-full py-2 px-3 rounded bg-court-navy border border-court-border text-text-primary focus:border-stadium-emerald">
-                            <option value="GK">GK (Kiper)</option>
-                            <option value="DEF">DEF (Anchor / Defender)</option>
-                            <option value="FLA" selected>FLA (Flank / Sayap)</option>
-                            <option value="PIV">PIV (Pivot / Penyerang)</option>
+                            <option value="GK" :selected="editPlayer && editPlayer.position === 'GK'">GK (Kiper)</option>
+                            <option value="DEF" :selected="editPlayer && editPlayer.position === 'DEF'">DEF (Anchor / Defender)</option>
+                            <option value="FLA" :selected="editPlayer ? editPlayer.position === 'FLA' : true">FLA (Flank / Sayap)</option>
+                            <option value="PIV" :selected="editPlayer && editPlayer.position === 'PIV'">PIV (Pivot / Penyerang)</option>
                         </select>
                     </div>
                 </div>
 
                 <div class="flex items-center gap-2 pt-2">
-                    <input type="checkbox" name="is_captain" id="is_captain" value="1" class="rounded bg-court-navy border-court-border text-stadium-emerald focus:ring-stadium-emerald">
+                    <input type="checkbox" name="is_captain" id="is_captain" value="1" :checked="editPlayer ? editPlayer.is_captain : false" class="rounded bg-court-navy border-court-border text-stadium-emerald focus:ring-stadium-emerald">
                     <label for="is_captain" class="text-text-primary cursor-pointer">Pemain ini bertindak sebagai Kapten Tim</label>
                 </div>
 
-                <div class="pt-4 flex items-center justify-end gap-3">
+                <div class="pt-4 flex items-center justify-end gap-3 border-t border-court-border/60">
                     <button type="button" @click="playerModal = false" class="px-4 py-2 rounded bg-court-navy hover:bg-court-border text-text-muted font-bold transition-colors">
                         BATAL
                     </button>
                     <button type="submit" class="px-5 py-2 rounded bg-telemetry-cyan hover:bg-telemetry-cyan/90 text-court-navy font-headline font-bold uppercase transition-all shadow-[0_0_12px_rgba(0,229,255,0.3)]">
-                        DAFTARKAN PEMAIN
+                        <span x-text="editPlayer ? 'PERBARUI PEMAIN' : 'DAFTARKAN PEMAIN'">DAFTARKAN PEMAIN</span>
                     </button>
                 </div>
             </form>
@@ -998,6 +1116,97 @@
                     </button>
                     <button type="submit" class="px-5 py-2 rounded bg-stadium-emerald hover:bg-stadium-emerald/90 text-court-navy font-headline font-bold uppercase transition-all shadow-[0_0_12px_rgba(0,255,135,0.3)]">
                         <span x-text="editReferee ? 'PERBARUI WASIT' : 'SIMPAN WASIT'">SIMPAN WASIT</span>
+                    </button>
+                </div>
+            </form>
+        </div>
+    </div>
+    </template>
+
+    <!-- MODAL 7: CREATE / EDIT TAHAPAN BABAK -->
+    <template x-teleport="body">
+    <div x-show="stageModal" x-cloak class="fixed inset-0 z-[100] bg-black/80 backdrop-blur-sm flex items-center justify-center p-4">
+        <div class="bg-court-surface rounded-xl border border-court-border max-w-md w-full p-6 space-y-4 shadow-2xl">
+            <div class="flex items-center justify-between pb-3 border-b border-court-border">
+                <h3 class="font-headline font-bold text-base text-stadium-emerald uppercase flex items-center gap-2" x-text="editStage ? 'Edit Tahapan Babak' : 'Tambah Babak / Tahapan Baru'">
+                    Tambah Babak / Tahapan Baru
+                </h3>
+                <button @click="stageModal = false" class="text-text-muted hover:text-text-primary">
+                    <span class="material-symbols-outlined">close</span>
+                </button>
+            </div>
+
+            <form :action="stageFormUrl" method="POST" class="space-y-4 text-xs font-mono">
+                @csrf
+                <template x-if="stageMethod === 'PUT'">
+                    <input type="hidden" name="_method" value="PUT">
+                </template>
+
+                <div class="space-y-1">
+                    <label class="block text-text-muted uppercase font-bold">Kategori Turnamen</label>
+                    <select name="category_id" required class="w-full py-2 px-3 rounded bg-court-navy border border-court-border text-text-primary focus:border-stadium-emerald font-sans">
+                        @foreach($categories as $cat)
+                            <option value="{{ $cat->id }}" :selected="editStage ? editStage.category_id == {{ $cat->id }} : {{ $selectedCategoryId == $cat->id ? 'true' : 'false' }}">
+                                {{ $cat->name }}
+                            </option>
+                        @endforeach
+                    </select>
+                </div>
+
+                <div class="space-y-1.5">
+                    <label class="block text-text-muted uppercase font-bold">Pilihan Cepat / Preset Babak</label>
+                    <div class="flex flex-wrap gap-1.5">
+                        <button type="button" @click="$refs.stgName.value = 'Babak Grup'; $refs.stgType.value = 'group'; $refs.stgOrder.value = '1'" class="px-2 py-1 rounded bg-court-navy hover:bg-court-border border border-court-border text-[11px] text-text-muted hover:text-stadium-emerald transition-colors">
+                            Babak Grup
+                        </button>
+                        <button type="button" @click="$refs.stgName.value = 'Perempat Final'; $refs.stgType.value = 'knockout'; $refs.stgOrder.value = '2'" class="px-2 py-1 rounded bg-court-navy hover:bg-court-border border border-court-border text-[11px] text-text-muted hover:text-card-yellow transition-colors">
+                            Perempat Final
+                        </button>
+                        <button type="button" @click="$refs.stgName.value = 'Semifinal'; $refs.stgType.value = 'knockout'; $refs.stgOrder.value = '3'" class="px-2 py-1 rounded bg-court-navy hover:bg-court-border border border-court-border text-[11px] text-text-muted hover:text-card-yellow transition-colors">
+                            Semifinal
+                        </button>
+                        <button type="button" @click="$refs.stgName.value = 'Perebutan Juara 3 & 4'; $refs.stgType.value = 'knockout'; $refs.stgOrder.value = '4'" class="px-2 py-1 rounded bg-court-navy hover:bg-court-border border border-court-border text-[11px] text-text-muted hover:text-card-yellow transition-colors">
+                            Perebutan Juara 3 & 4
+                        </button>
+                        <button type="button" @click="$refs.stgName.value = 'Grand Final'; $refs.stgType.value = 'knockout'; $refs.stgOrder.value = '5'" class="px-2 py-1 rounded bg-court-navy hover:bg-court-border border border-court-border text-[11px] text-text-muted hover:text-stadium-emerald transition-colors">
+                            Grand Final
+                        </button>
+                    </div>
+                </div>
+
+                <div class="space-y-1">
+                    <label class="block text-text-muted uppercase font-bold">Nama Babak / Tahapan</label>
+                    <input type="text" name="name" x-ref="stgName" :value="editStage ? editStage.name : ''" required placeholder="Contoh: Semifinal" class="w-full py-2 px-3 rounded bg-court-navy border border-court-border text-text-primary focus:border-stadium-emerald font-sans">
+                </div>
+
+                <div class="grid grid-cols-2 gap-3">
+                    <div class="space-y-1">
+                        <label class="block text-text-muted uppercase font-bold">Sistem / Tipe Babak</label>
+                        <select name="type" x-ref="stgType" required class="w-full py-2 px-3 rounded bg-court-navy border border-court-border text-text-primary focus:border-stadium-emerald font-sans">
+                            <option value="group" :selected="editStage && editStage.type === 'group'">Babak Grup / Liga</option>
+                            <option value="knockout" :selected="editStage && editStage.type === 'knockout'">Sistem Gugur (Knockout)</option>
+                        </select>
+                    </div>
+                    <div class="space-y-1">
+                        <label class="block text-text-muted uppercase font-bold">Nomor Urutan</label>
+                        <input type="number" name="order_num" x-ref="stgOrder" min="1" max="99" :value="editStage ? editStage.order_num : 1" required class="w-full py-2 px-3 rounded bg-court-navy border border-court-border text-text-primary focus:border-stadium-emerald font-sans">
+                    </div>
+                </div>
+
+                <div class="p-3 rounded bg-court-navy/60 border border-court-border text-text-muted text-[11px] space-y-1">
+                    <p class="flex items-center gap-1.5 text-stadium-emerald font-bold">
+                        <span class="material-symbols-outlined text-sm">info</span>
+                        Catatan Bagan:
+                    </p>
+                    <p>Babak bertipe <strong>Sistem Gugur (Knockout)</strong> otomatis muncul di <em>Bagan Sistem Gugur (Knockout Tree)</em> di Fan Center publik.</p>
+                </div>
+
+                <div class="pt-4 flex items-center justify-end gap-3 border-t border-court-border/60">
+                    <button type="button" @click="stageModal = false" class="px-4 py-2 rounded bg-court-navy hover:bg-court-border text-text-muted font-bold transition-colors">
+                        BATAL
+                    </button>
+                    <button type="submit" class="px-5 py-2 rounded bg-stadium-emerald hover:bg-stadium-emerald/90 text-court-navy font-headline font-bold uppercase transition-all shadow-[0_0_12px_rgba(0,255,135,0.3)]">
+                        <span x-text="editStage ? 'PERBARUI BABAK' : 'SIMPAN BABAK'">SIMPAN BABAK</span>
                     </button>
                 </div>
             </form>

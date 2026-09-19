@@ -4,7 +4,9 @@ namespace Tests\Feature;
 
 use App\Models\Category;
 use App\Models\GameMatch;
+use App\Models\Player;
 use App\Models\Referee;
+use App\Models\Stage;
 use App\Models\Team;
 use App\Models\User;
 use App\Models\Venue;
@@ -114,7 +116,7 @@ class TournamentFeatureTest extends TestCase
             'team_id' => $match->home_team_id,
             'player_id' => $homePlayer?->id,
             'event_type' => 'goal',
-            'minute' => 19,
+            'minute' => 14,
             'notes' => 'Gol tendangan penalti',
         ]);
 
@@ -122,6 +124,29 @@ class TournamentFeatureTest extends TestCase
 
         $match->refresh();
         $this->assertEquals($initialHomeScore + 1, $match->home_score);
+    }
+
+    /**
+     * Test goal or card minute cannot exceed the current running time.
+     */
+    public function test_event_minute_cannot_exceed_current_running_time(): void
+    {
+        $operator = User::where('role', 'operator')->first() ?? User::first();
+        $match = GameMatch::first(); // Match has 840 seconds elapsed = minute 14
+        $homePlayer = $match->homeTeam->players->first();
+
+        $currentLiveMinute = max(1, (int) ceil($match->elapsed_seconds / 60));
+
+        // Attempting to record an event at minute beyond current live time should fail validation
+        $response = $this->actingAs($operator)->post(route('admin.matches.events.store', $match->id), [
+            'team_id' => $match->home_team_id,
+            'player_id' => $homePlayer?->id,
+            'event_type' => 'goal',
+            'minute' => $currentLiveMinute + 5,
+            'notes' => 'Gol di masa depan (tidak valid)',
+        ]);
+
+        $response->assertSessionHasErrors('minute');
     }
 
     /**
@@ -812,5 +837,138 @@ class TournamentFeatureTest extends TestCase
         $response->assertSee('Filter Tim:');
         $response->assertSee($team->name);
         $response->assertSee('tab=players');
+    }
+
+    public function test_admin_can_update_player(): void
+    {
+        $admin = User::where('role', 'admin')->first();
+        $player = Player::first();
+        $this->assertNotNull($player);
+
+        $response = $this->actingAs($admin)->put(route('admin.players.update', $player->id), [
+            'team_id' => $player->team_id,
+            'name' => 'Nama Pemain Terupdate',
+            'jersey_number' => $player->jersey_number,
+            'position' => 'PIV',
+            'is_captain' => 1,
+        ]);
+
+        $response->assertRedirect(route('admin.dashboard', ['tab' => 'players', 'team_id' => $player->team_id]));
+        $this->assertDatabaseHas('players', [
+            'id' => $player->id,
+            'name' => 'Nama Pemain Terupdate',
+            'position' => 'PIV',
+            'is_captain' => 1,
+        ]);
+    }
+
+    public function test_admin_can_manage_stages(): void
+    {
+        $admin = User::where('role', 'admin')->first();
+        $category = Category::first();
+        $this->assertNotNull($category);
+
+        // Store new stage
+        $response = $this->actingAs($admin)->post(route('admin.stages.store'), [
+            'category_id' => $category->id,
+            'name' => 'Perempat Final Baru',
+            'type' => 'knockout',
+            'order_num' => 2,
+        ]);
+
+        $response->assertRedirect(route('admin.dashboard', ['tab' => 'stages', 'category_id' => $category->id]));
+        $this->assertDatabaseHas('stages', [
+            'name' => 'Perempat Final Baru',
+            'type' => 'knockout',
+            'order_num' => 2,
+        ]);
+
+        $stage = Stage::where('name', 'Perempat Final Baru')->first();
+        $this->assertNotNull($stage);
+
+        // Update stage
+        $updateResponse = $this->actingAs($admin)->put(route('admin.stages.update', $stage->id), [
+            'category_id' => $category->id,
+            'name' => 'Perempat Final Revisi',
+            'type' => 'knockout',
+            'order_num' => 3,
+        ]);
+
+        $updateResponse->assertRedirect(route('admin.dashboard', ['tab' => 'stages', 'category_id' => $category->id]));
+        $this->assertDatabaseHas('stages', [
+            'id' => $stage->id,
+            'name' => 'Perempat Final Revisi',
+            'order_num' => 3,
+        ]);
+
+        // Delete stage
+        $deleteResponse = $this->actingAs($admin)->delete(route('admin.stages.destroy', $stage->id));
+        $deleteResponse->assertRedirect(route('admin.dashboard', ['tab' => 'stages', 'category_id' => $category->id]));
+        $this->assertDatabaseMissing('stages', ['id' => $stage->id]);
+    }
+
+    public function test_knockout_match_penalty_shootout_flow(): void
+    {
+        $admin = User::where('role', 'admin')->first();
+        $match = GameMatch::where('status', 'scheduled')->first();
+        $this->assertNotNull($match);
+
+        // Transition from scheduled to first_half, half_time, second_half, then penalty_shootout
+        $this->actingAs($admin)->post(route('admin.matches.status', $match->id), ['status' => 'first_half']);
+        $this->actingAs($admin)->post(route('admin.matches.status', $match->id), ['status' => 'half_time']);
+        $this->actingAs($admin)->post(route('admin.matches.status', $match->id), ['status' => 'second_half']);
+
+        $penaltyResponse = $this->actingAs($admin)->post(route('admin.matches.status', $match->id), [
+            'status' => 'penalty_shootout',
+        ]);
+        $penaltyResponse->assertRedirect();
+        $match->refresh();
+        $this->assertEquals('penalty_shootout', $match->status);
+        $this->assertFalse($match->timer_running);
+        $this->assertEquals('ADU PENALTI', $match->status_badge['text']);
+
+        // Update penalty score
+        $scoreResponse = $this->actingAs($admin)->postJson(route('admin.matches.penalty_score', $match->id), [
+            'home_penalty_score' => 4,
+            'away_penalty_score' => 3,
+        ]);
+        $scoreResponse->assertOk();
+        $scoreResponse->assertJson([
+            'success' => true,
+            'home_penalty_score' => 4,
+            'away_penalty_score' => 3,
+            'penalty_formatted' => 'Pen. 4 - 3',
+        ]);
+
+        $match->refresh();
+        $this->assertEquals(4, $match->home_penalty_score);
+        $this->assertEquals(3, $match->away_penalty_score);
+        $this->assertTrue($match->has_penalty);
+        $this->assertEquals('Pen. 4 - 3', $match->penalty_score_formatted);
+
+        // Finalize match
+        $finishResponse = $this->actingAs($admin)->post(route('admin.matches.status', $match->id), [
+            'status' => 'finished',
+        ]);
+        $finishResponse->assertRedirect();
+        $match->refresh();
+        $this->assertEquals('finished', $match->status);
+
+        // Verify public API returns penalty info
+        $apiResponse = $this->getJson(route('api.matches.live', $match->id));
+        $apiResponse->assertOk();
+        $apiResponse->assertJsonFragment([
+            'home_penalty_score' => 4,
+            'away_penalty_score' => 3,
+            'has_penalty' => true,
+            'penalty_formatted' => 'Pen. 4 - 3',
+        ]);
+
+        // Verify match detail page displays penalty score
+        $detailResponse = $this->get(route('matches.show', $match->id));
+        $detailResponse->assertOk();
+        $detailResponse->assertSee('ADU PENALTI:');
+        $detailResponse->assertSee('4');
+        $detailResponse->assertSee('3');
     }
 }

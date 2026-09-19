@@ -69,6 +69,10 @@ class AdminFixtureController extends Controller
      */
     public function store(Request $request): RedirectResponse
     {
+        if ($request->input('venue_id') === 'custom') {
+            $request->merge(['venue_id' => null]);
+        }
+
         $validated = $request->validate([
             'category_id' => ['required', 'exists:categories,id'],
             'stage_id' => ['nullable', 'exists:stages,id'],
@@ -92,7 +96,8 @@ class AdminFixtureController extends Controller
 
         if (! empty($validated['venue_id'])) {
             $v = Venue::find($validated['venue_id']);
-            $validated['venue'] = $v?->name ?? ($validated['venue'] ?? 'Arena Futsal');
+            $fullName = $v ? ($v->court_name ? "{$v->name} ({$v->court_name})" : $v->name) : ($validated['venue'] ?? 'Arena Futsal');
+            $validated['venue'] = $request->input('venue') ?: $fullName;
         } elseif (! empty($validated['venue'])) {
             $v = Venue::firstOrCreate(['name' => $validated['venue']], ['is_active' => true]);
             $validated['venue_id'] = $v->id;
@@ -121,6 +126,10 @@ class AdminFixtureController extends Controller
      */
     public function update(Request $request, int $id): RedirectResponse
     {
+        if ($request->input('venue_id') === 'custom') {
+            $request->merge(['venue_id' => null]);
+        }
+
         $match = GameMatch::findOrFail($id);
 
         $validated = $request->validate([
@@ -146,7 +155,8 @@ class AdminFixtureController extends Controller
 
         if (! empty($validated['venue_id'])) {
             $v = Venue::find($validated['venue_id']);
-            $validated['venue'] = $v?->name ?? ($validated['venue'] ?? $match->venue);
+            $fullName = $v ? ($v->court_name ? "{$v->name} ({$v->court_name})" : $v->name) : ($validated['venue'] ?? $match->venue);
+            $validated['venue'] = $request->input('venue') ?: $fullName;
         } elseif (! empty($validated['venue'])) {
             $v = Venue::firstOrCreate(['name' => $validated['venue']], ['is_active' => true]);
             $validated['venue_id'] = $v->id;

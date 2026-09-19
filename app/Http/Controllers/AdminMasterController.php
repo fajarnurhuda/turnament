@@ -6,6 +6,7 @@ use App\Models\Category;
 use App\Models\GameMatch;
 use App\Models\Player;
 use App\Models\Referee;
+use App\Models\Stage;
 use App\Models\Team;
 use App\Models\User;
 use App\Models\Venue;
@@ -57,8 +58,16 @@ class AdminMasterController extends Controller
             ->orderBy('name')
             ->get();
 
+        $stages = Stage::query()
+            ->when($selectedCategoryId, fn ($q) => $q->where('category_id', $selectedCategoryId))
+            ->withCount(['matches', 'groups'])
+            ->with('category')
+            ->orderBy('order_num')
+            ->get();
+
         $stats = [
             'total_categories' => $categories->count(),
+            'total_stages' => Stage::count(),
             'total_teams' => Team::count(),
             'total_players' => Player::count(),
             'total_venues' => $venues->count(),
@@ -71,6 +80,7 @@ class AdminMasterController extends Controller
         return view('admin.dashboard', [
             'categories' => $categories,
             'selectedCategoryId' => $selectedCategoryId,
+            'stages' => $stages,
             'teams' => $teams,
             'selectedTeamId' => $selectedTeamId,
             'players' => $players,
@@ -387,5 +397,54 @@ class AdminMasterController extends Controller
         $referee->delete();
 
         return redirect()->route('admin.dashboard', ['tab' => 'referees'])->with('success', 'Wasit lapangan berhasil dihapus dari Master Wasit.');
+    }
+
+    // --- STAGE (BABAK TURNAMEN) CRUD ---
+
+    public function storeStage(Request $request): RedirectResponse
+    {
+        $validated = $request->validate([
+            'category_id' => ['required', 'exists:categories,id'],
+            'name' => ['required', 'string', 'max:255'],
+            'type' => ['required', 'in:group,knockout'],
+            'order_num' => ['required', 'integer', 'min:1', 'max:99'],
+        ]);
+
+        Stage::create($validated);
+
+        return redirect()->route('admin.dashboard', ['tab' => 'stages', 'category_id' => $validated['category_id']])
+            ->with('success', 'Babak / Tahapan turnamen baru berhasil ditambahkan.');
+    }
+
+    public function updateStage(Request $request, int $id): RedirectResponse
+    {
+        $stage = Stage::findOrFail($id);
+
+        $validated = $request->validate([
+            'category_id' => ['required', 'exists:categories,id'],
+            'name' => ['required', 'string', 'max:255'],
+            'type' => ['required', 'in:group,knockout'],
+            'order_num' => ['required', 'integer', 'min:1', 'max:99'],
+        ]);
+
+        $stage->update($validated);
+
+        return redirect()->route('admin.dashboard', ['tab' => 'stages', 'category_id' => $stage->category_id])
+            ->with('success', 'Babak / Tahapan turnamen berhasil diperbarui.');
+    }
+
+    public function destroyStage(int $id): RedirectResponse
+    {
+        $stage = Stage::withCount('matches')->findOrFail($id);
+
+        if ($stage->matches_count > 0) {
+            return back()->with('error', "Tidak dapat menghapus babak '{$stage->name}' karena sudah ada {$stage->matches_count} pertandingan yang dijadwalkan di dalamnya.");
+        }
+
+        $categoryId = $stage->category_id;
+        $stage->delete();
+
+        return redirect()->route('admin.dashboard', ['tab' => 'stages', 'category_id' => $categoryId])
+            ->with('success', 'Babak / Tahapan turnamen berhasil dihapus.');
     }
 }

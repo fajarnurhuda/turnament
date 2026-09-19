@@ -88,10 +88,16 @@
                                     x-text="featured.status_badge.text">
                                     {{ $featuredMatch->status_badge['text'] }}
                                 </span>
-                                <span x-show="featured.is_live" class="text-telemetry-cyan font-bold tracking-wider whitespace-nowrap text-[10px] sm:text-xs">
+                                <span x-show="featured.is_live && featured.status !== 'penalty_shootout'" class="text-telemetry-cyan font-bold tracking-wider whitespace-nowrap text-[10px] sm:text-xs">
                                     MENIT <span x-text="featured.current_minute">{{ $featuredMatch->current_minute }}</span>'
                                 </span>
                             </div>
+
+                            <template x-if="featured.has_penalty || {{ $featuredMatch->has_penalty ? 'true' : 'false' }} || featured.status === 'penalty_shootout'">
+                                <div class="mt-1.5 px-2.5 py-0.5 rounded-full bg-card-yellow/20 text-card-yellow border border-card-yellow/40 font-mono font-bold text-[10px] sm:text-xs tracking-wider">
+                                    ADU PENALTI: <span x-text="featured.home_penalty_score ?? {{ $featuredMatch->home_penalty_score ?? 0 }}">{{ $featuredMatch->home_penalty_score ?? 0 }}</span> - <span x-text="featured.away_penalty_score ?? {{ $featuredMatch->away_penalty_score ?? 0 }}">{{ $featuredMatch->away_penalty_score ?? 0 }}</span>
+                                </div>
+                            </template>
                         </div>
 
                         <!-- Away Team -->
@@ -211,6 +217,13 @@
                                             <span class="{{ $match->isLive() ? 'text-stadium-emerald' : 'text-text-primary' }}">{{ $match->home_score }}</span>
                                             <span class="text-court-border text-xs">-</span>
                                             <span class="{{ $match->isLive() ? 'text-stadium-emerald' : 'text-text-primary' }}">{{ $match->away_score }}</span>
+                                            @if ($match->has_penalty)
+                                                <div class="mt-0.5">
+                                                    <span class="px-1.5 py-0.5 rounded bg-card-yellow/20 text-card-yellow font-mono text-[9px] font-bold border border-card-yellow/40">
+                                                        {{ $match->penalty_score_formatted }}
+                                                    </span>
+                                                </div>
+                                            @endif
                                         @endif
                                     </div>
 
@@ -277,7 +290,12 @@
                                                     </div>
                                                     <span class="font-headline font-bold text-text-primary truncate">{{ $bm->homeTeam->name }}</span>
                                                 </div>
-                                                <span class="font-mono font-black text-stadium-emerald ml-2 flex-shrink-0">{{ $bm->home_score }}</span>
+                                                <span class="font-mono font-black text-stadium-emerald ml-2 flex-shrink-0">
+                                                    {{ $bm->home_score }}
+                                                    @if($bm->has_penalty)
+                                                        <span class="text-[10px] text-card-yellow font-bold">({{ $bm->home_penalty_score }})</span>
+                                                    @endif
+                                                </span>
                                             </div>
                                             <div class="flex justify-between items-center py-1 border-t border-court-border/30">
                                                 <div class="flex items-center gap-2 truncate min-w-0">
@@ -290,8 +308,19 @@
                                                     </div>
                                                     <span class="font-headline font-bold text-text-primary truncate">{{ $bm->awayTeam->name }}</span>
                                                 </div>
-                                                <span class="font-mono font-black text-telemetry-cyan ml-2 flex-shrink-0">{{ $bm->away_score }}</span>
+                                                <span class="font-mono font-black text-telemetry-cyan ml-2 flex-shrink-0">
+                                                    {{ $bm->away_score }}
+                                                    @if($bm->has_penalty)
+                                                        <span class="text-[10px] text-card-yellow font-bold">({{ $bm->away_penalty_score }})</span>
+                                                    @endif
+                                                </span>
                                             </div>
+                                            @if($bm->has_penalty)
+                                                <div class="pt-1 mt-1 border-t border-court-border/30 flex items-center justify-between text-[10px] font-mono text-card-yellow">
+                                                    <span>Menang Adu Penalti</span>
+                                                    <span class="font-bold">{{ $bm->penalty_score_formatted }}</span>
+                                                </div>
+                                            @endif
                                         </div>
                                     @empty
                                         <p class="text-xs font-mono text-text-muted">Menunggu hasil babak penyisihan grup.</p>
@@ -529,11 +558,15 @@
                 featured: {
                     home_score: {{ $featuredMatch ? $featuredMatch->home_score : 0 }},
                     away_score: {{ $featuredMatch ? $featuredMatch->away_score : 0 }},
+                    home_penalty_score: {{ $featuredMatch && $featuredMatch->home_penalty_score !== null ? $featuredMatch->home_penalty_score : 'null' }},
+                    away_penalty_score: {{ $featuredMatch && $featuredMatch->away_penalty_score !== null ? $featuredMatch->away_penalty_score : 'null' }},
+                    has_penalty: {{ $featuredMatch && $featuredMatch->has_penalty ? 'true' : 'false' }},
                     current_minute: {{ $featuredMatch ? $featuredMatch->current_minute : 0 }},
                     timer_seconds: {{ $featuredMatch ? $featuredMatch->elapsed_seconds : 0 }},
                     timer_running: {{ $featuredMatch && $featuredMatch->timer_running ? 'true' : 'false' }},
                     time_formatted: "{{ $featuredMatch ? $featuredMatch->time_formatted : '00:00' }}",
                     is_live: {{ $featuredMatch && $featuredMatch->isLive() ? 'true' : 'false' }},
+                    status: "{{ $featuredMatch ? $featuredMatch->status : '' }}",
                     status_badge: {
                         text: "{{ $featuredMatch ? $featuredMatch->status_badge['text'] : '' }}",
                         color: "{{ $featuredMatch ? $featuredMatch->status_badge['color'] : '' }}"
@@ -552,6 +585,10 @@
                             .then(data => {
                                 this.featured.home_score = data.home_score;
                                 this.featured.away_score = data.away_score;
+                                this.featured.home_penalty_score = data.home_penalty_score;
+                                this.featured.away_penalty_score = data.away_penalty_score;
+                                this.featured.has_penalty = data.has_penalty;
+                                this.featured.status = data.status;
                                 this.featured.current_minute = data.current_minute;
                                 this.featured.is_live = data.is_live;
                                 this.featured.status_badge = data.status_badge;

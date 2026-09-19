@@ -11,6 +11,8 @@
         ownGoalModal: false,
         scoreModal: false,
         timerModal: false,
+        homePenaltyScore: {{ $match->home_penalty_score ?? 0 }},
+        awayPenaltyScore: {{ $match->away_penalty_score ?? 0 }},
         goalTeamId: '{{ $match->home_team_id }}',
         cardTeamId: '{{ $match->home_team_id }}',
         timerSeconds: {{ $match->elapsed_seconds }},
@@ -18,6 +20,23 @@
         timeFormatted: '{{ $match->time_formatted }}',
         currentMinute: {{ $match->current_minute }},
         isUpdating: false,
+
+        updatePenalty(deltaHome, deltaAway) {
+            this.homePenaltyScore = Math.max(0, this.homePenaltyScore + deltaHome);
+            this.awayPenaltyScore = Math.max(0, this.awayPenaltyScore + deltaAway);
+            fetch('{{ route('admin.matches.penalty_score', $match->id) }}', {
+                method: 'POST',
+                headers: {
+                    'Content-Type': 'application/json',
+                    'X-CSRF-TOKEN': '{{ csrf_token() }}',
+                    'Accept': 'application/json'
+                },
+                body: JSON.stringify({
+                    home_penalty_score: this.homePenaltyScore,
+                    away_penalty_score: this.awayPenaltyScore
+                })
+            }).then(r => r.json()).catch(() => {});
+        },
 
         init() {
             if (!this.isFinished) {
@@ -228,12 +247,12 @@
                 </div>
 
                 <!-- Step Indicators -->
-                <div class="grid grid-cols-2 sm:grid-cols-5 gap-2 font-mono text-xs">
+                <div class="grid grid-cols-2 sm:grid-cols-6 gap-2 font-mono text-xs">
                     <!-- Step 1: Babak 1 -->
-                    <div class="p-2.5 rounded-lg border flex flex-col gap-1 transition-all {{ $match->status === 'first_half' ? 'bg-stadium-emerald/10 border-stadium-emerald text-stadium-emerald ring-1 ring-stadium-emerald/50' : (in_array($match->status, ['half_time', 'second_half', 'extra_time', 'finished']) ? 'bg-court-navy/60 border-court-border text-stadium-emerald/80' : 'bg-court-navy border-court-border text-text-muted') }}">
+                    <div class="p-2.5 rounded-lg border flex flex-col gap-1 transition-all {{ $match->status === 'first_half' ? 'bg-stadium-emerald/10 border-stadium-emerald text-stadium-emerald ring-1 ring-stadium-emerald/50' : (in_array($match->status, ['half_time', 'second_half', 'extra_time', 'penalty_shootout', 'finished']) ? 'bg-court-navy/60 border-court-border text-stadium-emerald/80' : 'bg-court-navy border-court-border text-text-muted') }}">
                         <div class="flex items-center justify-between">
                             <span class="font-bold">1. BABAK 1</span>
-                            @if(in_array($match->status, ['half_time', 'second_half', 'extra_time', 'finished']))
+                            @if(in_array($match->status, ['half_time', 'second_half', 'extra_time', 'penalty_shootout', 'finished']))
                                 <span class="material-symbols-outlined text-sm text-stadium-emerald">check_circle</span>
                             @elseif($match->status === 'first_half')
                                 <span class="w-2 h-2 rounded-full bg-stadium-emerald animate-ping"></span>
@@ -243,10 +262,10 @@
                     </div>
 
                     <!-- Step 2: Half Time -->
-                    <div class="p-2.5 rounded-lg border flex flex-col gap-1 transition-all {{ $match->status === 'half_time' ? 'bg-card-yellow/10 border-card-yellow text-card-yellow ring-1 ring-card-yellow/50' : (in_array($match->status, ['second_half', 'extra_time', 'finished']) ? 'bg-court-navy/60 border-court-border text-card-yellow/80' : 'bg-court-navy border-court-border text-text-muted') }}">
+                    <div class="p-2.5 rounded-lg border flex flex-col gap-1 transition-all {{ $match->status === 'half_time' ? 'bg-card-yellow/10 border-card-yellow text-card-yellow ring-1 ring-card-yellow/50' : (in_array($match->status, ['second_half', 'extra_time', 'penalty_shootout', 'finished']) ? 'bg-court-navy/60 border-court-border text-card-yellow/80' : 'bg-court-navy border-court-border text-text-muted') }}">
                         <div class="flex items-center justify-between">
                             <span class="font-bold">2. HALF TIME</span>
-                            @if(in_array($match->status, ['second_half', 'extra_time', 'finished']))
+                            @if(in_array($match->status, ['second_half', 'extra_time', 'penalty_shootout', 'finished']))
                                 <span class="material-symbols-outlined text-sm text-card-yellow">check_circle</span>
                             @elseif($match->status === 'half_time')
                                 <span class="w-2 h-2 rounded-full bg-card-yellow animate-ping"></span>
@@ -256,10 +275,10 @@
                     </div>
 
                     <!-- Step 3: Babak 2 -->
-                    <div class="p-2.5 rounded-lg border flex flex-col gap-1 transition-all {{ $match->status === 'second_half' ? 'bg-stadium-emerald/10 border-stadium-emerald text-stadium-emerald ring-1 ring-stadium-emerald/50' : (in_array($match->status, ['extra_time', 'finished']) ? 'bg-court-navy/60 border-court-border text-stadium-emerald/80' : 'bg-court-navy border-court-border text-text-muted') }}">
+                    <div class="p-2.5 rounded-lg border flex flex-col gap-1 transition-all {{ $match->status === 'second_half' ? 'bg-stadium-emerald/10 border-stadium-emerald text-stadium-emerald ring-1 ring-stadium-emerald/50' : (in_array($match->status, ['extra_time', 'penalty_shootout', 'finished']) ? 'bg-court-navy/60 border-court-border text-stadium-emerald/80' : 'bg-court-navy border-court-border text-text-muted') }}">
                         <div class="flex items-center justify-between">
                             <span class="font-bold">3. BABAK 2</span>
-                            @if(in_array($match->status, ['extra_time', 'finished']))
+                            @if(in_array($match->status, ['extra_time', 'penalty_shootout', 'finished']))
                                 <span class="material-symbols-outlined text-sm text-stadium-emerald">check_circle</span>
                             @elseif($match->status === 'second_half')
                                 <span class="w-2 h-2 rounded-full bg-stadium-emerald animate-ping"></span>
@@ -269,20 +288,33 @@
                     </div>
 
                     <!-- Step 4: Babak Tambahan -->
-                    <div class="p-2.5 rounded-lg border flex flex-col gap-1 transition-all {{ $match->status === 'extra_time' ? 'bg-telemetry-cyan/10 border-telemetry-cyan text-telemetry-cyan ring-1 ring-telemetry-cyan/50' : ($match->status === 'finished' ? 'bg-court-navy/60 border-court-border text-text-muted' : 'bg-court-navy border-court-border text-text-muted/60') }}">
+                    <div class="p-2.5 rounded-lg border flex flex-col gap-1 transition-all {{ $match->status === 'extra_time' ? 'bg-telemetry-cyan/10 border-telemetry-cyan text-telemetry-cyan ring-1 ring-telemetry-cyan/50' : (in_array($match->status, ['penalty_shootout', 'finished']) ? 'bg-court-navy/60 border-court-border text-text-muted' : 'bg-court-navy border-court-border text-text-muted/60') }}">
                         <div class="flex items-center justify-between">
                             <span class="font-bold">4. EXTRA TIME</span>
                             @if($match->status === 'extra_time')
                                 <span class="w-2 h-2 rounded-full bg-telemetry-cyan animate-ping"></span>
                             @endif
                         </div>
-                        <span class="text-[10px] text-text-muted">+{{ $match->extra_time_duration_minutes }}' Menit Tambahan</span>
+                        <span class="text-[10px] text-text-muted">+{{ $match->extra_time_duration_minutes }}' Menit</span>
                     </div>
 
-                    <!-- Step 5: Selesai (Full Time) -->
+                    <!-- Step 5: Adu Penalti -->
+                    <div class="p-2.5 rounded-lg border flex flex-col gap-1 transition-all {{ $match->status === 'penalty_shootout' ? 'bg-card-yellow/20 border-card-yellow text-card-yellow ring-1 ring-card-yellow/50' : ($match->status === 'finished' && $match->has_penalty ? 'bg-court-navy/60 border-court-border text-card-yellow/80' : 'bg-court-navy border-court-border text-text-muted/60') }}">
+                        <div class="flex items-center justify-between">
+                            <span class="font-bold">5. PENALTI</span>
+                            @if($match->status === 'penalty_shootout')
+                                <span class="w-2 h-2 rounded-full bg-card-yellow animate-ping"></span>
+                            @elseif($match->has_penalty)
+                                <span class="material-symbols-outlined text-sm text-card-yellow">check_circle</span>
+                            @endif
+                        </div>
+                        <span class="text-[10px] text-text-muted">Adu Penalti</span>
+                    </div>
+
+                    <!-- Step 6: Selesai (Full Time) -->
                     <div class="p-2.5 rounded-lg border flex flex-col gap-1 transition-all {{ $match->status === 'finished' ? 'bg-stadium-emerald text-court-navy font-bold' : 'bg-court-navy border-court-border text-text-muted' }}">
                         <div class="flex items-center justify-between">
-                            <span class="font-bold">5. FULL TIME</span>
+                            <span class="font-bold">6. FULL TIME</span>
                             @if($match->status === 'finished')
                                 <span class="material-symbols-outlined text-sm">flag</span>
                             @endif
@@ -302,9 +334,11 @@
                         @elseif($match->status === 'half_time')
                             <p class="text-xs font-mono text-text-primary mt-0.5">Jeda istirahat babak. Klik tombol di kanan saat kedua tim siap memulai Babak 2.</p>
                         @elseif($match->status === 'second_half')
-                            <p class="text-xs font-mono text-text-primary mt-0.5">Babak 2 sedang berlangsung. Anda dapat mengakhiri pertandingan (Full Time) atau lanjut babak tambahan jika skor imbang.</p>
+                            <p class="text-xs font-mono text-text-primary mt-0.5">Babak 2 sedang berlangsung. Anda dapat mengakhiri pertandingan (Full Time), lanjut Extra Time, atau langsung ke sesi Adu Penalti jika skor imbang.</p>
                         @elseif($match->status === 'extra_time')
-                            <p class="text-xs font-mono text-text-primary mt-0.5">Babak tambahan sedang berlangsung (+{{ $match->extra_time_duration_minutes }}'). Selesaikan laga untuk mengunci hasil akhir.</p>
+                            <p class="text-xs font-mono text-text-primary mt-0.5">Babak tambahan sedang berlangsung (+{{ $match->extra_time_duration_minutes }}'). Anda dapat mengakhiri laga atau lanjut ke sesi Adu Penalti jika skor masih imbang.</p>
+                        @elseif($match->status === 'penalty_shootout')
+                            <p class="text-xs font-mono text-text-primary mt-0.5">Sesi adu penalti sedang berlangsung. Atur skor adu penalti di panel kontrol, lalu klik 'SELESAIKAN PENALTI & KUNCI LAGA' untuk meresmikan hasil akhir.</p>
                         @endif
                     </div>
 
@@ -347,23 +381,52 @@
                                 </button>
                             </form>
 
-                            <!-- Option 2: Full Time -->
+                            <!-- Option 2: Adu Penalti -->
+                            <form action="{{ route('admin.matches.status', $match->id) }}" method="POST" onsubmit="return confirm('Lanjutkan laga ke Sesi Adu Penalti (Shootout)?')">
+                                @csrf
+                                <input type="hidden" name="status" value="penalty_shootout">
+                                <button type="submit" class="px-4 py-2.5 rounded-lg bg-court-navy hover:bg-court-surface-elevated text-card-yellow border border-card-yellow/40 font-headline font-bold text-xs uppercase tracking-wider transition-all flex items-center gap-1.5">
+                                    <span class="material-symbols-outlined text-sm">sports_soccer</span>
+                                    SESI ADU PENALTI
+                                </button>
+                            </form>
+
+                            <!-- Option 3: Full Time -->
                             <form action="{{ route('admin.matches.status', $match->id) }}" method="POST" onsubmit="return confirm('Akhiri pertandingan ini secara resmi (Full Time)? Skor akhir dan waktu akan dikunci.')">
                                 @csrf
                                 <input type="hidden" name="status" value="finished">
                                 <button type="submit" class="px-5 py-2.5 rounded-lg bg-stadium-emerald hover:bg-stadium-emerald/90 text-court-navy font-headline font-bold text-xs uppercase tracking-wider transition-all shadow-[0_0_15px_rgba(0,255,135,0.3)] flex items-center gap-2">
                                     <span class="material-symbols-outlined text-sm">flag</span>
-                                    SELESAI PERTANDINGAN (FULL TIME)
+                                    SELESAI LAGA (FULL TIME)
                                 </button>
                             </form>
                         @elseif($match->status === 'extra_time')
-                            <!-- Full Time after Extra Time -->
+                            <!-- Option 1: Adu Penalti -->
+                            <form action="{{ route('admin.matches.status', $match->id) }}" method="POST" onsubmit="return confirm('Lanjutkan pertandingan ke Sesi Adu Penalti (Shootout)?')">
+                                @csrf
+                                <input type="hidden" name="status" value="penalty_shootout">
+                                <button type="submit" class="px-4 py-2.5 rounded-lg bg-court-navy hover:bg-court-surface-elevated text-card-yellow border border-card-yellow/40 font-headline font-bold text-xs uppercase tracking-wider transition-all flex items-center gap-1.5">
+                                    <span class="material-symbols-outlined text-sm">sports_soccer</span>
+                                    SESI ADU PENALTI
+                                </button>
+                            </form>
+
+                            <!-- Option 2: Full Time after Extra Time -->
                             <form action="{{ route('admin.matches.status', $match->id) }}" method="POST" onsubmit="return confirm('Akhiri babak tambahan dan resmikan hasil pertandingan (Full Time)?')">
                                 @csrf
                                 <input type="hidden" name="status" value="finished">
                                 <button type="submit" class="px-5 py-2.5 rounded-lg bg-stadium-emerald hover:bg-stadium-emerald/90 text-court-navy font-headline font-bold text-xs uppercase tracking-wider transition-all shadow-[0_0_15px_rgba(0,255,135,0.3)] flex items-center gap-2">
                                     <span class="material-symbols-outlined text-sm">flag</span>
                                     AKHIRI LAGA (FULL TIME)
+                                </button>
+                            </form>
+                        @elseif($match->status === 'penalty_shootout')
+                            <form action="{{ route('admin.matches.status', $match->id) }}" method="POST" onsubmit="return confirm('Akhiri adu penalti dan resmikan hasil akhir pertandingan (Full Time)?')">
+                                @csrf
+                                <input type="hidden" name="status" value="finished">
+                                <button type="submit" class="px-5 py-2.5 rounded-lg bg-stadium-emerald hover:bg-stadium-emerald/90 text-court-navy font-headline font-bold text-xs uppercase tracking-wider transition-all shadow-[0_0_15px_rgba(0,255,135,0.3)] flex items-center gap-2">
+                                    <span class="material-symbols-outlined text-sm">flag</span>
+                                    SELESAIKAN PENALTI & KUNCI LAGA (FULL TIME)
                                 </button>
                             </form>
                         @endif
@@ -426,6 +489,17 @@
                                     </button>
                                 </form>
                             @endif
+
+                            @if($match->status !== 'penalty_shootout')
+                                <form action="{{ route('admin.matches.status', $match->id) }}" method="POST" onsubmit="return confirm('PERINGATAN: Kembalikan pertandingan ke status Adu Penalti?')">
+                                    @csrf
+                                    <input type="hidden" name="status" value="penalty_shootout">
+                                    <input type="hidden" name="force" value="1">
+                                    <button type="submit" class="px-2.5 py-1.5 rounded bg-court-surface hover:bg-card-yellow/20 text-text-muted hover:text-card-yellow border border-court-border transition-colors">
+                                        ↩ Kembalikan ke Adu Penalti
+                                    </button>
+                                </form>
+                            @endif
                         </div>
                     </div>
                 </div>
@@ -459,13 +533,21 @@
                     <span class="text-text-primary">{{ $match->away_score }}</span>
                 </div>
 
-                <div class="mt-2 flex items-center gap-2 font-mono text-xs">
-                    <span class="px-2.5 py-0.5 rounded font-bold border {{ $match->status_badge['color'] }}">
-                        {{ $match->status_badge['text'] }}
-                    </span>
-                    @if($match->status !== 'finished')
-                        <span class="text-text-muted">MENIT {{ $match->current_minute }}'</span>
-                    @endif
+                <div class="mt-2 flex flex-col items-center gap-1 font-mono text-xs">
+                    <div class="flex items-center gap-2">
+                        <span class="px-2.5 py-0.5 rounded font-bold border {{ $match->status_badge['color'] }}">
+                            {{ $match->status_badge['text'] }}
+                        </span>
+                        @if($match->status !== 'finished' && $match->status !== 'penalty_shootout')
+                            <span class="text-text-muted">MENIT {{ $match->current_minute }}'</span>
+                        @endif
+                    </div>
+
+                    <template x-if="homePenaltyScore > 0 || awayPenaltyScore > 0 || '{{ $match->status }}' === 'penalty_shootout' || {{ $match->has_penalty ? 'true' : 'false' }}">
+                        <div class="mt-1 px-3 py-1 rounded-full bg-card-yellow/20 text-card-yellow border border-card-yellow/40 font-mono font-bold text-xs tracking-wider">
+                            ADU PENALTI: <span x-text="homePenaltyScore">{{ $match->home_penalty_score ?? 0 }}</span> - <span x-text="awayPenaltyScore">{{ $match->away_penalty_score ?? 0 }}</span>
+                        </div>
+                    </template>
                 </div>
 
                 <!-- Manual Score Correction Trigger -->
@@ -486,6 +568,79 @@
                 <div class="text-center md:text-left">
                     <h2 class="text-2xl sm:text-3xl font-headline font-black text-text-primary">{{ $match->awayTeam->name }}</h2>
                     <span class="text-xs font-mono text-telemetry-cyan">TANDANG (AWAY)</span>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- DEDICATED PENALTY SHOOTOUT CONTROL DECK -->
+    <div x-show="'{{ $match->status }}' === 'penalty_shootout' || {{ $match->has_penalty ? 'true' : 'false' }} || homePenaltyScore > 0 || awayPenaltyScore > 0" 
+         class="rounded-xl overflow-hidden bg-court-surface border-2 {{ $match->status === 'penalty_shootout' ? 'border-card-yellow shadow-[0_0_30px_rgba(255,214,0,0.15)]' : 'border-court-border' }} p-6 space-y-4">
+        <div class="flex flex-col sm:flex-row sm:items-center justify-between gap-3 pb-3 border-b border-court-border">
+            <div class="flex items-center gap-3">
+                <span class="w-10 h-10 rounded-xl bg-card-yellow/20 text-card-yellow border border-card-yellow/40 flex items-center justify-center font-bold text-xl">
+                    ⚽
+                </span>
+                <div>
+                    <h3 class="font-headline font-bold text-base uppercase text-card-yellow tracking-wider flex items-center gap-2">
+                        Papan Skor Adu Penalti (Shootout Deck)
+                        @if($match->status === 'penalty_shootout')
+                            <span class="px-2 py-0.5 rounded text-[10px] bg-card-yellow text-court-navy font-bold animate-pulse">SESI AKTIF</span>
+                        @endif
+                    </h3>
+                    <p class="text-xs font-mono text-text-muted">Tekan tombol +1 atau -1 untuk mencatat eksekusi tendangan penalti yang berhasil masuk</p>
+                </div>
+            </div>
+
+            <div class="text-right font-mono text-xs text-text-muted">
+                Status: <span class="font-bold text-text-primary uppercase">{{ $match->status_badge['text'] }}</span>
+            </div>
+        </div>
+
+        <div class="grid grid-cols-1 md:grid-cols-2 gap-6 pt-2">
+            <!-- Home Penalty Controls -->
+            <div class="p-4 rounded-xl bg-court-navy border border-court-border space-y-3">
+                <div class="flex items-center justify-between">
+                    <span class="font-headline font-bold text-sm text-stadium-emerald uppercase truncate">{{ $match->homeTeam->name }} (HOME)</span>
+                    <span class="text-[10px] font-mono text-text-muted uppercase">Penalti Masuk</span>
+                </div>
+                <div class="flex items-center justify-between gap-4">
+                    <div class="font-headline font-black text-5xl text-stadium-emerald font-mono" x-text="homePenaltyScore">
+                        {{ $match->home_penalty_score ?? 0 }}
+                    </div>
+                    @if($match->status !== 'finished')
+                        <div class="flex items-center gap-2">
+                            <button type="button" @click="updatePenalty(-1, 0)" class="w-12 h-12 rounded-xl bg-court-surface hover:bg-card-red/20 text-card-red border border-court-border font-headline font-bold text-xl flex items-center justify-center transition-colors shadow-sm">
+                                -1
+                            </button>
+                            <button type="button" @click="updatePenalty(1, 0)" class="w-14 h-12 rounded-xl bg-stadium-emerald hover:bg-stadium-emerald/90 text-court-navy font-headline font-black text-xl flex items-center justify-center transition-all shadow-[0_0_15px_rgba(0,255,135,0.3)]">
+                                +1
+                            </button>
+                        </div>
+                    @endif
+                </div>
+            </div>
+
+            <!-- Away Penalty Controls -->
+            <div class="p-4 rounded-xl bg-court-navy border border-court-border space-y-3">
+                <div class="flex items-center justify-between">
+                    <span class="font-headline font-bold text-sm text-telemetry-cyan uppercase truncate">{{ $match->awayTeam->name }} (AWAY)</span>
+                    <span class="text-[10px] font-mono text-text-muted uppercase">Penalti Masuk</span>
+                </div>
+                <div class="flex items-center justify-between gap-4">
+                    <div class="font-headline font-black text-5xl text-telemetry-cyan font-mono" x-text="awayPenaltyScore">
+                        {{ $match->away_penalty_score ?? 0 }}
+                    </div>
+                    @if($match->status !== 'finished')
+                        <div class="flex items-center gap-2">
+                            <button type="button" @click="updatePenalty(0, -1)" class="w-12 h-12 rounded-xl bg-court-surface hover:bg-card-red/20 text-card-red border border-court-border font-headline font-bold text-xl flex items-center justify-center transition-colors shadow-sm">
+                                -1
+                            </button>
+                            <button type="button" @click="updatePenalty(0, 1)" class="w-14 h-12 rounded-xl bg-telemetry-cyan hover:bg-telemetry-cyan/90 text-court-navy font-headline font-black text-xl flex items-center justify-center transition-all shadow-[0_0_15px_rgba(0,229,255,0.3)]">
+                                +1
+                            </button>
+                        </div>
+                    @endif
                 </div>
             </div>
         </div>
@@ -699,14 +854,14 @@
                 <div class="space-y-1">
                     <label class="block text-text-muted uppercase">Pencetak Gol (Scorer)</label>
                     <!-- Home Players -->
-                    <select name="player_id" x-show="goalTeamId == '{{ $match->home_team_id }}'" class="w-full py-2 px-3 rounded bg-court-navy border border-court-border text-text-primary focus:border-stadium-emerald font-sans">
+                    <select name="player_id" :disabled="goalTeamId != '{{ $match->home_team_id }}'" x-show="goalTeamId == '{{ $match->home_team_id }}'" class="w-full py-2 px-3 rounded bg-court-navy border border-court-border text-text-primary focus:border-stadium-emerald font-sans">
                         <option value="">-- Pilih Pemain {{ $match->homeTeam->name }} --</option>
                         @foreach($match->homeTeam->players as $p)
                             <option value="{{ $p->id }}">#{{ $p->jersey_number }} - {{ $p->name }} ({{ $p->position }})</option>
                         @endforeach
                     </select>
                     <!-- Away Players -->
-                    <select name="player_id" x-show="goalTeamId == '{{ $match->away_team_id }}'" class="w-full py-2 px-3 rounded bg-court-navy border border-court-border text-text-primary focus:border-stadium-emerald font-sans">
+                    <select name="player_id" :disabled="goalTeamId != '{{ $match->away_team_id }}'" x-show="goalTeamId == '{{ $match->away_team_id }}'" class="w-full py-2 px-3 rounded bg-court-navy border border-court-border text-text-primary focus:border-stadium-emerald font-sans">
                         <option value="">-- Pilih Pemain {{ $match->awayTeam->name }} --</option>
                         @foreach($match->awayTeam->players as $p)
                             <option value="{{ $p->id }}">#{{ $p->jersey_number }} - {{ $p->name }} ({{ $p->position }})</option>
@@ -718,14 +873,14 @@
                 <div class="space-y-1">
                     <label class="block text-text-muted uppercase">Penyumbang Assist (Opsional)</label>
                     <!-- Home Players -->
-                    <select name="assist_player_id" x-show="goalTeamId == '{{ $match->home_team_id }}'" class="w-full py-2 px-3 rounded bg-court-navy border border-court-border text-text-primary focus:border-stadium-emerald font-sans">
+                    <select name="assist_player_id" :disabled="goalTeamId != '{{ $match->home_team_id }}'" x-show="goalTeamId == '{{ $match->home_team_id }}'" class="w-full py-2 px-3 rounded bg-court-navy border border-court-border text-text-primary focus:border-stadium-emerald font-sans">
                         <option value="">-- Tanpa Assist / Gol Solo --</option>
                         @foreach($match->homeTeam->players as $p)
                             <option value="{{ $p->id }}">#{{ $p->jersey_number }} - {{ $p->name }}</option>
                         @endforeach
                     </select>
                     <!-- Away Players -->
-                    <select name="assist_player_id" x-show="goalTeamId == '{{ $match->away_team_id }}'" class="w-full py-2 px-3 rounded bg-court-navy border border-court-border text-text-primary focus:border-stadium-emerald font-sans">
+                    <select name="assist_player_id" :disabled="goalTeamId != '{{ $match->away_team_id }}'" x-show="goalTeamId == '{{ $match->away_team_id }}'" class="w-full py-2 px-3 rounded bg-court-navy border border-court-border text-text-primary focus:border-stadium-emerald font-sans">
                         <option value="">-- Tanpa Assist / Gol Solo --</option>
                         @foreach($match->awayTeam->players as $p)
                             <option value="{{ $p->id }}">#{{ $p->jersey_number }} - {{ $p->name }}</option>
@@ -734,15 +889,22 @@
                 </div>
 
                 <!-- Minute -->
-                <div class="grid grid-cols-2 gap-3">
-                    <div class="space-y-1">
+                <div class="space-y-1">
+                    <div class="flex items-center justify-between">
                         <label class="block text-text-muted uppercase">Menit Kejadian</label>
-                        <input type="number" name="minute" min="1" max="120" :value="currentMinute" required class="w-full py-2 px-3 rounded bg-court-navy border border-court-border text-text-primary focus:border-stadium-emerald">
+                        <span class="text-[10px] text-stadium-emerald font-bold font-mono">Maks: Menit ke-<span x-text="currentMinute"></span></span>
                     </div>
-                    <div class="space-y-1">
-                        <label class="block text-text-muted uppercase">Keterangan Singkat</label>
-                        <input type="text" name="notes" placeholder="Tembakan mendatar / voli" class="w-full py-2 px-3 rounded bg-court-navy border border-court-border text-text-primary focus:border-stadium-emerald font-sans">
-                    </div>
+                    <input type="number" name="minute" min="1" :max="currentMinute" :value="currentMinute"
+                           @input="if (parseInt($el.value) > currentMinute) $el.value = currentMinute; if (parseInt($el.value) < 1 && $el.value !== '') $el.value = 1;"
+                           required
+                           class="w-full py-2 px-3 rounded bg-court-navy border border-court-border text-text-primary focus:border-stadium-emerald font-mono font-bold">
+                    <p class="text-[10px] text-text-muted">Terkunci maks. menit ke-<span class="text-stadium-emerald font-bold" x-text="currentMinute"></span> (sesuai waktu berjalan)</p>
+                </div>
+
+                <!-- Notes -->
+                <div class="space-y-1">
+                    <label class="block text-text-muted uppercase">Keterangan Singkat</label>
+                    <input type="text" name="notes" placeholder="Tembakan mendatar / voli" class="w-full py-2 px-3 rounded bg-court-navy border border-court-border text-text-primary focus:border-stadium-emerald font-sans">
                 </div>
 
                 <div class="pt-4 flex items-center justify-end gap-3 border-t border-court-border/60">
@@ -804,13 +966,13 @@
                 <!-- Player Select -->
                 <div class="space-y-1">
                     <label class="block text-text-muted uppercase">Pemain yang Diberi Kartu</label>
-                    <select name="player_id" required x-show="cardTeamId == '{{ $match->home_team_id }}'" class="w-full py-2 px-3 rounded bg-court-navy border border-court-border text-text-primary focus:border-stadium-emerald font-sans">
+                    <select name="player_id" :disabled="cardTeamId != '{{ $match->home_team_id }}'" :required="cardTeamId == '{{ $match->home_team_id }}'" x-show="cardTeamId == '{{ $match->home_team_id }}'" class="w-full py-2 px-3 rounded bg-court-navy border border-court-border text-text-primary focus:border-stadium-emerald font-sans">
                         <option value="">-- Pilih Pemain {{ $match->homeTeam->name }} --</option>
                         @foreach($match->homeTeam->players as $p)
                             <option value="{{ $p->id }}">#{{ $p->jersey_number }} - {{ $p->name }} ({{ $p->position }})</option>
                         @endforeach
                     </select>
-                    <select name="player_id" required x-show="cardTeamId == '{{ $match->away_team_id }}'" class="w-full py-2 px-3 rounded bg-court-navy border border-court-border text-text-primary focus:border-stadium-emerald font-sans">
+                    <select name="player_id" :disabled="cardTeamId != '{{ $match->away_team_id }}'" :required="cardTeamId == '{{ $match->away_team_id }}'" x-show="cardTeamId == '{{ $match->away_team_id }}'" class="w-full py-2 px-3 rounded bg-court-navy border border-court-border text-text-primary focus:border-stadium-emerald font-sans">
                         <option value="">-- Pilih Pemain {{ $match->awayTeam->name }} --</option>
                         @foreach($match->awayTeam->players as $p)
                             <option value="{{ $p->id }}">#{{ $p->jersey_number }} - {{ $p->name }} ({{ $p->position }})</option>
@@ -818,16 +980,23 @@
                     </select>
                 </div>
 
-                <!-- Minute & Notes -->
-                <div class="grid grid-cols-2 gap-3">
-                    <div class="space-y-1">
+                <!-- Minute -->
+                <div class="space-y-1">
+                    <div class="flex items-center justify-between">
                         <label class="block text-text-muted uppercase">Menit Kejadian</label>
-                        <input type="number" name="minute" min="1" max="120" :value="currentMinute" required class="w-full py-2 px-3 rounded bg-court-navy border border-court-border text-text-primary focus:border-stadium-emerald">
+                        <span class="text-[10px] text-card-yellow font-bold font-mono">Maks: Menit ke-<span x-text="currentMinute"></span></span>
                     </div>
-                    <div class="space-y-1">
-                        <label class="block text-text-muted uppercase">Alasan Pelanggaran</label>
-                        <input type="text" name="notes" placeholder="Tarikan baju / tekel keras" class="w-full py-2 px-3 rounded bg-court-navy border border-court-border text-text-primary focus:border-stadium-emerald font-sans">
-                    </div>
+                    <input type="number" name="minute" min="1" :max="currentMinute" :value="currentMinute"
+                           @input="if (parseInt($el.value) > currentMinute) $el.value = currentMinute; if (parseInt($el.value) < 1 && $el.value !== '') $el.value = 1;"
+                           required
+                           class="w-full py-2 px-3 rounded bg-court-navy border border-court-border text-text-primary focus:border-stadium-emerald font-mono font-bold">
+                    <p class="text-[10px] text-text-muted">Terkunci maks. menit ke-<span class="text-card-yellow font-bold" x-text="currentMinute"></span> (sesuai waktu berjalan)</p>
+                </div>
+
+                <!-- Notes -->
+                <div class="space-y-1">
+                    <label class="block text-text-muted uppercase">Alasan Pelanggaran</label>
+                    <input type="text" name="notes" placeholder="Tarikan baju / tekel keras" class="w-full py-2 px-3 rounded bg-court-navy border border-court-border text-text-primary focus:border-stadium-emerald font-sans">
                 </div>
 
                 <div class="pt-4 flex items-center justify-end gap-3 border-t border-court-border/60">
@@ -869,15 +1038,23 @@
                     </select>
                 </div>
 
-                <div class="grid grid-cols-2 gap-3">
-                    <div class="space-y-1">
+                <!-- Minute -->
+                <div class="space-y-1">
+                    <div class="flex items-center justify-between">
                         <label class="block text-text-muted uppercase">Menit Kejadian</label>
-                        <input type="number" name="minute" min="1" max="120" :value="currentMinute" required class="w-full py-2 px-3 rounded bg-court-navy border border-court-border text-text-primary focus:border-stadium-emerald">
+                        <span class="text-[10px] text-card-red font-bold font-mono">Maks: Menit ke-<span x-text="currentMinute"></span></span>
                     </div>
-                    <div class="space-y-1">
-                        <label class="block text-text-muted uppercase">Catatan</label>
-                        <input type="text" name="notes" placeholder="Defleksi bola tendangan lawan" class="w-full py-2 px-3 rounded bg-court-navy border border-court-border text-text-primary focus:border-stadium-emerald font-sans">
-                    </div>
+                    <input type="number" name="minute" min="1" :max="currentMinute" :value="currentMinute"
+                           @input="if (parseInt($el.value) > currentMinute) $el.value = currentMinute; if (parseInt($el.value) < 1 && $el.value !== '') $el.value = 1;"
+                           required
+                           class="w-full py-2 px-3 rounded bg-court-navy border border-court-border text-text-primary focus:border-stadium-emerald font-mono font-bold">
+                    <p class="text-[10px] text-text-muted">Terkunci maks. menit ke-<span class="text-card-red font-bold" x-text="currentMinute"></span> (sesuai waktu berjalan)</p>
+                </div>
+
+                <!-- Notes -->
+                <div class="space-y-1">
+                    <label class="block text-text-muted uppercase">Catatan</label>
+                    <input type="text" name="notes" placeholder="Defleksi bola tendangan lawan" class="w-full py-2 px-3 rounded bg-court-navy border border-court-border text-text-primary focus:border-stadium-emerald font-sans">
                 </div>
 
                 <div class="pt-4 flex items-center justify-end gap-3 border-t border-court-border/60">

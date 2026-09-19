@@ -28,6 +28,8 @@ class GameMatch extends Model
         'away_team_id',
         'home_score',
         'away_score',
+        'home_penalty_score',
+        'away_penalty_score',
         'match_date',
         'venue_id',
         'venue',
@@ -49,6 +51,8 @@ class GameMatch extends Model
             'match_date' => 'datetime',
             'home_score' => 'integer',
             'away_score' => 'integer',
+            'home_penalty_score' => 'integer',
+            'away_penalty_score' => 'integer',
             'current_minute' => 'integer',
             'half_duration_minutes' => 'integer',
             'extra_time_duration_minutes' => 'integer',
@@ -181,7 +185,7 @@ class GameMatch extends Model
     // Scopes
     public function scopeLive(Builder $query): Builder
     {
-        return $query->whereIn('status', ['first_half', 'half_time', 'second_half', 'extra_time']);
+        return $query->whereIn('status', ['first_half', 'half_time', 'second_half', 'extra_time', 'penalty_shootout']);
     }
 
     public function scopeFinished(Builder $query): Builder
@@ -199,7 +203,35 @@ class GameMatch extends Model
      */
     public function isLive(): bool
     {
-        return in_array($this->status, ['first_half', 'half_time', 'second_half', 'extra_time']);
+        return in_array($this->status, ['first_half', 'half_time', 'second_half', 'extra_time', 'penalty_shootout']);
+    }
+
+    /**
+     * Check whether the match was decided by or is currently in penalty shootout.
+     */
+    public function getHasPenaltyAttribute(): bool
+    {
+        return ! is_null($this->home_penalty_score) && ! is_null($this->away_penalty_score);
+    }
+
+    /**
+     * Get penalty score formatted as (Pen. X - Y).
+     */
+    public function getPenaltyScoreFormattedAttribute(): ?string
+    {
+        if (! $this->has_penalty) {
+            return null;
+        }
+
+        return sprintf('Pen. %d - %d', $this->home_penalty_score, $this->away_penalty_score);
+    }
+
+    /**
+     * Check if this is a knockout stage match.
+     */
+    public function isKnockout(): bool
+    {
+        return $this->stage && $this->stage->type === 'knockout';
     }
 
     /**
@@ -212,6 +244,7 @@ class GameMatch extends Model
             'half_time' => ['text' => 'HALF TIME', 'color' => 'bg-card-yellow/20 text-card-yellow border-card-yellow/40'],
             'second_half' => ['text' => '2ND HALF', 'color' => 'bg-live-pulse/20 text-live-pulse border-live-pulse/40 animate-pulse'],
             'extra_time' => ['text' => 'EXTRA TIME', 'color' => 'bg-secondary-container/20 text-secondary border-secondary/40 animate-pulse'],
+            'penalty_shootout' => ['text' => 'ADU PENALTI', 'color' => 'bg-card-yellow/20 text-card-yellow border-card-yellow/40 animate-pulse'],
             'finished' => ['text' => 'FULL TIME', 'color' => 'bg-surface-bright text-text-muted border-court-border'],
             'postponed' => ['text' => 'DITUNDA', 'color' => 'bg-card-red/20 text-card-red border-card-red/40'],
             default => ['text' => 'UPCOMING', 'color' => 'bg-surface-container text-text-muted border-court-border'],

@@ -67,6 +67,7 @@ class LiveMatchControlController extends Controller
                 'half_time',
                 'second_half',
                 'extra_time',
+                'penalty_shootout',
                 'finished',
                 'postponed',
             ])],
@@ -83,8 +84,9 @@ class LiveMatchControlController extends Controller
                 'scheduled' => ['first_half', 'postponed'],
                 'first_half' => ['half_time', 'postponed'],
                 'half_time' => ['second_half', 'postponed'],
-                'second_half' => ['finished', 'extra_time', 'postponed'],
-                'extra_time' => ['finished', 'postponed'],
+                'second_half' => ['finished', 'extra_time', 'penalty_shootout', 'postponed'],
+                'extra_time' => ['finished', 'penalty_shootout', 'postponed'],
+                'penalty_shootout' => ['finished', 'postponed'],
                 'finished' => [], // Reopening finished match requires force=true
                 'postponed' => ['scheduled', 'first_half'],
                 default => [],
@@ -114,6 +116,7 @@ class LiveMatchControlController extends Controller
                 'half_time' => $halfDurationMinutes,
                 'second_half' => max($match->current_minute, $halfDurationMinutes + 1),
                 'extra_time' => max($match->current_minute, ($halfDurationMinutes * 2) + 1),
+                'penalty_shootout' => max($match->current_minute, $halfDurationMinutes * 2),
                 'finished' => max($match->current_minute, $halfDurationMinutes * 2),
                 default => $match->current_minute,
             };
@@ -136,6 +139,16 @@ class LiveMatchControlController extends Controller
             $validated['timer_seconds'] = max($fullTimeSeconds, $match->timer_seconds);
             $validated['timer_running'] = true;
             $validated['timer_started_at'] = now();
+        } elseif ($newStatus === 'penalty_shootout') {
+            $validated['timer_seconds'] = $match->elapsed_seconds;
+            $validated['timer_running'] = false;
+            $validated['timer_started_at'] = null;
+            if (is_null($match->home_penalty_score)) {
+                $validated['home_penalty_score'] = 0;
+            }
+            if (is_null($match->away_penalty_score)) {
+                $validated['away_penalty_score'] = 0;
+            }
         } elseif (in_array($newStatus, ['finished', 'postponed', 'scheduled'])) {
             $validated['timer_seconds'] = $match->elapsed_seconds;
             $validated['timer_running'] = false;
@@ -165,15 +178,19 @@ class LiveMatchControlController extends Controller
         $match = GameMatch::findOrFail($id);
         $this->authorizeMatchControl($match);
 
-        if ($match->status === 'finished') {
+        if (in_array($match->status, ['finished', 'penalty_shootout'])) {
+            $msg = $match->status === 'penalty_shootout'
+                ? 'Pertandingan dalam sesi Adu Penalti. Stopwatch waktu bersih tidak digunakan.'
+                : 'Pertandingan telah selesai (Full Time). Stopwatch tidak dapat diaktifkan.';
+
             if ($request->wantsJson()) {
                 return response()->json([
                     'success' => false,
-                    'message' => 'Pertandingan telah selesai (Full Time). Stopwatch tidak dapat diaktifkan.',
+                    'message' => $msg,
                 ], 422);
             }
 
-            return back()->withErrors(['error' => 'Pertandingan telah selesai (Full Time). Stopwatch tidak dapat diaktifkan.']);
+            return back()->withErrors(['error' => $msg]);
         }
 
         if ($match->timer_running) {
@@ -327,6 +344,33 @@ class LiveMatchControlController extends Controller
     }
 
     /**
+     * Update penalty shootout scores.
+     */
+    public function updatePenaltyScore(Request $request, int $id): RedirectResponse|JsonResponse
+    {
+        $match = GameMatch::findOrFail($id);
+        $this->authorizeMatchControl($match);
+
+        $validated = $request->validate([
+            'home_penalty_score' => ['required', 'integer', 'min:0', 'max:50'],
+            'away_penalty_score' => ['required', 'integer', 'min:0', 'max:50'],
+        ]);
+
+        $match->update($validated);
+
+        if ($request->wantsJson()) {
+            return response()->json([
+                'success' => true,
+                'home_penalty_score' => $match->home_penalty_score,
+                'away_penalty_score' => $match->away_penalty_score,
+                'penalty_formatted' => $match->penalty_score_formatted,
+            ]);
+        }
+
+        return back()->with('success', 'Skor adu penalti berhasil diperbarui: '.$match->penalty_score_formatted);
+    }
+
+    /**
      * Record match event (Goal, Yellow Card, Red Card, Own Goal, Assist).
      */
     public function addEvent(Request $request, int $id): RedirectResponse|JsonResponse
@@ -334,25 +378,26 @@ class LiveMatchControlController extends Controller
         $match = GameMatch::findOrFail($id);
         $this->authorizeMatchControl($match);
 
+        $currentLiveMinute = max(1, (int) ceil($match->elapsed_seconds / 60));
+        $maxMinute = $match->status === 'finished'
+            ? 120
+            : $currentLiveMinute;
+
         $validated = $request->validate([
             'team_id' => ['required', 'exists:teams,id'],
             'player_id' => ['nullable', 'exists:players,id'],
             'assist_player_id' => ['nullable', 'exists:players,id', 'different:player_id'],
             'event_type' => ['required', Rule::in(['goal', 'own_goal', 'yellow_card', 'red_card', 'second_yellow', 'assist'])],
-            'minute' => ['required', 'integer', 'min:1', 'max:120'],
+            'minute' => ['required', 'integer', 'min:1', "max:$maxMinute"],
             'notes' => ['nullable', 'string', 'max:255'],
         ], [
+            'minute.max' => "Menit kejadian tidak boleh melebihi waktu pertandingan yang sedang berjalan (Maksimal menit ke-{$maxMinute}).",
             'assist_player_id.different' => 'Pencetak gol dan pemberi assist tidak boleh pemain yang sama.',
         ]);
 
         $validated['match_id'] = $match->id;
 
         $event = MatchEvent::create($validated);
-
-        // Update match minute to event minute if event is later
-        if ($validated['minute'] > $match->current_minute) {
-            $match->update(['current_minute' => $validated['minute']]);
-        }
 
         // Recalculate match score automatically if goal or own goal
         if (in_array($validated['event_type'], ['goal', 'own_goal'])) {

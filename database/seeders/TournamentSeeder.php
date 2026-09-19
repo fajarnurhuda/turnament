@@ -72,11 +72,18 @@ class TournamentSeeder extends Seeder
             'order_num' => 2,
         ]);
 
+        $stageThirdU17 = Stage::create([
+            'category_id' => $catU17->id,
+            'name' => 'Perebutan Juara 3 & 4',
+            'type' => 'knockout',
+            'order_num' => 3,
+        ]);
+
         $stageFinalU17 = Stage::create([
             'category_id' => $catU17->id,
             'name' => 'Grand Final',
             'type' => 'knockout',
-            'order_num' => 3,
+            'order_num' => 4,
         ]);
 
         $groupA = Group::create([

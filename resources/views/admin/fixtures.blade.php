@@ -3,7 +3,30 @@
 @section('title', 'Master Jadwal & Fixture Pertandingan - LDII CUP TANJUNG PINANG')
 
 @section('content')
-    <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8 space-y-8" x-data="{ createModal: false, editModal: false, editData: {}, editUrl: '', selectedVenueId: '' }">
+    <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8 space-y-8" 
+         x-data="{ 
+             createModal: false, 
+             editModal: false, 
+             editData: {}, 
+             editUrl: '', 
+             selectedVenueId: '{{ $venues->first()?->id ?? '' }}',
+             venueInput: '{{ $venues->first() ? ($venues->first()->court_name ? $venues->first()->name . ' (' . $venues->first()->court_name . ')' : $venues->first()->name) : '' }}',
+             venueMap: {{ $venues->mapWithKeys(fn($v) => [(string)$v->id => $v->court_name ? $v->name . ' (' . $v->court_name . ')' : $v->name])->toJson() }},
+             onVenueChange(val) {
+                 if (val && this.venueMap[val]) {
+                     this.venueInput = this.venueMap[val];
+                 } else if (val === 'custom') {
+                     this.venueInput = '';
+                 }
+             },
+             onEditVenueChange(val) {
+                 if (val && this.venueMap[val]) {
+                     this.editData.venue = this.venueMap[val];
+                 } else if (val === 'custom') {
+                     this.editData.venue = '';
+                 }
+             }
+         }">
 
         <!-- Header Section -->
         <div class="flex flex-col sm:flex-row sm:items-center justify-between gap-4 pb-4 border-b border-court-border">
@@ -163,8 +186,15 @@
                                         class="{{ $m->isLive() ? 'text-stadium-emerald' : 'text-text-primary' }}">{{ $m->away_score }}</span>
                                 </div>
                                 <span class="text-[10px] font-mono text-text-muted">
-                                    {{ $m->isLive() ? "Menit ke-{$m->current_minute}'" : 'Hasil Akhir' }}
+                                    {{ $m->isLive() ? ($m->status === 'penalty_shootout' ? 'Adu Penalti' : "Menit ke-{$m->current_minute}'") : 'Hasil Akhir' }}
                                 </span>
+                                @if ($m->has_penalty)
+                                    <div class="mt-1">
+                                        <span class="px-2 py-0.5 rounded bg-card-yellow/20 text-card-yellow border border-card-yellow/30 font-bold text-[10px]">
+                                            Adu Penalti: {{ $m->home_penalty_score }} - {{ $m->away_penalty_score }}
+                                        </span>
+                                    </div>
+                                @endif
                             @endif
                         </div>
 
@@ -218,7 +248,7 @@
                                 referee_2_id: '{{ $m->referee_2_id ?? '' }}',
                                 referee_3_id: '{{ $m->referee_3_id ?? '' }}',
                                 operator_ids: {{ json_encode($m->operators->pluck('id')->toArray()) }}
-                            }; editUrl = '{{ route('admin.fixtures.update', $m->id) }}'; editModal = true"
+                            }; if (editData.venue_id && venueMap[editData.venue_id]) { editData.venue = venueMap[editData.venue_id]; } editUrl = '{{ route('admin.fixtures.update', $m->id) }}'; editModal = true"
                                     class="px-3 py-1.5 rounded font-headline font-bold text-xs uppercase tracking-wider bg-court-navy hover:bg-court-surface-elevated text-text-muted hover:text-telemetry-cyan border border-court-border transition-colors flex items-center gap-1">
                                     <span class="material-symbols-outlined text-sm">edit_calendar</span>
                                     Edit / Venue
@@ -316,7 +346,7 @@
                                             class="w-full py-2.5 px-3 rounded-lg bg-court-navy border border-court-border text-text-primary focus:border-stadium-emerald font-sans">
                                             <option value="">Babak Umum</option>
                                             @foreach ($stages as $stg)
-                                                <option value="{{ $stg->id }}">{{ $stg->name }}</option>
+                                                <option value="{{ $stg->id }}">{{ $stg->name }} [{{ $stg->type === 'knockout' ? 'Knockout' : 'Grup' }}]</option>
                                             @endforeach
                                         </select>
                                     </div>
@@ -416,7 +446,7 @@
                                 <div class="grid grid-cols-1 md:grid-cols-2 gap-4 pt-3 border-t border-court-border/40">
                                     <div class="space-y-1.5">
                                         <label class="block text-text-muted uppercase font-bold">Pilih dari Master Venue Lapangan</label>
-                                        <select name="venue_id" x-model="selectedVenueId"
+                                        <select name="venue_id" x-model="selectedVenueId" @change="onVenueChange($event.target.value)"
                                             class="w-full py-2.5 px-3 rounded-lg bg-court-navy border border-court-border text-text-primary focus:border-stadium-emerald font-sans">
                                             <option value="">-- Pilih dari Master Venue Lapangan --</option>
                                             @foreach ($venues as $v)
@@ -424,23 +454,22 @@
                                                     {{ $v->name }} {{ $v->court_name ? '(' . $v->court_name . ')' : '' }} &bull; {{ $v->city ?? 'Arena' }}
                                                 </option>
                                             @endforeach
-                                            <option value="custom">✏️ Tulis Nama Venue Kustom / Baru...</option>
+                                            <option value="custom">✏️ Tulis Nama Venue Kustom / Manual...</option>
                                         </select>
                                         <span class="text-[10px] text-text-muted">Pilih lapangan resmi yang sudah terdaftar</span>
                                     </div>
 
                                     <div class="space-y-1.5">
                                         <label class="block text-text-muted uppercase font-bold">Nama Venue / Lapangan</label>
-                                        <input type="text" name="venue" list="venueSuggestions"
+                                        <input type="text" name="venue" x-model="venueInput"
+                                            :readonly="!!(selectedVenueId && venueMap[selectedVenueId])"
+                                            :class="selectedVenueId && venueMap[selectedVenueId] ? 'bg-court-surface-elevated/70 text-text-primary border-court-border cursor-not-allowed' : 'bg-court-navy border-court-border text-text-primary focus:border-stadium-emerald'"
                                             placeholder="Ketik nama venue/lapangan..."
-                                            value="Court A - GOR Futsal Arena Utama"
-                                            class="w-full py-2.5 px-3 rounded-lg bg-court-navy border border-court-border text-text-primary focus:border-stadium-emerald font-sans">
-                                        <datalist id="venueSuggestions">
-                                            @foreach ($venues as $vn)
-                                                <option value="{{ $vn->name }}"></option>
-                                            @endforeach
-                                        </datalist>
-                                        <span class="text-[10px] text-text-muted">Venue baru akan otomatis tersimpan ke Master Data Venue</span>
+                                            required
+                                            class="w-full py-2.5 px-3 rounded-lg border text-sm font-sans transition-all">
+                                        <span class="text-[10px] text-text-muted" x-text="selectedVenueId && venueMap[selectedVenueId] ? 'Terkunci otomatis (readonly) sesuai Master Venue yang dipilih' : 'Ketik nama venue kustom jika memilih manual'">
+                                            Terkunci otomatis (readonly) sesuai Master Venue yang dipilih
+                                        </span>
                                     </div>
                                 </div>
                             </div>
@@ -628,6 +657,7 @@
                                             <option value="half_time">Istirahat Babak (Half Time)</option>
                                             <option value="second_half">Babak 2 (Second Half - Live)</option>
                                             <option value="extra_time">Babak Tambahan (Extra Time)</option>
+                                            <option value="penalty_shootout">Adu Penalti (Shootout - Live)</option>
                                             <option value="finished">Selesai (Finished)</option>
                                             <option value="postponed">Ditunda (Postponed)</option>
                                         </select>
@@ -710,7 +740,7 @@
                                 <div class="grid grid-cols-1 md:grid-cols-2 gap-4 pt-3 border-t border-court-border/40">
                                     <div class="space-y-1.5">
                                         <label class="block text-text-muted uppercase font-bold">Pilih dari Master Venue</label>
-                                        <select name="venue_id" x-model="editData.venue_id"
+                                        <select name="venue_id" x-model="editData.venue_id" @change="onEditVenueChange($event.target.value)"
                                             class="w-full py-2.5 px-3 rounded-lg bg-court-navy border border-court-border text-text-primary focus:border-stadium-emerald font-sans">
                                             <option value="">-- Pilih dari Master Venue --</option>
                                             @foreach ($venues as $v)
@@ -718,16 +748,22 @@
                                                     {{ $v->name }} {{ $v->court_name ? '(' . $v->court_name . ')' : '' }} &bull; {{ $v->city ?? 'Arena' }}
                                                 </option>
                                             @endforeach
+                                            <option value="custom">✏️ Tulis Nama Venue Kustom / Manual...</option>
                                         </select>
                                         <span class="text-[10px] text-text-muted">Pilih lapangan yang terdaftar</span>
                                     </div>
 
                                     <div class="space-y-1.5">
-                                        <label class="block text-text-muted uppercase font-bold">Nama Venue Kustom</label>
-                                        <input type="text" name="venue" :value="editData.venue"
+                                        <label class="block text-text-muted uppercase font-bold">Nama Venue</label>
+                                        <input type="text" name="venue" x-model="editData.venue"
+                                            :readonly="!!(editData.venue_id && venueMap[editData.venue_id])"
+                                            :class="editData.venue_id && venueMap[editData.venue_id] ? 'bg-court-surface-elevated/70 text-text-primary border-court-border cursor-not-allowed' : 'bg-court-navy border-court-border text-text-primary focus:border-stadium-emerald'"
                                             placeholder="Nama venue..."
-                                            class="w-full py-2.5 px-3 rounded-lg bg-court-navy border border-court-border text-text-primary focus:border-stadium-emerald font-sans">
-                                        <span class="text-[10px] text-text-muted">Isi jika ingin nama kustom lapangan</span>
+                                            required
+                                            class="w-full py-2.5 px-3 rounded-lg border text-sm font-sans transition-all">
+                                        <span class="text-[10px] text-text-muted" x-text="editData.venue_id && venueMap[editData.venue_id] ? 'Terkunci otomatis (readonly) sesuai Master Venue yang dipilih' : 'Ketik nama venue kustom jika diperlukan'">
+                                            Terkunci otomatis (readonly) sesuai Master Venue yang dipilih
+                                        </span>
                                     </div>
                                 </div>
                             </div>

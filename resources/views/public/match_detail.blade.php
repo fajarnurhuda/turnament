@@ -70,10 +70,16 @@
                           x-text="matchData.status_badge.text">
                         {{ $match->status_badge['text'] }}
                     </span>
-                    <span x-show="matchData.is_live" class="text-telemetry-cyan font-bold tracking-wider whitespace-nowrap text-[10px] sm:text-xs">
+                    <span x-show="matchData.is_live && matchData.status !== 'penalty_shootout'" class="text-telemetry-cyan font-bold tracking-wider whitespace-nowrap text-[10px] sm:text-xs">
                         MENIT <span x-text="matchData.current_minute">{{ $match->current_minute }}</span>'
                     </span>
                 </div>
+
+                <template x-if="matchData.has_penalty || {{ $match->has_penalty ? 'true' : 'false' }} || matchData.status === 'penalty_shootout'">
+                    <div class="mt-2 px-3 py-1 rounded-full bg-card-yellow/20 text-card-yellow border border-card-yellow/40 font-mono font-bold text-xs tracking-wider">
+                        ADU PENALTI: <span x-text="matchData.home_penalty_score ?? {{ $match->home_penalty_score ?? 0 }}">{{ $match->home_penalty_score ?? 0 }}</span> - <span x-text="matchData.away_penalty_score ?? {{ $match->away_penalty_score ?? 0 }}">{{ $match->away_penalty_score ?? 0 }}</span>
+                    </div>
+                </template>
             </div>
 
             <!-- Away Team -->
@@ -308,6 +314,10 @@
             matchData: {
                 home_score: {{ $match->home_score }},
                 away_score: {{ $match->away_score }},
+                home_penalty_score: {{ $match->home_penalty_score !== null ? $match->home_penalty_score : 'null' }},
+                away_penalty_score: {{ $match->away_penalty_score !== null ? $match->away_penalty_score : 'null' }},
+                has_penalty: {{ $match->has_penalty ? 'true' : 'false' }},
+                status: "{{ $match->status }}",
                 current_minute: {{ $match->current_minute }},
                 timer_seconds: {{ $match->elapsed_seconds }},
                 timer_running: {{ $match->timer_running ? 'true' : 'false' }},
@@ -330,6 +340,10 @@
                         .then(data => {
                             this.matchData.home_score = data.home_score;
                             this.matchData.away_score = data.away_score;
+                            this.matchData.home_penalty_score = data.home_penalty_score;
+                            this.matchData.away_penalty_score = data.away_penalty_score;
+                            this.matchData.has_penalty = data.has_penalty;
+                            this.matchData.status = data.status;
                             this.matchData.current_minute = data.current_minute;
                             this.matchData.is_live = data.is_live;
                             this.matchData.status_badge = data.status_badge;
