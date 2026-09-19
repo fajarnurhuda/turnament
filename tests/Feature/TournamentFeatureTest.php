@@ -971,4 +971,47 @@ class TournamentFeatureTest extends TestCase
         $detailResponse->assertSee('4');
         $detailResponse->assertSee('3');
     }
+
+    /**
+     * Test starting stopwatch transitions scheduled match into live first_half immediately.
+     */
+    public function test_starting_timer_transitions_scheduled_match_to_live_first_half(): void
+    {
+        $admin = User::where('role', 'admin')->first() ?? User::first();
+        $match = GameMatch::where('status', 'scheduled')->first();
+
+        if (! $match) {
+            $match = GameMatch::first();
+            $match->update(['status' => 'scheduled', 'timer_running' => false, 'timer_seconds' => 0]);
+        }
+
+        $this->assertEquals('scheduled', $match->status);
+        $this->assertFalse($match->isLive());
+        $this->assertEquals('UPCOMING', $match->status_badge['text']);
+
+        // Start stopwatch
+        $response = $this->actingAs($admin)->postJson(route('admin.matches.timer.toggle', $match->id));
+        $response->assertOk();
+        $response->assertJson([
+            'success' => true,
+            'timer_running' => true,
+            'status' => 'first_half',
+            'is_live' => true,
+        ]);
+
+        $match->refresh();
+        $this->assertEquals('first_half', $match->status);
+        $this->assertTrue($match->timer_running);
+        $this->assertTrue($match->isLive());
+        $this->assertEquals('1ST HALF', $match->status_badge['text']);
+
+        // Public API confirms live state and time
+        $apiRes = $this->getJson(route('api.matches.live', $match->id));
+        $apiRes->assertOk();
+        $apiRes->assertJsonFragment([
+            'is_live' => true,
+            'timer_running' => true,
+            'status' => 'first_half',
+        ]);
+    }
 }

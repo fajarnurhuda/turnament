@@ -70,9 +70,15 @@
                           x-text="matchData.status_badge.text">
                         {{ $match->status_badge['text'] }}
                     </span>
-                    <span x-show="matchData.is_live && matchData.status !== 'penalty_shootout'" class="text-telemetry-cyan font-bold tracking-wider whitespace-nowrap text-[10px] sm:text-xs">
-                        MENIT <span x-text="matchData.current_minute">{{ $match->current_minute }}</span>'
-                    </span>
+                    <div x-show="matchData.is_live && matchData.status !== 'penalty_shootout'" class="flex items-center gap-1.5 bg-court-surface px-2.5 py-0.5 rounded border border-court-border/80">
+                        <span class="w-2 h-2 rounded-full" :class="matchData.timer_running ? 'bg-stadium-emerald animate-ping' : 'bg-card-yellow'"></span>
+                        <span class="font-headline font-bold text-xs sm:text-sm text-stadium-emerald font-mono tracking-wider" x-text="matchData.time_formatted">
+                            {{ $match->time_formatted }}
+                        </span>
+                        <span class="text-telemetry-cyan font-bold tracking-wider whitespace-nowrap text-[10px] sm:text-xs">
+                            (Menit ke-<span x-text="matchData.current_minute">{{ $match->current_minute }}</span>')
+                        </span>
+                    </div>
                 </div>
 
                 <template x-if="matchData.has_penalty || {{ $match->has_penalty ? 'true' : 'false' }} || matchData.status === 'penalty_shootout'">
@@ -329,7 +335,18 @@
                 }
             },
             init() {
-                if (this.matchData.is_live) {
+                // 1-second local clock increment for smooth live stopwatch animation
+                setInterval(() => {
+                    if (this.matchData.is_live && this.matchData.timer_running && this.matchData.status !== 'penalty_shootout') {
+                        this.matchData.timer_seconds++;
+                        const mins = Math.floor(this.matchData.timer_seconds / 60);
+                        const secs = this.matchData.timer_seconds % 60;
+                        this.matchData.time_formatted = String(mins).padStart(2, '0') + ':' + String(secs).padStart(2, '0');
+                        this.matchData.current_minute = Math.max(1, Math.ceil(this.matchData.timer_seconds / 60));
+                    }
+                }, 1000);
+
+                if (this.matchData.status !== 'finished') {
                     this.pollLive();
                 }
             },
@@ -347,6 +364,9 @@
                             this.matchData.current_minute = data.current_minute;
                             this.matchData.is_live = data.is_live;
                             this.matchData.status_badge = data.status_badge;
+                            this.matchData.timer_seconds = data.timer_seconds;
+                            this.matchData.timer_running = data.timer_running;
+                            this.matchData.time_formatted = data.time_formatted;
                         })
                         .catch(() => {});
                 }, 3000);

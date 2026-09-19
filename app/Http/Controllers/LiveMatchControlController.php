@@ -207,10 +207,18 @@ class LiveMatchControlController extends Controller
             $msg = 'Stopwatch dijeda (Paused).';
         } else {
             // Start or resume the stopwatch
-            $match->update([
+            $updateData = [
                 'timer_running' => true,
                 'timer_started_at' => now(),
-            ]);
+            ];
+
+            // If match is still scheduled, starting the timer officially kicks off Babak 1
+            if ($match->status === 'scheduled') {
+                $updateData['status'] = 'first_half';
+                $updateData['current_minute'] = max(1, (int) $match->current_minute);
+            }
+
+            $match->update($updateData);
             $msg = 'Stopwatch berjalan (Running).';
         }
 
@@ -222,6 +230,9 @@ class LiveMatchControlController extends Controller
                 'elapsed_seconds' => $match->elapsed_seconds,
                 'time_formatted' => $match->time_formatted,
                 'current_minute' => $match->current_minute,
+                'status' => $match->status,
+                'status_badge' => $match->status_badge,
+                'is_live' => $match->isLive(),
             ]);
         }
 
@@ -261,6 +272,10 @@ class LiveMatchControlController extends Controller
 
         if ($match->timer_running) {
             $updateData['timer_started_at'] = now();
+        }
+
+        if ($match->status === 'scheduled') {
+            $updateData['status'] = 'first_half';
         }
 
         $match->update($updateData);

@@ -185,7 +185,12 @@ class GameMatch extends Model
     // Scopes
     public function scopeLive(Builder $query): Builder
     {
-        return $query->whereIn('status', ['first_half', 'half_time', 'second_half', 'extra_time', 'penalty_shootout']);
+        return $query->where(function ($q) {
+            $q->whereIn('status', ['first_half', 'half_time', 'second_half', 'extra_time', 'penalty_shootout'])
+                ->orWhere(function ($sub) {
+                    $sub->where('timer_running', true)->where('status', '!=', 'finished');
+                });
+        });
     }
 
     public function scopeFinished(Builder $query): Builder
@@ -203,7 +208,8 @@ class GameMatch extends Model
      */
     public function isLive(): bool
     {
-        return in_array($this->status, ['first_half', 'half_time', 'second_half', 'extra_time', 'penalty_shootout']);
+        return in_array($this->status, ['first_half', 'half_time', 'second_half', 'extra_time', 'penalty_shootout'])
+            || ($this->timer_running && $this->status !== 'finished');
     }
 
     /**
@@ -239,7 +245,9 @@ class GameMatch extends Model
      */
     public function getStatusBadgeAttribute(): array
     {
-        return match ($this->status) {
+        $status = ($this->status === 'scheduled' && $this->timer_running) ? 'first_half' : $this->status;
+
+        return match ($status) {
             'first_half' => ['text' => '1ST HALF', 'color' => 'bg-live-pulse/20 text-live-pulse border-live-pulse/40 animate-pulse'],
             'half_time' => ['text' => 'HALF TIME', 'color' => 'bg-card-yellow/20 text-card-yellow border-card-yellow/40'],
             'second_half' => ['text' => '2ND HALF', 'color' => 'bg-live-pulse/20 text-live-pulse border-live-pulse/40 animate-pulse'],

@@ -82,15 +82,21 @@
                                 <span class="text-text-primary" x-text="featured.away_score">{{ $featuredMatch->away_score }}</span>
                             </div>
 
-                            <!-- Status Babak & Menit Pertandingan -->
-                            <div class="mt-1.5 sm:mt-3 flex flex-col sm:flex-row items-center gap-1 sm:gap-2 font-mono text-[10px] sm:text-xs text-center">
+                            <!-- Status Babak, Stopwatch Digital & Menit Pertandingan -->
+                            <div class="mt-1.5 sm:mt-3 flex flex-col sm:flex-row items-center gap-1.5 sm:gap-2 font-mono text-[10px] sm:text-xs text-center">
                                 <span class="px-2 py-0.5 rounded font-bold border whitespace-nowrap text-[9px] sm:text-xs" :class="featured.status_badge.color"
                                     x-text="featured.status_badge.text">
                                     {{ $featuredMatch->status_badge['text'] }}
                                 </span>
-                                <span x-show="featured.is_live && featured.status !== 'penalty_shootout'" class="text-telemetry-cyan font-bold tracking-wider whitespace-nowrap text-[10px] sm:text-xs">
-                                    MENIT <span x-text="featured.current_minute">{{ $featuredMatch->current_minute }}</span>'
-                                </span>
+                                <div x-show="featured.is_live && featured.status !== 'penalty_shootout'" class="flex items-center gap-1.5 bg-court-surface px-2 py-0.5 rounded border border-court-border/80">
+                                    <span class="w-2 h-2 rounded-full" :class="featured.timer_running ? 'bg-stadium-emerald animate-ping' : 'bg-card-yellow'"></span>
+                                    <span class="font-headline font-bold text-xs sm:text-sm text-stadium-emerald font-mono tracking-wider" x-text="featured.time_formatted">
+                                        {{ $featuredMatch->time_formatted }}
+                                    </span>
+                                    <span class="text-telemetry-cyan font-bold tracking-wider whitespace-nowrap text-[10px] sm:text-xs">
+                                        (Menit ke-<span x-text="featured.current_minute">{{ $featuredMatch->current_minute }}</span>')
+                                    </span>
+                                </div>
                             </div>
 
                             <template x-if="featured.has_penalty || {{ $featuredMatch->has_penalty ? 'true' : 'false' }} || featured.status === 'penalty_shootout'">
@@ -437,12 +443,35 @@
                     @endforeach
 
                     <!-- Standings Legend / Info Footer -->
-                    <div class="px-4 py-2.5 bg-court-navy/50 border-t border-court-border text-[10px] font-mono text-text-muted flex flex-col sm:flex-row sm:items-center justify-between gap-1.5">
-                        <span class="flex items-center gap-1.5">
-                            <span class="w-2 h-2 rounded bg-stadium-emerald flex-shrink-0"></span>
-                            Posisi 1 - 4 Lolos ke Babak Knockout
-                        </span>
-                        <span>Sistem: M=3, S=1, K=0</span>
+                    <div class="px-4 py-3 bg-court-navy/60 border-t border-court-border space-y-2 text-[10px] font-mono text-text-muted">
+                        <!-- Qualification & Point Rules -->
+                        <div class="flex flex-col sm:flex-row sm:items-center justify-between gap-1.5 pb-2 border-b border-court-border/40">
+                            <span class="flex items-center gap-1.5 text-text-primary">
+                                <span class="w-2 h-2 rounded-full bg-stadium-emerald flex-shrink-0 animate-pulse"></span>
+                                <strong class="text-stadium-emerald font-bold">Posisi 1 - 4:</strong> Lolos ke Babak Knockout / Sistem Gugur
+                            </span>
+                            <span class="text-text-muted font-mono">
+                                Sistem Poin: <strong class="text-text-primary">Menang (MG) = 3</strong> &bull; <strong class="text-text-primary">Seri (S) = 1</strong> &bull; <strong class="text-text-primary">Kalah (K) = 0</strong>
+                            </span>
+                        </div>
+
+                        <!-- Column Abbreviations Legend -->
+                        <div class="pt-0.5">
+                            <div class="flex items-center gap-1 text-[10px] text-telemetry-cyan font-bold uppercase tracking-wider mb-1.5">
+                                <span class="material-symbols-outlined text-xs">info</span>
+                                <span>Keterangan Singkatan Kolom Klasemen:</span>
+                            </div>
+                            <div class="flex flex-wrap items-center gap-x-2.5 gap-y-1 text-[10px] leading-relaxed">
+                                <span class="px-1.5 py-0.5 rounded bg-court-surface border border-court-border"><strong class="text-text-primary">M</strong> = Main (Pertandingan)</span>
+                                <span class="px-1.5 py-0.5 rounded bg-court-surface border border-court-border"><strong class="text-stadium-emerald">MG</strong> = Menang</span>
+                                <span class="px-1.5 py-0.5 rounded bg-court-surface border border-court-border"><strong class="text-card-yellow">S</strong> = Seri / Imbang</span>
+                                <span class="px-1.5 py-0.5 rounded bg-court-surface border border-court-border"><strong class="text-card-red">K</strong> = Kalah</span>
+                                <span class="px-1.5 py-0.5 rounded bg-court-surface border border-court-border"><strong class="text-text-primary">GM</strong> = Gol Memasukkan (Cetak Gol)</span>
+                                <span class="px-1.5 py-0.5 rounded bg-court-surface border border-court-border"><strong class="text-text-primary">GK</strong> = Gol Kemasukan (Kebobolan)</span>
+                                <span class="px-1.5 py-0.5 rounded bg-court-surface border border-court-border"><strong class="text-text-primary">SG</strong> = Selisih Gol (GM - GK)</span>
+                                <span class="px-1.5 py-0.5 rounded bg-court-surface border border-court-border"><strong class="text-stadium-emerald">PTS</strong> = Total Poin</span>
+                            </div>
+                        </div>
                     </div>
                 </div>
 
@@ -573,6 +602,17 @@
                     }
                 },
                 init() {
+                    // 1-second local clock increment for smooth live stopwatch animation
+                    setInterval(() => {
+                        if (this.featured.is_live && this.featured.timer_running && this.featured.status !== 'penalty_shootout') {
+                            this.featured.timer_seconds++;
+                            const mins = Math.floor(this.featured.timer_seconds / 60);
+                            const secs = this.featured.timer_seconds % 60;
+                            this.featured.time_formatted = String(mins).padStart(2, '0') + ':' + String(secs).padStart(2, '0');
+                            this.featured.current_minute = Math.max(1, Math.ceil(this.featured.timer_seconds / 60));
+                        }
+                    }, 1000);
+
                     if (this.featuredId) {
                         this.startPolling();
                     }
@@ -592,6 +632,9 @@
                                 this.featured.current_minute = data.current_minute;
                                 this.featured.is_live = data.is_live;
                                 this.featured.status_badge = data.status_badge;
+                                this.featured.timer_seconds = data.timer_seconds;
+                                this.featured.timer_running = data.timer_running;
+                                this.featured.time_formatted = data.time_formatted;
                             })
                             .catch(() => {});
                     }, 3000);
