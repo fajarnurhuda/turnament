@@ -795,4 +795,22 @@ class TournamentFeatureTest extends TestCase
         $validResponse->assertRedirect(route('admin.dashboard'));
         $this->assertAuthenticated();
     }
+
+    public function test_admin_dashboard_supports_filtering_players_by_team_and_preserves_tab(): void
+    {
+        $admin = User::where('role', 'admin')->first();
+        $team = Team::has('players')->first();
+        $this->assertNotNull($team);
+
+        $response = $this->actingAs($admin)->get(route('admin.dashboard', [
+            'category_id' => $team->category_id,
+            'team_id' => $team->id,
+            'tab' => 'players',
+        ]));
+
+        $response->assertOk();
+        $response->assertSee('Filter Tim:');
+        $response->assertSee($team->name);
+        $response->assertSee('tab=players');
+    }
 }

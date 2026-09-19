@@ -39,21 +39,31 @@
                     </div>
 
                     <!-- Password Input -->
-                    <div class="space-y-1.5">
+                    <div class="space-y-1.5" x-data="{ showPassword: false }">
                         <div class="flex items-center justify-between">
                             <label for="password"
                                 class="block text-xs font-mono font-medium text-text-primary uppercase tracking-wider">
                                 KATA SANDI / PIN
                             </label>
+                            <button type="button" @click="showPassword = !showPassword"
+                                class="text-[11px] font-mono text-telemetry-cyan hover:text-stadium-emerald transition-colors flex items-center gap-1 focus:outline-none">
+                                <span class="material-symbols-outlined text-xs" x-text="showPassword ? 'visibility_off' : 'visibility'">visibility</span>
+                                <span x-text="showPassword ? 'Sembunyikan Sandi' : 'Lihat Sandi'">Lihat Sandi</span>
+                            </button>
                         </div>
                         <div class="relative">
                             <span
                                 class="absolute inset-y-0 left-0 pl-3 flex items-center pointer-events-none text-text-muted">
                                 <span class="material-symbols-outlined text-sm">lock</span>
                             </span>
-                            <input id="password" type="password" name="password" value="" required
+                            <input id="password" :type="showPassword ? 'text' : 'password'" type="password" name="password" value="" required
                                 placeholder="masukan password"
-                                class="w-full pl-10 pr-4 py-2.5 rounded bg-court-navy border border-court-border focus:border-stadium-emerald focus:ring-1 focus:ring-stadium-emerald text-sm text-text-primary placeholder-text-muted/60 transition-all">
+                                class="w-full pl-10 pr-10 py-2.5 rounded bg-court-navy border border-court-border focus:border-stadium-emerald focus:ring-1 focus:ring-stadium-emerald text-sm text-text-primary placeholder-text-muted/60 transition-all">
+                            <button type="button" @click="showPassword = !showPassword"
+                                class="absolute inset-y-0 right-0 pr-3 flex items-center text-text-muted hover:text-text-primary transition-colors focus:outline-none"
+                                :title="showPassword ? 'Sembunyikan Sandi' : 'Lihat Sandi'">
+                                <span class="material-symbols-outlined text-lg" x-text="showPassword ? 'visibility_off' : 'visibility'">visibility</span>
+                            </button>
                         </div>
                     </div>
 

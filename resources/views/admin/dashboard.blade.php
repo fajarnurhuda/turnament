@@ -5,7 +5,7 @@
 @section('content')
 <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8 space-y-8" 
      x-data="{ 
-        tab: '{{ request('tab', 'teams') }}',
+        tab: '{{ request('tab', request('team_id') ? 'players' : 'teams') }}',
         categoryModal: false,
         teamModal: false,
         playerModal: false,
@@ -90,7 +90,7 @@
         <div class="flex items-center gap-2 overflow-x-auto">
             <span class="text-xs font-mono text-text-muted">FILTER KATEGORI:</span>
             @foreach($categories as $c)
-                <a href="{{ route('admin.dashboard', ['category_id' => $c->id]) }}" 
+                <a :href="'{{ route('admin.dashboard') }}?category_id={{ $c->id }}&tab=' + tab" 
                    class="px-3 py-1 rounded text-xs font-mono {{ $selectedCategoryId == $c->id ? 'bg-stadium-emerald text-court-navy font-bold' : 'bg-court-navy text-text-muted hover:text-text-primary border border-court-border' }}">
                     {{ $c->name }} ({{ $c->teams_count }} tim)
                 </a>
@@ -202,7 +202,7 @@
                         </div>
 
                         <div class="pt-3 border-t border-court-border/60 flex items-center justify-between text-xs font-mono">
-                            <a href="{{ route('admin.dashboard', ['category_id' => $cat->id]) }}" @click="tab = 'teams'" class="text-xs font-mono text-stadium-emerald hover:underline flex items-center gap-1 font-bold">
+                            <a href="{{ route('admin.dashboard', ['category_id' => $cat->id, 'tab' => 'teams']) }}" class="text-xs font-mono text-stadium-emerald hover:underline flex items-center gap-1 font-bold">
                                 <span>Lihat Tim</span>
                                 <span class="material-symbols-outlined text-sm">arrow_forward</span>
                             </a>
@@ -272,7 +272,7 @@
                         </div>
 
                         <div class="flex items-center justify-between pt-1 border-t border-court-border/60">
-                            <a href="{{ route('admin.dashboard', ['category_id' => $selectedCategoryId, 'team_id' => $tm->id]) }}" @click="tab = 'players'" class="text-xs font-mono text-stadium-emerald hover:underline">
+                            <a href="{{ route('admin.dashboard', ['category_id' => $selectedCategoryId, 'team_id' => $tm->id, 'tab' => 'players']) }}" class="text-xs font-mono text-stadium-emerald hover:underline">
                                 Lihat Pemain &rarr;
                             </a>
 
@@ -310,8 +310,29 @@
         </div>
 
         <!-- TAB 2: PLAYERS LIST -->
-        <div x-show="tab === 'players'" class="overflow-x-auto">
-            <table class="w-full text-left text-xs">
+        <div x-show="tab === 'players'" class="space-y-4">
+            @if($selectedTeamId && ($filteredTeam = $teams->firstWhere('id', $selectedTeamId)))
+                <div class="px-6 py-3 bg-court-surface-elevated/80 border-b border-court-border flex flex-wrap items-center justify-between gap-3">
+                    <div class="flex items-center gap-2">
+                        <span class="material-symbols-outlined text-stadium-emerald text-base">filter_alt</span>
+                        <span class="text-xs font-mono text-text-muted">Filter Tim:</span>
+                        <span class="text-xs font-headline font-bold text-text-primary px-2.5 py-1 rounded bg-court-navy border border-court-border flex items-center gap-1.5">
+                            @if($filteredTeam->logo)
+                                <img src="{{ $filteredTeam->logo_url }}" alt="{{ $filteredTeam->name }}" class="w-4 h-4 object-contain">
+                            @endif
+                            {{ $filteredTeam->name }}
+                        </span>
+                        <span class="text-xs font-mono text-telemetry-cyan font-bold">({{ $players->count() }} pemain terdaftar)</span>
+                    </div>
+                    <a href="{{ route('admin.dashboard', ['category_id' => $selectedCategoryId, 'tab' => 'players']) }}" class="px-2.5 py-1 rounded bg-court-navy hover:bg-court-border text-text-muted hover:text-text-primary text-xs font-mono transition-colors flex items-center gap-1 border border-court-border">
+                        <span class="material-symbols-outlined text-sm">close</span>
+                        Tampilkan Semua Pemain Kategori Ini
+                    </a>
+                </div>
+            @endif
+
+            <div class="overflow-x-auto">
+                <table class="w-full text-left text-xs">
                 <thead class="bg-court-navy font-mono text-text-muted uppercase border-b border-court-border">
                     <tr>
                         <th class="py-3 px-4">NO. PUNGGUNG</th>
