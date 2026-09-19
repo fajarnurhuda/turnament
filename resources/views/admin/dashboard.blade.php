@@ -29,7 +29,12 @@
         operatorMethod: 'POST',
         refereeFormUrl: '{{ route('admin.referees.store') }}',
         refereeMethod: 'POST'
-     }">
+     }"
+     x-init="$watch('tab', val => {
+        const url = new URL(window.location);
+        url.searchParams.set('tab', val);
+        window.history.replaceState({}, '', url);
+     })">
 
     <!-- Top Admin Banner -->
     <div class="flex flex-col sm:flex-row sm:items-center justify-between gap-4 pb-4 border-b border-court-border">
@@ -389,9 +394,10 @@
                 </tbody>
             </table>
         </div>
+    </div>
 
-        <!-- TAB 3: VENUES LIST -->
-        <div x-show="tab === 'venues'" class="p-6">
+    <!-- TAB 3: VENUES LIST -->
+    <div x-show="tab === 'venues'" class="p-6">
             <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-5">
                 @forelse($venues as $vn)
                     <div class="p-5 rounded-xl bg-court-surface-elevated border border-court-border space-y-4 hover:border-stadium-emerald/40 transition-all flex flex-col justify-between">

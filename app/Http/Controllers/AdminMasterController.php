@@ -94,7 +94,7 @@ class AdminMasterController extends Controller
 
         Category::create($validated);
 
-        return back()->with('success', 'Kategori turnamen baru berhasil ditambahkan.');
+        return redirect()->route('admin.dashboard', ['tab' => 'categories'])->with('success', 'Kategori turnamen baru berhasil ditambahkan.');
     }
 
     public function updateCategory(Request $request, int $id): RedirectResponse
@@ -110,7 +110,7 @@ class AdminMasterController extends Controller
 
         $category->update($validated);
 
-        return back()->with('success', 'Kategori turnamen berhasil diperbarui.');
+        return redirect()->route('admin.dashboard', ['tab' => 'categories'])->with('success', 'Kategori turnamen berhasil diperbarui.');
     }
 
     public function destroyCategory(int $id): RedirectResponse
@@ -122,7 +122,7 @@ class AdminMasterController extends Controller
         $category = Category::findOrFail($id);
         $category->delete();
 
-        return back()->with('success', 'Kategori turnamen berhasil dihapus.');
+        return redirect()->route('admin.dashboard', ['tab' => 'categories'])->with('success', 'Kategori turnamen berhasil dihapus.');
     }
 
     // --- TEAM CRUD ---
@@ -144,7 +144,7 @@ class AdminMasterController extends Controller
 
         Team::create($validated);
 
-        return back()->with('success', 'Tim futsal baru berhasil didaftarkan.');
+        return redirect()->route('admin.dashboard', ['tab' => 'teams', 'category_id' => $validated['category_id']])->with('success', 'Tim futsal baru berhasil didaftarkan.');
     }
 
     public function updateTeam(Request $request, int $id): RedirectResponse
@@ -169,7 +169,7 @@ class AdminMasterController extends Controller
 
         $team->update($validated);
 
-        return back()->with('success', 'Data tim futsal berhasil diperbarui.');
+        return redirect()->route('admin.dashboard', ['tab' => 'teams', 'category_id' => $team->category_id])->with('success', 'Data tim futsal berhasil diperbarui.');
     }
 
     public function destroyTeam(int $id): RedirectResponse
@@ -182,7 +182,7 @@ class AdminMasterController extends Controller
 
         $team->delete();
 
-        return back()->with('success', 'Tim futsal berhasil dihapus.');
+        return redirect()->route('admin.dashboard', ['tab' => 'teams'])->with('success', 'Tim futsal berhasil dihapus.');
     }
 
     // --- PLAYER CRUD ---
@@ -205,9 +205,9 @@ class AdminMasterController extends Controller
 
         $validated['is_captain'] = $request->boolean('is_captain');
 
-        Player::create($validated);
+        $player = Player::create($validated);
 
-        return back()->with('success', 'Pemain berhasil didaftarkan ke skuad.');
+        return redirect()->route('admin.dashboard', ['tab' => 'players', 'team_id' => $player->team_id])->with('success', 'Pemain berhasil didaftarkan ke skuad.');
     }
 
     public function updatePlayer(Request $request, int $id): RedirectResponse
@@ -232,15 +232,16 @@ class AdminMasterController extends Controller
 
         $player->update($validated);
 
-        return back()->with('success', 'Data pemain berhasil diperbarui.');
+        return redirect()->route('admin.dashboard', ['tab' => 'players', 'team_id' => $player->team_id])->with('success', 'Data pemain berhasil diperbarui.');
     }
 
     public function destroyPlayer(int $id): RedirectResponse
     {
         $player = Player::findOrFail($id);
+        $teamId = $player->team_id;
         $player->delete();
 
-        return back()->with('success', 'Pemain berhasil dihapus dari tim.');
+        return redirect()->route('admin.dashboard', ['tab' => 'players', 'team_id' => $teamId])->with('success', 'Pemain berhasil dihapus dari tim.');
     }
 
     // --- VENUE CRUD ---
@@ -259,7 +260,7 @@ class AdminMasterController extends Controller
 
         Venue::create($validated);
 
-        return back()->with('success', 'Venue / Lapangan baru berhasil ditambahkan.');
+        return redirect()->route('admin.dashboard', ['tab' => 'venues'])->with('success', 'Venue / Lapangan baru berhasil ditambahkan.');
     }
 
     public function updateVenue(Request $request, int $id): RedirectResponse
@@ -279,7 +280,7 @@ class AdminMasterController extends Controller
 
         $venue->update($validated);
 
-        return back()->with('success', 'Data venue / lapangan berhasil diperbarui.');
+        return redirect()->route('admin.dashboard', ['tab' => 'venues'])->with('success', 'Data venue / lapangan berhasil diperbarui.');
     }
 
     public function destroyVenue(int $id): RedirectResponse
@@ -287,7 +288,7 @@ class AdminMasterController extends Controller
         $venue = Venue::findOrFail($id);
         $venue->delete();
 
-        return back()->with('success', 'Venue / Lapangan berhasil dihapus.');
+        return redirect()->route('admin.dashboard', ['tab' => 'venues'])->with('success', 'Venue / Lapangan berhasil dihapus.');
     }
 
     // --- OPERATOR (WASIT MEJA) CRUD ---
@@ -306,7 +307,7 @@ class AdminMasterController extends Controller
 
         User::create($validated);
 
-        return back()->with('success', 'Operator wasit meja baru berhasil ditambahkan.');
+        return redirect()->route('admin.dashboard', ['tab' => 'operators'])->with('success', 'Operator wasit meja baru berhasil didaftarkan.');
     }
 
     public function updateOperator(Request $request, int $id): RedirectResponse
@@ -327,7 +328,7 @@ class AdminMasterController extends Controller
 
         $operator->update($validated);
 
-        return back()->with('success', 'Data operator wasit meja berhasil diperbarui.');
+        return redirect()->route('admin.dashboard', ['tab' => 'operators'])->with('success', 'Data operator wasit meja berhasil diperbarui.');
     }
 
     public function destroyOperator(int $id): RedirectResponse
@@ -340,7 +341,7 @@ class AdminMasterController extends Controller
 
         $operator->delete();
 
-        return back()->with('success', 'Akun operator wasit meja berhasil dihapus.');
+        return redirect()->route('admin.dashboard', ['tab' => 'operators'])->with('success', 'Akun operator wasit meja berhasil dihapus.');
     }
 
     // --- REFEREE (WASIT LAPANGAN) CRUD ---
@@ -358,7 +359,7 @@ class AdminMasterController extends Controller
 
         Referee::create($validated);
 
-        return back()->with('success', 'Wasit lapangan baru berhasil ditambahkan ke Master Wasit.');
+        return redirect()->route('admin.dashboard', ['tab' => 'referees'])->with('success', 'Wasit lapangan baru berhasil ditambahkan ke Master Wasit.');
     }
 
     public function updateReferee(Request $request, int $id): RedirectResponse
@@ -377,7 +378,7 @@ class AdminMasterController extends Controller
 
         $referee->update($validated);
 
-        return back()->with('success', 'Data wasit lapangan berhasil diperbarui.');
+        return redirect()->route('admin.dashboard', ['tab' => 'referees'])->with('success', 'Data wasit lapangan berhasil diperbarui.');
     }
 
     public function destroyReferee(int $id): RedirectResponse
@@ -385,6 +386,6 @@ class AdminMasterController extends Controller
         $referee = Referee::findOrFail($id);
         $referee->delete();
 
-        return back()->with('success', 'Wasit lapangan berhasil dihapus dari Master Wasit.');
+        return redirect()->route('admin.dashboard', ['tab' => 'referees'])->with('success', 'Wasit lapangan berhasil dihapus dari Master Wasit.');
     }
 }
