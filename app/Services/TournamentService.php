@@ -151,7 +151,7 @@ class TournamentService
     /**
      * Get Top Scorers leaderboard (excluding own goals).
      */
-    public function getTopScorers(?int $categoryId = null, int $limit = 10): Collection
+    public function getTopScorers(?int $categoryId = null, ?int $limit = null): Collection
     {
         $query = MatchEvent::query()
             ->where('event_type', 'goal')
@@ -167,14 +167,14 @@ class TournamentService
             ->groupBy('player_id', 'team_id')
             ->orderByDesc('total_goals')
             ->with(['player', 'team'])
-            ->limit($limit)
+            ->when($limit, fn ($q) => $q->limit($limit))
             ->get();
     }
 
     /**
      * Get Top Assists leaderboard.
      */
-    public function getTopAssists(?int $categoryId = null, int $limit = 10): Collection
+    public function getTopAssists(?int $categoryId = null, ?int $limit = null): Collection
     {
         $query = MatchEvent::query()
             ->whereNotNull('assist_player_id');
@@ -185,18 +185,18 @@ class TournamentService
             });
         }
 
-        return $query->select('assist_player_id as player_id', 'team_id', DB::raw('count(*) as total_assists'))
+        return $query->select('assist_player_id', 'team_id', DB::raw('count(*) as total_assists'))
             ->groupBy('assist_player_id', 'team_id')
             ->orderByDesc('total_assists')
             ->with(['assistPlayer', 'team'])
-            ->limit($limit)
+            ->when($limit, fn ($q) => $q->limit($limit))
             ->get();
     }
 
     /**
      * Get Disciplinary cards leaderboard (Yellow & Red cards).
      */
-    public function getDisciplinaryLeaderboard(?int $categoryId = null, int $limit = 10): Collection
+    public function getDisciplinaryLeaderboard(?int $categoryId = null, ?int $limit = null): Collection
     {
         $query = MatchEvent::query()
             ->whereIn('event_type', ['yellow_card', 'red_card', 'second_yellow'])
@@ -219,7 +219,7 @@ class TournamentService
             ->orderByDesc('red_cards')
             ->orderByDesc('yellow_cards')
             ->with(['player', 'team'])
-            ->limit($limit)
+            ->when($limit, fn ($q) => $q->limit($limit))
             ->get();
     }
 

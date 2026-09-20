@@ -13,6 +13,7 @@ Route::get('/matches/{id}', [PublicTournamentController::class, 'showMatch'])->n
 Route::get('/api/matches/{id}/live', [PublicTournamentController::class, 'liveFeed'])->name('api.matches.live');
 Route::get('/api/matches/live-score', [PublicTournamentController::class, 'allLiveScores'])->name('api.matches.live-score');
 Route::get('/api/categories/{id}/standings', [PublicTournamentController::class, 'standingsFeed'])->name('api.categories.standings');
+Route::get('/api/categories/{id}/leaderboards', [PublicTournamentController::class, 'leaderboardsFeed'])->name('api.categories.leaderboards');
 Route::get('/api/visitor-stats', [PublicTournamentController::class, 'visitorStats'])->name('api.visitor-stats');
 
 // --- AUTHENTICATION ---

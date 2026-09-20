@@ -584,8 +584,7 @@
                 </div>
 
                 <!-- INDIVIDUAL LEADERBOARDS (TOP SCORER, TOP ASSIST, CARDS) -->
-                <div class="bg-court-surface rounded-xl border border-court-border overflow-hidden"
-                    x-data="{ statTab: 'scorers' }">
+                <div class="bg-court-surface rounded-xl border border-court-border overflow-hidden">
                     <div
                         class="px-4 sm:px-6 py-4 border-b border-court-border bg-court-surface-elevated/40 flex flex-col sm:flex-row sm:items-center justify-between gap-3">
                         <h3 class="font-headline font-bold uppercase tracking-wider text-sm flex items-center gap-2">
@@ -597,107 +596,136 @@
                             <button @click="statTab = 'scorers'"
                                 :class="statTab === 'scorers' ? 'bg-stadium-emerald text-white dark:text-court-navy font-bold' :
                                     'text-text-muted hover:text-text-primary'"
-                                class="flex-1 sm:flex-initial px-2.5 py-1 rounded transition-colors text-center">
-                                GOL
+                                class="flex-1 sm:flex-initial px-2.5 py-1 rounded transition-colors text-center flex items-center justify-center gap-1">
+                                <span>GOL</span>
+                                <template x-if="leaderboards.top_scorers && leaderboards.top_scorers.length > 0">
+                                    <span class="px-1.5 py-0.2 rounded-full text-[9px] bg-white/20 dark:bg-court-navy/20 font-bold" x-text="leaderboards.top_scorers.length"></span>
+                                </template>
                             </button>
                             <button @click="statTab = 'assists'"
                                 :class="statTab === 'assists' ? 'bg-telemetry-cyan text-white dark:text-court-navy font-bold' :
                                     'text-text-muted hover:text-text-primary'"
-                                class="flex-1 sm:flex-initial px-2.5 py-1 rounded transition-colors text-center">
-                                ASSIST
+                                class="flex-1 sm:flex-initial px-2.5 py-1 rounded transition-colors text-center flex items-center justify-center gap-1">
+                                <span>ASSIST</span>
+                                <template x-if="leaderboards.top_assists && leaderboards.top_assists.length > 0">
+                                    <span class="px-1.5 py-0.2 rounded-full text-[9px] bg-white/20 dark:bg-court-navy/20 font-bold" x-text="leaderboards.top_assists.length"></span>
+                                </template>
                             </button>
                             <button @click="statTab = 'cards'"
                                 :class="statTab === 'cards' ? 'bg-card-yellow text-white dark:text-court-navy font-bold' :
                                     'text-text-muted hover:text-text-primary'"
-                                class="flex-1 sm:flex-initial px-2.5 py-1 rounded transition-colors text-center">
-                                KARTU
+                                class="flex-1 sm:flex-initial px-2.5 py-1 rounded transition-colors text-center flex items-center justify-center gap-1">
+                                <span>KARTU</span>
+                                <template x-if="leaderboards.disciplinary && leaderboards.disciplinary.length > 0">
+                                    <span class="px-1.5 py-0.2 rounded-full text-[9px] bg-white/20 dark:bg-court-navy/20 font-bold" x-text="leaderboards.disciplinary.length"></span>
+                                </template>
                             </button>
                         </div>
                     </div>
 
                     <!-- Top Scorers Tab -->
-                    <div x-show="statTab === 'scorers'" class="p-3 sm:p-4 divide-y divide-court-border/40">
-                        @forelse($topScorers as $idx => $sc)
+                    <div x-show="statTab === 'scorers'" class="p-3 sm:p-4 divide-y divide-court-border/40 max-h-96 overflow-y-auto">
+                        <template x-for="(sc, idx) in leaderboards.top_scorers" :key="idx">
                             <div class="py-2.5 flex items-center justify-between gap-2">
                                 <div class="flex items-center gap-2 sm:gap-3 min-w-0">
                                     <span
-                                        class="w-5 sm:w-6 font-mono font-bold text-xs flex-shrink-0 {{ $idx === 0 ? 'text-card-yellow' : 'text-text-muted' }}">
-                                        #{{ $idx + 1 }}
+                                        class="w-5 sm:w-6 font-mono font-bold text-xs flex-shrink-0"
+                                        :class="idx === 0 ? 'text-card-yellow' : 'text-text-muted'"
+                                        x-text="'#' + (idx + 1)">
                                     </span>
                                     <div class="min-w-0">
                                         <span
-                                            class="font-headline font-bold text-xs sm:text-sm text-text-primary block truncate">{{ $sc->player?->name }}</span>
+                                            class="font-headline font-bold text-xs sm:text-sm text-text-primary block truncate"
+                                            x-text="sc.player_name"></span>
                                         <span
-                                            class="font-mono text-[10px] sm:text-[11px] text-text-muted truncate block">{{ $sc->team?->name }}
-                                            &bull; No. {{ $sc->player?->jersey_number }}</span>
+                                            class="font-mono text-[10px] sm:text-[11px] text-text-muted truncate block">
+                                            <span x-text="sc.team_name"></span>
+                                            <template x-if="sc.jersey_number">
+                                                <span> &bull; No. <span x-text="sc.jersey_number"></span></span>
+                                            </template>
+                                        </span>
                                     </div>
                                 </div>
                                 <div class="text-right flex-shrink-0 pl-2">
                                     <span
-                                        class="font-headline font-black text-base sm:text-lg text-stadium-emerald">{{ $sc->total_goals }}</span>
+                                        class="font-headline font-black text-base sm:text-lg text-stadium-emerald"
+                                        x-text="sc.total_goals"></span>
                                     <span class="text-[9px] sm:text-[10px] font-mono text-text-muted block">GOL</span>
                                 </div>
                             </div>
-                        @empty
-                            <p class="py-4 text-center font-mono text-xs text-text-muted">Belum ada catatan gol.</p>
-                        @endforelse
+                        </template>
+                        <div x-show="!leaderboards.top_scorers || leaderboards.top_scorers.length === 0"
+                            class="py-4 text-center font-mono text-xs text-text-muted">
+                            Belum ada catatan gol.
+                        </div>
                     </div>
 
                     <!-- Top Assists Tab -->
-                    <div x-show="statTab === 'assists'" class="p-3 sm:p-4 divide-y divide-court-border/40">
-                        @forelse($topAssists as $idx => $as)
+                    <div x-show="statTab === 'assists'" class="p-3 sm:p-4 divide-y divide-court-border/40 max-h-96 overflow-y-auto">
+                        <template x-for="(as, idx) in leaderboards.top_assists" :key="idx">
                             <div class="py-2.5 flex items-center justify-between gap-2">
                                 <div class="flex items-center gap-2 sm:gap-3 min-w-0">
                                     <span
-                                        class="w-5 sm:w-6 font-mono font-bold text-xs flex-shrink-0 {{ $idx === 0 ? 'text-telemetry-cyan' : 'text-text-muted' }}">
-                                        #{{ $idx + 1 }}
+                                        class="w-5 sm:w-6 font-mono font-bold text-xs flex-shrink-0"
+                                        :class="idx === 0 ? 'text-telemetry-cyan' : 'text-text-muted'"
+                                        x-text="'#' + (idx + 1)">
                                     </span>
                                     <div class="min-w-0">
                                         <span
-                                            class="font-headline font-bold text-xs sm:text-sm text-text-primary block truncate">{{ $as->assistPlayer?->name }}</span>
+                                            class="font-headline font-bold text-xs sm:text-sm text-text-primary block truncate"
+                                            x-text="as.player_name"></span>
                                         <span
-                                            class="font-mono text-[10px] sm:text-[11px] text-text-muted truncate block">{{ $as->team?->name }}</span>
+                                            class="font-mono text-[10px] sm:text-[11px] text-text-muted truncate block"
+                                            x-text="as.team_name"></span>
                                     </div>
                                 </div>
                                 <div class="text-right flex-shrink-0 pl-2">
                                     <span
-                                        class="font-headline font-black text-base sm:text-lg text-telemetry-cyan">{{ $as->total_assists }}</span>
+                                        class="font-headline font-black text-base sm:text-lg text-telemetry-cyan"
+                                        x-text="as.total_assists"></span>
                                     <span class="text-[9px] sm:text-[10px] font-mono text-text-muted block">ASSIST</span>
                                 </div>
                             </div>
-                        @empty
-                            <p class="py-4 text-center font-mono text-xs text-text-muted">Belum ada catatan assist.</p>
-                        @endforelse
+                        </template>
+                        <div x-show="!leaderboards.top_assists || leaderboards.top_assists.length === 0"
+                            class="py-4 text-center font-mono text-xs text-text-muted">
+                            Belum ada catatan assist.
+                        </div>
                     </div>
 
                     <!-- Cards Tab -->
-                    <div x-show="statTab === 'cards'" class="p-3 sm:p-4 divide-y divide-court-border/40">
-                        @forelse($disciplinary as $idx => $card)
+                    <div x-show="statTab === 'cards'" class="p-3 sm:p-4 divide-y divide-court-border/40 max-h-96 overflow-y-auto">
+                        <template x-for="(card, idx) in leaderboards.disciplinary" :key="idx">
                             <div class="py-2.5 flex items-center justify-between gap-2">
                                 <div class="flex items-center gap-2 sm:gap-3 min-w-0">
                                     <span
-                                        class="w-5 sm:w-6 font-mono font-bold text-xs flex-shrink-0 text-text-muted">#{{ $idx + 1 }}</span>
+                                        class="w-5 sm:w-6 font-mono font-bold text-xs flex-shrink-0 text-text-muted"
+                                        x-text="'#' + (idx + 1)"></span>
                                     <div class="min-w-0">
                                         <span
-                                            class="font-headline font-bold text-xs sm:text-sm text-text-primary block truncate">{{ $card->player?->name }}</span>
+                                            class="font-headline font-bold text-xs sm:text-sm text-text-primary block truncate"
+                                            x-text="card.player_name"></span>
                                         <span
-                                            class="font-mono text-[10px] sm:text-[11px] text-text-muted truncate block">{{ $card->team?->name }}</span>
+                                            class="font-mono text-[10px] sm:text-[11px] text-text-muted truncate block"
+                                            x-text="card.team_name"></span>
                                     </div>
                                 </div>
                                 <div class="flex items-center gap-1.5 sm:gap-3 font-mono text-xs flex-shrink-0">
                                     <span
                                         class="px-1.5 sm:px-2 py-0.5 rounded bg-card-yellow/20 text-card-yellow border border-card-yellow/40 font-bold text-[10px] sm:text-xs">
-                                        🟨 {{ $card->yellow_cards }}
+                                        🟨 <span x-text="card.yellow_cards"></span>
                                     </span>
                                     <span
                                         class="px-1.5 sm:px-2 py-0.5 rounded bg-card-red/20 text-card-red border border-card-red/40 font-bold text-[10px] sm:text-xs">
-                                        🟥 {{ $card->red_cards }}
+                                        🟥 <span x-text="card.red_cards"></span>
                                     </span>
                                 </div>
                             </div>
-                        @empty
-                            <p class="py-4 text-center font-mono text-xs text-text-muted">Catatan kartu bersih.</p>
-                        @endforelse
+                        </template>
+                        <div x-show="!leaderboards.disciplinary || leaderboards.disciplinary.length === 0"
+                            class="py-4 text-center font-mono text-xs text-text-muted">
+                            Catatan kartu bersih.
+                        </div>
                     </div>
                 </div>
 
@@ -706,6 +734,31 @@
     </div>
 @endsection
 
+@php
+    $initialLeaderboards = [
+        'top_scorers' => $topScorers->map(fn ($sc, $idx) => [
+            'rank' => $idx + 1,
+            'player_name' => $sc->player?->name ?? 'Pemain',
+            'jersey_number' => $sc->player?->jersey_number,
+            'team_name' => $sc->team?->name ?? 'Tim',
+            'total_goals' => (int) $sc->total_goals,
+        ])->values(),
+        'top_assists' => $topAssists->map(fn ($as, $idx) => [
+            'rank' => $idx + 1,
+            'player_name' => $as->assistPlayer?->name ?? 'Pemain',
+            'team_name' => $as->team?->name ?? 'Tim',
+            'total_assists' => (int) $as->total_assists,
+        ])->values(),
+        'disciplinary' => $disciplinary->map(fn ($cd, $idx) => [
+            'rank' => $idx + 1,
+            'player_name' => $cd->player?->name ?? 'Pemain',
+            'team_name' => $cd->team?->name ?? 'Tim',
+            'yellow_cards' => (int) $cd->yellow_cards,
+            'red_cards' => (int) $cd->red_cards,
+        ])->values(),
+    ];
+@endphp
+
 @push('scripts')
     <script>
         function fanCenterData(featuredId, categoryId) {
@@ -713,6 +766,8 @@
                 featuredId: featuredId,
                 categoryId: categoryId,
                 standings: @json($standingsByGroup),
+                leaderboards: @json($initialLeaderboards),
+                statTab: 'scorers',
                 getRows(gName) {
                     if (this.standings && this.standings[gName] && this.standings[gName].rows) {
                         return this.standings[gName].rows;
@@ -726,6 +781,17 @@
                         .then(data => {
                             if (data && Object.keys(data).length > 0) {
                                 this.standings = data;
+                            }
+                        })
+                        .catch(() => {});
+                },
+                refreshLeaderboards() {
+                    if (!this.categoryId) return;
+                    fetch(`/api/categories/${this.categoryId}/leaderboards`)
+                        .then(res => res.json())
+                        .then(data => {
+                            if (data) {
+                                this.leaderboards = data;
                             }
                         })
                         .catch(() => {});
@@ -786,18 +852,20 @@
                                     this.featured.timer_running = data.timer_running;
                                     this.featured.time_formatted = data.time_formatted;
 
-                                    // Instantly update standings whenever a goal is scored or status reaches fulltime
+                                    // Instantly update standings & leaderboards whenever a goal is scored or status reaches fulltime
                                     if (statusChanged || scoreChanged) {
                                         this.refreshStandings();
+                                        this.refreshLeaderboards();
                                     }
                                 })
                                 .catch(() => {});
                         }
 
-                        // Periodic background standings sync
+                        // Periodic background standings & leaderboards sync
                         pollCount++;
                         if (pollCount % 2 === 0) {
                             this.refreshStandings();
+                            this.refreshLeaderboards();
                         }
                     }, 3000);
                 }

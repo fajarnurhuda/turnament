@@ -15,6 +15,7 @@
         awayPenaltyScore: {{ $match->away_penalty_score ?? 0 }},
         goalTeamId: '{{ $match->home_team_id }}',
         cardTeamId: '{{ $match->home_team_id }}',
+        cardType: 'yellow_card',
         timerSeconds: {{ $match->elapsed_seconds }},
         timerRunning: {{ $match->timer_running ? 'true' : 'false' }},
         timeFormatted: '{{ $match->time_formatted }}',
@@ -854,14 +855,14 @@
                 <div class="space-y-1">
                     <label class="block text-text-muted uppercase">Pencetak Gol (Scorer)</label>
                     <!-- Home Players -->
-                    <select name="player_id" :disabled="goalTeamId != '{{ $match->home_team_id }}'" x-show="goalTeamId == '{{ $match->home_team_id }}'" class="w-full py-2 px-3 rounded bg-court-navy border border-court-border text-text-primary focus:border-stadium-emerald font-sans">
+                    <select name="player_id" :disabled="goalTeamId != '{{ $match->home_team_id }}'" :required="goalTeamId == '{{ $match->home_team_id }}'" x-show="goalTeamId == '{{ $match->home_team_id }}'" class="w-full py-2 px-3 rounded bg-court-navy border border-court-border text-text-primary focus:border-stadium-emerald font-sans">
                         <option value="">-- Pilih Pemain {{ $match->homeTeam->name }} --</option>
                         @foreach($match->homeTeam->players as $p)
                             <option value="{{ $p->id }}">#{{ $p->jersey_number }} - {{ $p->name }} ({{ $p->position }})</option>
                         @endforeach
                     </select>
                     <!-- Away Players -->
-                    <select name="player_id" :disabled="goalTeamId != '{{ $match->away_team_id }}'" x-show="goalTeamId == '{{ $match->away_team_id }}'" class="w-full py-2 px-3 rounded bg-court-navy border border-court-border text-text-primary focus:border-stadium-emerald font-sans">
+                    <select name="player_id" :disabled="goalTeamId != '{{ $match->away_team_id }}'" :required="goalTeamId == '{{ $match->away_team_id }}'" x-show="goalTeamId == '{{ $match->away_team_id }}'" class="w-full py-2 px-3 rounded bg-court-navy border border-court-border text-text-primary focus:border-stadium-emerald font-sans">
                         <option value="">-- Pilih Pemain {{ $match->awayTeam->name }} --</option>
                         @foreach($match->awayTeam->players as $p)
                             <option value="{{ $p->id }}">#{{ $p->jersey_number }} - {{ $p->name }} ({{ $p->position }})</option>
@@ -939,7 +940,7 @@
                 <!-- Card Type Selector -->
                 <div class="space-y-1">
                     <label class="block text-text-muted uppercase">Jenis Kartu</label>
-                    <select name="event_type" required class="w-full py-2 px-3 rounded bg-court-navy border border-court-border text-text-primary focus:border-stadium-emerald">
+                    <select name="event_type" x-model="cardType" required class="w-full py-2 px-3 rounded bg-court-navy border border-court-border text-text-primary focus:border-stadium-emerald">
                         <option value="yellow_card">🟨 Kartu Kuning (Peringatan)</option>
                         <option value="red_card">🟥 Kartu Merah Langsung (Ejection)</option>
                         <option value="second_yellow">🟥 Kartu Kuning Kedua (Kartu Merah)</option>

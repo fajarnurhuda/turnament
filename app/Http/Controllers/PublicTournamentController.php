@@ -76,10 +76,10 @@ class PublicTournamentController extends Controller
             ];
         }
 
-        // Leaderboards
-        $topScorers = $this->tournamentService->getTopScorers($categoryId, 5);
-        $topAssists = $this->tournamentService->getTopAssists($categoryId, 5);
-        $disciplinary = $this->tournamentService->getDisciplinaryLeaderboard($categoryId, 5);
+        // Leaderboards (Semua pencetak gol, assist, dan kartu)
+        $topScorers = $this->tournamentService->getTopScorers($categoryId);
+        $topAssists = $this->tournamentService->getTopAssists($categoryId);
+        $disciplinary = $this->tournamentService->getDisciplinaryLeaderboard($categoryId);
 
         // Knockout Stages (Bracket)
         $knockoutStages = $activeCategory?->stages->where('type', 'knockout') ?: collect();
@@ -282,6 +282,39 @@ class PublicTournamentController extends Controller
         }
 
         return response()->json($standingsByGroup);
+    }
+
+    /**
+     * JSON Endpoint for real-time individual leaderboards (scorers, assists, disciplinary cards).
+     */
+    public function leaderboardsFeed(int $categoryId): JsonResponse
+    {
+        $topScorers = $this->tournamentService->getTopScorers($categoryId);
+        $topAssists = $this->tournamentService->getTopAssists($categoryId);
+        $disciplinary = $this->tournamentService->getDisciplinaryLeaderboard($categoryId);
+
+        return response()->json([
+            'top_scorers' => $topScorers->map(fn ($sc, $idx) => [
+                'rank' => $idx + 1,
+                'player_name' => $sc->player?->name ?? 'Pemain',
+                'jersey_number' => $sc->player?->jersey_number,
+                'team_name' => $sc->team?->name ?? 'Tim',
+                'total_goals' => (int) $sc->total_goals,
+            ])->values(),
+            'top_assists' => $topAssists->map(fn ($as, $idx) => [
+                'rank' => $idx + 1,
+                'player_name' => $as->assistPlayer?->name ?? 'Pemain',
+                'team_name' => $as->team?->name ?? 'Tim',
+                'total_assists' => (int) $as->total_assists,
+            ])->values(),
+            'disciplinary' => $disciplinary->map(fn ($cd, $idx) => [
+                'rank' => $idx + 1,
+                'player_name' => $cd->player?->name ?? 'Pemain',
+                'team_name' => $cd->team?->name ?? 'Tim',
+                'yellow_cards' => (int) $cd->yellow_cards,
+                'red_cards' => (int) $cd->red_cards,
+            ])->values(),
+        ]);
     }
 
     /**
